@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatekeeper AI - Never Miss an Important Message</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a0a; color: white; overflow-x: hidden; }
+        
+        .header { background: #1a1a2e; padding: 15px 20px; border-bottom: 3px solid #FFB300; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .header h1 { color: #FFB300; font-size: 24px; }
+        .header h1 span { color: white; }
+        .nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .nav a { color: #ccc; text-decoration: none; font-size: 14px; padding: 5px 10px; }
+        .nav a:hover { color: #FFB300; }
+        .nav .demo-btn { background: #FFB300; color: black; padding: 6px 16px; border-radius: 20px; font-weight: bold; }
+        .nav .demo-btn:hover { background: #e6a300; color: black; }
+        
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #0a0a0a, #1a1a2e); }
+        .hero h1 { font-size: 36px; max-width: 700px; margin: 0 auto; line-height: 1.2; }
+        .hero h1 span { color: #FFB300; }
+        .hero p { color: #aaa; font-size: 16px; max-width: 600px; margin: 15px auto; line-height: 1.6; }
+        .hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
+        .btn { background: #FFB300; color: black; padding: 14px 30px; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #e6a300; }
+        .btn-outline { background: transparent; border: 2px solid #FFB300; color: #FFB300; }
+        .btn-outline:hover { background: #FFB300; color: black; }
+        
+        .features { padding: 50px 20px; max-width: 1200px; margin: 0 auto; }
+        .features h2 { text-align: center; font-size: 30px; color: #FFB300; margin-bottom: 30px; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card { background: #1a1a2e; padding: 25px 20px; border-radius: 16px; border: 1px solid #2a2a2a; text-align: center; }
+        .feature-card .icon { font-size: 40px; margin-bottom: 12px; }
+        .feature-card h3 { font-size: 18px; margin-bottom: 8px; color: #FFB300; }
+        .feature-card p { color: #aaa; font-size: 14px; line-height: 1.6; }
+        
+        .pricing { padding: 50px 20px; background: #1a1a2e; }
+        .pricing h2 { text-align: center; font-size: 30px; color: #FFB300; margin-bottom: 30px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; max-width: 1000px; margin: 0 auto; }
+        .pricing-card { background: #0a0a0a; padding: 25px 20px; border-radius: 16px; border: 1px solid #2a2a2a; text-align: center; }
+        .pricing-card.featured { border: 2px solid #FFB300; }
+        .pricing-card h3 { font-size: 20px; margin-bottom: 8px; }
+        .pricing-card .price { font-size: 40px; font-weight: bold; color: #FFB300; margin: 12px 0; }
+        .pricing-card .price small { font-size: 14px; color: #888; }
+        .pricing-card ul { list-style: none; padding: 0; margin: 15px 0; }
+        .pricing-card li { padding: 6px 0; color: #ccc; font-size: 14px; border-bottom: 1px solid #2a2a2a; }
+        .pricing-card .btn { padding: 12px 30px; font-size: 14px; }
+        
+        .contact { padding: 50px 20px; max-width: 600px; margin: 0 auto; text-align: center; }
+        .contact h2 { font-size: 30px; color: #FFB300; margin-bottom: 15px; }
+        .contact p { color: #aaa; margin-bottom: 20px; font-size: 15px; }
+        .contact-info { color: #ccc; line-height: 2; font-size: 15px; }
+        .contact-info strong { color: #FFB300; }
+        
+        .footer { background: #1a1a2e; padding: 25px 20px; text-align: center; border-top: 1px solid #2a2a2a; color: #666; font-size: 13px; }
+        .footer a { color: #FFB300; text-decoration: none; margin: 0 8px; }
+        .footer a:hover { text-decoration: underline; }
+        .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px 15px; margin-top: 8px; }
+        
+        /* Modal for Privacy & Terms */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #1a1a2e; max-width: 500px; padding: 30px; border-radius: 16px; border: 1px solid #FFB300; max-height: 80vh; overflow-y: auto; }
+        .modal-content h2 { color: #FFB300; margin-bottom: 15px; }
+        .modal-content p { color: #ccc; line-height: 1.8; font-size: 14px; }
+        .modal-content .close { background: #FFB300; color: black; border: none; padding: 10px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; padding: 12px 15px; }
+            .header h1 { font-size: 20px; }
+            .nav { justify-content: center; }
+            .nav a { font-size: 13px; padding: 4px 8px; }
+            .hero { padding: 40px 15px; }
+            .hero h1 { font-size: 26px; }
+            .hero p { font-size: 15px; }
+            .btn { padding: 12px 24px; font-size: 14px; }
+            .features { padding: 30px 15px; }
+            .features h2 { font-size: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .feature-card { padding: 20px; }
+            .pricing { padding: 30px 15px; }
+            .pricing h2 { font-size: 24px; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 350px; }
+            .contact { padding: 30px 15px; }
+            .contact h2 { font-size: 24px; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 22px; }
+            .hero p { font-size: 14px; }
+            .pricing-card .price { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>🔒 Gatekeeper <span>AI</span></h1>
+        <nav class="nav">
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#contact">Contact</a>
+            <a href="http://127.0.0.1:8080/gatekeeper_mp_edition.html" class="demo-btn">Try Demo</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>Never Miss <span>an Important Message</span> Again</h1>
+        <p>Gatekeeper AI sorts your SMS, WhatsApp, and Email by urgency — so you always see what matters first.</p>
+        <div class="hero-buttons">
+            <a href="http://127.0.0.1:8080/gatekeeper_mp_edition.html" class="btn">Try Free Trial</a>
+            <a href="#features" class="btn btn-outline">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <h2>How Gatekeeper AI Works</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">📱</div>
+                <h3>Reads All Messages</h3>
+                <p>Automatically reads SMS, WhatsApp, and Email — all in one place.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🧠</div>
+                <h3>AI Classification</h3>
+                <p>Sorts messages as URGENT, IMPORTANT, or NORMAL.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔔</div>
+                <h3>Instant Alerts</h3>
+                <p>Push notifications for urgent messages. Never miss a crisis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🇿🇼</div>
+                <h3>Built for Zimbabwe</h3>
+                <p>Understands Shona, Ndebele, and local emergency keywords.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔒</div>
+                <h3>Privacy First</h3>
+                <p>Your messages are encrypted. No human reads them. Ever.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">💳</div>
+                <h3>EcoCash, InnBucks</h3>
+                <p>Pay with EcoCash, InnBucks, or OneMoney — $99/month.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <h2>Simple, Transparent Pricing</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>MP Edition</h3>
+                <div class="price">$99 <small>/month</small></div>
+                <ul>
+                    <li>✅ Unlimited SMS & Email</li>
+                    <li>✅ WhatsApp Integration</li>
+                    <li>✅ Shona & Ndebele</li>
+                    <li>✅ 14-Day Free Trial</li>
+                    <li>✅ Priority Support</li>
+                </ul>
+                <a href="#contact" class="btn">Get Started</a>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Executive Edition</h3>
+                <div class="price">$99 <small>/month</small></div>
+                <ul>
+                    <li>✅ All MP Features</li>
+                    <li>✅ CEO Keywords</li>
+                    <li>✅ Business Analytics</li>
+                    <li>✅ Team Sharing</li>
+                    <li>✅ 14-Day Free Trial</li>
+                </ul>
+                <a href="#contact" class="btn">Get Started</a>
+            </div>
+            <div class="pricing-card">
+                <h3>Councillor Edition</h3>
+                <div class="price">$49 <small>/month</small></div>
+                <ul>
+                    <li>✅ SMS & Email Sorting</li>
+                    <li>✅ Community Keywords</li>
+                    <li>✅ Shona & Ndebele</li>
+                    <li>✅ 14-Day Free Trial</li>
+                    <li>✅ Standard Support</li>
+                </ul>
+                <a href="#contact" class="btn">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+        <h2>Contact Us</h2>
+        <p>Get in touch for demos, partnerships, or questions.</p>
+        <div class="contact-info">
+            <p><strong>📧 Email:</strong> support@gatekeeperai.com</p>
+            <p><strong>📱 Phone:</strong> +263 73 304 5325</p>
+            <p><strong>📍 Location:</strong> Bulawayo, Zimbabwe</p>
+            <p><strong>💬 WhatsApp:</strong> +263 73 304 5325</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 Gatekeeper AI | Built with ❤️ in Zimbabwe 🇿🇼</p>
+        <div class="footer-links">
+            <a href="#" onclick="openModal('privacy')">Privacy Policy</a>
+            <a href="#" onclick="openModal('terms')">Terms & Conditions</a>
+        </div>
+    </footer>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2>🔒 Privacy Policy</h2>
+            <p><strong>Last updated:</strong> June 2026</p>
+            <p>Gatekeeper AI processes your messages solely to sort them by urgency. We do <strong>not</strong> read, store, or share your messages with any third party.</p>
+            <p>Your data is encrypted. Only the AI sees your messages, and it forgets them immediately after sorting.</p>
+            <p><strong>Your Rights:</strong> You can request deletion of your data at any time.</p>
+            <p><strong>Contact:</strong> privacy@gatekeeperai.com</p>
+            <button class="close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="termsModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2>📜 Terms & Conditions</h2>
+            <p><strong>Last updated:</strong> June 2026</p>
+            <p><strong>1. Free Trial:</strong> You agree to a 14-day free trial. After that, subscription fees apply.</p>
+            <p><strong>2. Subscription:</strong> $99/month for MPs and CEOs. $49/month for Councillors.</p>
+            <p><strong>3. Cancellation:</strong> You can cancel anytime. No refunds for partial months.</p>
+            <p><strong>4. Data Ownership:</strong> Your data belongs to you. We do not sell or share it.</p>
+            <p><strong>5. Liability:</strong> We strive for accuracy but cannot guarantee 100% perfect classification.</p>
+            <p><strong>Contact:</strong> legal@gatekeeperai.com</p>
+            <button class="close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(type) {
+            if (type === 'privacy') {
+                document.getElementById('privacyModal').style.display = 'flex';
+            } else if (type === 'terms') {
+                document.getElementById('termsModal').style.display = 'flex';
+            }
+        }
+
+        function closeModal(event) {
+            if (event) {
+                document.getElementById('privacyModal').style.display = 'none';
+                document.getElementById('termsModal').style.display = 'none';
+            } else {
+                document.getElementById('privacyModal').style.display = 'none';
+                document.getElementById('termsModal').style.display = 'none';
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
