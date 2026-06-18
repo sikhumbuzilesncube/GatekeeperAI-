@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gatekeeper AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family: sans-serif; padding: 20px; background: black; color: white;">
+    <h1>🔒 Gatekeeper AI</h1>
+    <p>Test Message Classification</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        <button id="urgentBtn" style="padding: 20px; font-size: 18px; background: #e94560; border: none; border-radius: 10px; color: white;">🔴 Test URGENT: Borehole broken, no water</button>
+        
+        <button id="importantBtn" style="padding: 20px; font-size: 18px; background: #f5a623; border: none; border-radius: 10px; color: white;">🟠 Test IMPORTANT: Parliament meeting 2pm</button>
+        
+        <button id="normalBtn" style="padding: 20px; font-size: 18px; background: #4a4e69; border: none; border-radius: 10px; color: white;">⚪ Test NORMAL: Hello, how are you?</button>
+    </div>
+    
+    <div id="result" style="margin-top: 30px; padding: 20px; border-radius: 10px; font-size: 24px; text-align: center;"></div>
+    
+    <script>
+        const apiUrl = 'http://127.0.0.1:5000/classify';
+        
+        document.getElementById('urgentBtn').onclick = () => send('Borehole broken at Nketa 8', 'No water for 500 people');
+        document.getElementById('importantBtn').onclick = () => send('Parliament Meeting', '2pm today in Committee Room');
+        document.getElementById('normalBtn').onclick = () => send('Hello', 'How are you?');
+        
+        async function send(subject, body) {
+            document.getElementById('result').innerHTML = '⏳ Processing...';
+            document.getElementById('result').style.background = '#333';
+            
+            try {
+                let response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({subject: subject, body: body})
+                });
+                let data = await response.json();
+                
+                let color = data.label === 'URGENT' ? '#e94560' : (data.label === 'IMPORTANT' ? '#f5a623' : '#4a4e69');
+                document.getElementById('result').style.background = color;
+                document.getElementById('result').innerHTML = data.label;
+            } catch(e) {
+                document.getElementById('result').innerHTML = 'ERROR: ' + e.message;
+                document.getElementById('result').style.background = '#333';
+            }
+        }
+    </script>
+</body>
+</html>

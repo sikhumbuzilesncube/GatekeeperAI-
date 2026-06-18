@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Gatekeeper AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00d4ff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .header h1 span {
+            color: #00d4ff;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Trial Banner */
+        .trial-banner {
+            background: linear-gradient(135deg, #00d4ff20 0%, #00d4ff05 100%);
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            border-bottom: 1px solid #00d4ff30;
+        }
+
+        .trial-banner strong {
+            color: #00d4ff;
+        }
+
+        /* Stats Bar */
+        .stats {
+            display: flex;
+            padding: 15px;
+            gap: 10px;
+            background: #0f0f0f;
+        }
+
+        .stat {
+            flex: 1;
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .stat.urgent .stat-number { color: #e94560; }
+        .stat.important .stat-number { color: #f5a623; }
+        .stat.normal .stat-number { color: #4a4e69; }
+
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            background: #1a1a2e;
+            padding: 10px;
+            gap: 8px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 25px;
+            color: #888;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #00d4ff;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Messages */
+        .messages {
+            padding: 15px;
+        }
+
+        .message {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid;
+        }
+
+        .message:active {
+            transform: scale(0.98);
+        }
+
+        .message.urgent {
+            border-left-color: #e94560;
+            background: linear-gradient(135deg, #1a1520 0%, #1a1a1a 100%);
+        }
+
+        .message.important {
+            border-left-color: #f5a623;
+            background: linear-gradient(135deg, #1a1f15 0%, #1a1a1a 100%);
+        }
+
+        .message.normal {
+            border-left-color: #4a4e69;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .badge.urgent { background: #e94560; color: white; }
+        .badge.important { background: #f5a623; color: black; }
+        .badge.normal { background: #4a4e69; color: white; }
+
+        .sender {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .summary {
+            font-size: 13px;
+            color: #bbb;
+            line-height: 1.4;
+        }
+
+        .time {
+            font-size: 10px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* Test Area (for demo) */
+        .test-area {
+            background: #1a1a2e;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 16px;
+        }
+
+        .test-area h4 {
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .test-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .test-btn.urgent { background: #e94560; color: white; }
+        .test-btn.important { background: #f5a623; color: black; }
+        .test-btn.normal { background: #4a4e69; color: white; }
+
+        /* Fab Button */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00d4ff;
+            color: black;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+            cursor: pointer;
+            border: none;
+            z-index: 1000;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a2e;
+            display: flex;
+            padding: 10px;
+            gap: 5px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            background: #00d4ff20;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔒 GATEKEEPER <span>AI</span></h1>
+        <p>Your messages, sorted by urgency</p>
+    </div>
+
+    <div class="trial-banner" id="trialBanner">
+        ⏳ <strong>14-DAY FREE TRIAL</strong> ⏳<br>
+        Days remaining: <strong id="daysLeft">14</strong>
+    </div>
+
+    <div class="stats">
+        <div class="stat urgent">
+            <div class="stat-number" id="urgentCount">0</div>
+            <div class="stat-label">🔴 URGENT</div>
+        </div>
+        <div class="stat important">
+            <div class="stat-number" id="importantCount">0</div>
+            <div class="stat-label">🟠 IMPORTANT</div>
+        </div>
+        <div class="stat normal">
+            <div class="stat-number" id="normalCount">0</div>
+            <div class="stat-label">⚪ NORMAL</div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab active" onclick="filterMessages('all')">All</div>
+        <div class="tab" onclick="filterMessages('URGENT')">🔴 Urgent</div>
+        <div class="tab" onclick="filterMessages('IMPORTANT')">🟠 Important</div>
+        <div class="tab" onclick="filterMessages('NORMAL')">⚪ Normal</div>
+    </div>
+
+    <div class="messages" id="messagesList">
+        <div class="empty-state">📭 Loading messages...</div>
+    </div>
+
+    <div class="test-area">
+        <h4>📱 Test Message (Demo)</h4>
+        <div class="test-buttons">
+            <button class="test-btn urgent" onclick="sendTestMessage('Borehole broken at Nketa 8', 'No water for 500 people', 'URGENT')">🔴 Borehole broken</button>
+            <button class="test-btn important" onclick="sendTestMessage('Parliament Meeting', '2pm today in Committee Room', 'IMPORTANT')">🟠 Parliament Meeting</button>
+            <button class="test-btn normal" onclick="sendTestMessage('Hello', 'How are you?', 'NORMAL')">⚪ Hello</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showSection('inbox')">📥 Inbox</div>
+        <div class="nav-item" onclick="showSection('test')">🧪 Test</div>
+        <div class="nav-item" onclick="showSection('settings')">⚙️ Settings</div>
+    </div>
+
+    <div class="fab" onclick="composeMessage()">✏️</div>
+
+    <script>
+        let messages = [];
+        let currentFilter = 'all';
+
+        // Sample messages that look real
+        const sampleMessages = [
+            { sender: "Constituent - Ward 4", subject: "Borehole Emergency", summary: "Borehole broken at Nketa 8. 500 people have no water for 2 days.", category: "URGENT", time: "2 minutes ago" },
+            { sender: "Parliament Secretariat", subject: "Committee Meeting", summary: "2pm today in Committee Room 12. Budget review.", category: "IMPORTANT", time: "1 hour ago" },
+            { sender: "Minister's Office", subject: "Q3 Report", summary: "Please submit Q3 constituency report by tomorrow.", category: "IMPORTANT", time: "2 hours ago" },
+            { sender: "Constituent - Ward 8", subject: "School Fees Plea", summary: "My child cannot write exams. Need $50 urgently.", category: "URGENT", time: "3 hours ago" },
+            { sender: "Chief Moyo", subject: "Community Meeting", summary: "Village heads meeting on Saturday at 10am.", category: "IMPORTANT", time: "5 hours ago" },
+            { sender: "Party Official", subject: "Campaign Strategy", summary: "Next week's rally details attached.", category: "NORMAL", time: "Yesterday" },
+            { sender: "Newsletter", subject: "Weekly Digest", summary: "Parliament highlights from this week.", category: "NORMAL", time: "Yesterday" }
+        ];
+
+        function loadMessages() {
+            let filtered = messages.length > 0 ? messages : sampleMessages;
+            
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(m => m.category === currentFilter);
+            }
+
+            const urgent = (messages.length > 0 ? messages : sampleMessages).filter(m => m.category === 'URGENT').length;
+            const important = (messages.length > 0 ? messages : sampleMessages).filter(m => m.category === 'IMPORTANT').length;
+            const normal = (messages.length > 0 ? messages : sampleMessages).filter(m => m.category === 'NORMAL').length;
+            
+            document.getElementById('urgentCount').innerText = urgent;
+            document.getElementById('importantCount').innerText = important;
+            document.getElementById('normalCount').innerText = normal;
+
+            if (filtered.length === 0) {
+                document.getElementById('messagesList').innerHTML = '<div class="empty-state">📭 No messages in this category</div>';
+                return;
+            }
+
+            let html = '';
+            for (let msg of filtered) {
+                const badgeClass = msg.category === 'URGENT' ? 'urgent' : (msg.category === 'IMPORTANT' ? 'important' : 'normal');
+                html += `
+                    <div class="message ${msg.category.toLowerCase()}" onclick="markRead('${msg.subject}')">
+                        <div class="badge ${badgeClass}">${msg.category}</div>
+                        <div class="sender">📱 ${msg.sender}</div>
+                        <div class="summary">${msg.summary || msg.subject}</div>
+                        <div class="time">🕐 ${msg.time}</div>
+                    </div>
+                `;
+            }
+            document.getElementById('messagesList').innerHTML = html;
+        }
+
+        function filterMessages(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            loadMessages();
+        }
+
+        function sendTestMessage(subject, body, category) {
+            const newMessage = {
+                sender: "Test Constituent",
+                subject: subject,
+                summary: body,
+                category: category,
+                time: "Just now"
+            };
+            messages.unshift(newMessage);
+            loadMessages();
+            
+            // Show alert for urgent
+            if (category === 'URGENT') {
+                alert('🔴 URGENT MESSAGE DETECTED!\n\nThis would send a notification to your phone.');
+            }
+        }
+
+        function markRead(subject) {
+            // In real version, this would mark as read
+            console.log('Read:', subject);
+        }
+
+        function composeMessage() {
+            alert('✏️ Compose message\n\nIn the full version, you can reply to constituents directly from Gatekeeper AI.');
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (section === 'inbox') {
+                document.querySelector('.messages').style.display = 'block';
+                document.querySelector('.test-area').style.display = 'block';
+            } else if (section === 'test') {
+                document.querySelector('.messages').style.display = 'block';
+                document.querySelector('.test-area').style.display = 'block';
+            }
+        }
+
+        // Trial countdown
+        function updateTrialDays() {
+            const startDate = localStorage.getItem('gatekeeper_trial_start');
+            if (!startDate) {
+                localStorage.setItem('gatekeeper_trial_start', new Date().toISOString());
+            }
+            
+            const start = new Date(localStorage.getItem('gatekeeper_trial_start'));
+            const today = new Date();
+            const daysUsed = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+            const daysLeft = Math.max(0, 14 - daysUsed);
+            
+            document.getElementById('daysLeft').innerText = daysLeft;
+            
+            if (daysLeft === 0) {
+                document.getElementById('trialBanner').innerHTML = '⚠️ <strong>TRIAL EXPIRED</strong> ⚠️<br>Subscribe for $99/month to continue';
+            }
+        }
+
+        // Load everything
+        loadMessages();
+        updateTrialDays();
+    </script>
+</body>
+</html>
