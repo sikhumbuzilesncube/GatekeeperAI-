@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Summary - Gatekeeper AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;padding:20px}
+.header{text-align:center;margin-bottom:30px}
+.header h1{color:#FFB300;font-size:28px}
+.header p{color:#888;font-size:14px}
+.summary-card{background:#1a1a2e;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #2a2a2a}
+.summary-card h3{color:#FFB300;font-size:16px;margin-bottom:12px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.summary-item{background:#0a0a0a;padding:12px;border-radius:10px;text-align:center}
+.summary-item .number{font-size:28px;font-weight:700}
+.summary-item .label{font-size:11px;color:#888;margin-top:4px}
+.summary-item.urgent .number{color:#e94560}
+.summary-item.important .number{color:#f5a623}
+.summary-item.normal .number{color:#4a4e69}
+.summary-item.total .number{color:#FFB300}
+.channel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px}
+.channel-item{background:#0a0a0a;padding:10px;border-radius:8px;text-align:center}
+.channel-item .icon{font-size:24px}
+.channel-item .count{font-size:20px;font-weight:700}
+.channel-item .label{font-size:10px;color:#888}
+.sender-list{list-style:none;padding:0}
+.sender-list li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:14px}
+.sender-list li:last-child{border-bottom:none}
+.sender-list .count{color:#FFB300;font-weight:700}
+.btn{background:#FFB300;color:#000;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px}
+.btn:hover{background:#e6a300}
+.back-btn{background:#333;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;margin-top:10px}
+.footer{text-align:center;margin-top:30px;color:#666;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>📊 Daily Summary</h1>
+<p>Your briefing for today</p>
+</div>
+
+<!-- Summary Stats -->
+<div class="summary-card">
+<h3>📈 Message Overview</h3>
+<div class="summary-grid">
+<div class="summary-item total">
+<div class="number" id="totalCount">0</div>
+<div class="label">Total Messages</div>
+</div>
+<div class="summary-item urgent">
+<div class="number" id="urgentCount">0</div>
+<div class="label">🔴 URGENT</div>
+</div>
+<div class="summary-item important">
+<div class="number" id="importantCount">0</div>
+<div class="label">🟠 IMPORTANT</div>
+</div>
+<div class="summary-item normal">
+<div class="number" id="normalCount">0</div>
+<div class="label">⚪ NORMAL</div>
+</div>
+</div>
+</div>
+
+<!-- Channel Breakdown -->
+<div class="summary-card">
+<h3>📱 By Channel</h3>
+<div class="channel-grid">
+<div class="channel-item">
+<div class="icon">💬</div>
+<div class="count" id="whatsappCount">0</div>
+<div class="label">WhatsApp</div>
+</div>
+<div class="channel-item">
+<div class="icon">📧</div>
+<div class="count" id="emailCount">0</div>
+<div class="label">Email</div>
+</div>
+<div class="channel-item">
+<div class="icon">📱</div>
+<div class="count" id="smsCount">0</div>
+<div class="label">SMS</div>
+</div>
+</div>
+</div>
+
+<!-- Top Senders -->
+<div class="summary-card">
+<h3>👤 Top Senders</h3>
+<ul class="sender-list" id="senderList">
+<li style="color:#888;text-align:center;padding:20px;">Loading...</li>
+</ul>
+</div>
+
+<!-- Quick Actions -->
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+<button class="btn" onclick="window.location.href='gatekeeper_mp_edition.html'">📥 Go to Inbox</button>
+<button class="btn" onclick="generateReport()">📄 Generate Report</button>
+</div>
+<button class="back-btn" onclick="window.location.href='gatekeeper_mp_edition.html'">← Back to App</button>
+
+<div class="footer">
+2026 Gatekeeper AI | Daily Summary
+</div>
+
+<script>
+// Sample data — in production, this would come from your database
+const sampleData = {
+    total: 47,
+    urgent: 5,
+    important: 12,
+    normal: 30,
+    whatsapp: 18,
+    email: 15,
+    sms: 14,
+    senders: [
+        { name: "Constituent - Ward 4", count: 8 },
+        { name: "Parliament Secretariat", count: 5 },
+        { name: "Minister's Office", count: 4 },
+        { name: "Constituent - Ward 8", count: 3 },
+        { name: "Chief Moyo", count: 3 },
+        { name: "Other", count: 24 }
+    ]
+};
+
+function loadSummary(data) {
+    document.getElementById('totalCount').textContent = data.total;
+    document.getElementById('urgentCount').textContent = data.urgent;
+    document.getElementById('importantCount').textContent = data.important;
+    document.getElementById('normalCount').textContent = data.normal;
+    document.getElementById('whatsappCount').textContent = data.whatsapp;
+    document.getElementById('emailCount').textContent = data.email;
+    document.getElementById('smsCount').textContent = data.sms;
+    
+    let html = '';
+    for (let s of data.senders) {
+        html += `<li><span>${s.name}</span><span class="count">${s.count}</span></li>`;
+    }
+    document.getElementById('senderList').innerHTML = html;
+}
+
+function generateReport() {
+    const date = new Date().toLocaleDateString('en-ZW', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    const report = `
+📊 GATEKEEPER AI DAILY SUMMARY
+📅 ${date}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 MESSAGE OVERVIEW
+Total Messages: ${sampleData.total}
+🔴 URGENT: ${sampleData.urgent}
+🟠 IMPORTANT: ${sampleData.important}
+⚪ NORMAL: ${sampleData.normal}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📱 BY CHANNEL
+💬 WhatsApp: ${sampleData.whatsapp}
+📧 Email: ${sampleData.email}
+📱 SMS: ${sampleData.sms}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 TOP SENDERS
+${sampleData.senders.map(s => `${s.name}: ${s.count}`).join('\n')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 SUMMARY
+${sampleData.urgent > 0 ? `🔴 You have ${sampleData.urgent} URGENT messages that need immediate attention.` : '✅ No urgent messages.'}
+${sampleData.important > 0 ? `🟠 You have ${sampleData.important} IMPORTANT messages for today.` : '✅ No important messages.'}
+Have a productive day! 🔒
+    `;
+    alert(report);
+}
+
+// Load with sample data
+loadSummary(sampleData);
+</script>
+</body>
+</html>
