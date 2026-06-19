@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missed Calls</title>
+<style>
+body{font-family:sans-serif;background:#0a0a0a;color:#fff;padding:20px}
+h1{color:#FFB300}
+.call{background:#1a1a2e;padding:15px;border-radius:10px;margin-bottom:10px;border-left:4px solid}
+.urgent{border-left-color:#e94560}
+.important{border-left-color:#f5a623}
+.normal{border-left-color:#4a4e69}
+.name{font-size:18px;font-weight:bold}
+.number{color:#aaa;font-size:14px}
+.time{color:#666;font-size:12px}
+.badge{display:inline-block;padding:2px 12px;border-radius:10px;font-size:11px;margin-top:5px}
+.badge-urgent{background:#e94560;color:#fff}
+.badge-important{background:#f5a623;color:#000}
+.badge-normal{background:#4a4e69;color:#fff}
+.btn{background:#00ff88;color:#000;border:none;padding:6px 14px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:5px}
+.btn-back{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px}
+.nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
+.nav-item.active{background:#FFB30020;color:#FFB300}
+</style>
+</head>
+<body>
+
+<h1>📞 Missed Calls</h1>
+<p style="color:#888;">Calls you missed, sorted by urgency</p>
+
+<div id="callsList"></div>
+
+<button class="btn-back" onclick="window.location.href='gatekeeper_mp_edition.html'">⬅ Back to Inbox</button>
+
+<div class="bottom-nav">
+<div class="nav-item" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
+<div class="nav-item active">📞 Calls</div>
+<div class="nav-item" onclick="window.location.href='daily_summary.html'">Summary</div>
+</div>
+
+<script>
+const calls = [
+    { name: "Constituent - Ward 4", number: "+263 77 234 5678", time: "Today 10:30 AM", count: 3, urgency: "URGENT" },
+    { name: "Private Number", number: "Private", time: "Today 9:15 AM", count: 2, urgency: "IMPORTANT" },
+    { name: "Parliament Secretariat", number: "+263 71 234 5678", time: "Today 8:45 AM", count: 1, urgency: "NORMAL" }
+];
+
+function loadCalls() {
+    const list = document.getElementById('callsList');
+    let html = '';
+    for (let c of calls) {
+        const cls = c.urgency.toLowerCase();
+        const badge = c.urgency === 'URGENT' ? 'badge-urgent' : (c.urgency === 'IMPORTANT' ? 'badge-important' : 'badge-normal');
+        const icon = c.urgency === 'URGENT' ? '🔴' : (c.urgency === 'IMPORTANT' ? '🟠' : '⚪');
+        const countText = c.count > 1 ? `📞 Called ${c.count} times` : '';
+        html += `
+            <div class="call ${cls}">
+                <div class="name">${icon} ${c.name}</div>
+                <div class="number">📱 ${c.number}</div>
+                <div class="time">🕐 ${c.time}</div>
+                ${countText ? `<div class="time">${countText}</div>` : ''}
+                <div>
+                    <span class="badge ${badge}">${c.urgency}</span>
+                    <button class="btn" onclick="callBack('${c.number}')">📞 Call Back</button>
+                </div>
+            </div>
+        `;
+    }
+    list.innerHTML = html;
+}
+
+function callBack(number) {
+    if (number === 'Private') {
+        alert('Cannot call private numbers.');
+        return;
+    }
+    window.location.href = 'tel:' + number;
+}
+
+loadCalls();
+</script>
+</body>
+</html>
