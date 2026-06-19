@@ -5,34 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Missed Calls</title>
 <style>
-body{font-family:sans-serif;background:#0a0a0a;color:#fff;padding:20px}
-h1{color:#FFB300}
-.call{background:#1a1a2e;padding:15px;border-radius:10px;margin-bottom:10px;border-left:4px solid}
-.urgent{border-left-color:#e94560}
-.important{border-left-color:#f5a623}
-.normal{border-left-color:#4a4e69}
-.name{font-size:18px;font-weight:bold}
-.number{color:#aaa;font-size:14px}
-.time{color:#666;font-size:12px}
-.badge{display:inline-block;padding:2px 12px;border-radius:10px;font-size:11px;margin-top:5px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:sans-serif;background:#0a0a0a;color:#fff;padding:20px;padding-bottom:80px}
+.header{text-align:center;margin-bottom:20px}
+.header h1{color:#FFB300;font-size:24px}
+.header p{color:#888;font-size:13px}
+.call-card{background:#1a1a2e;border-radius:12px;padding:14px;margin-bottom:10px;border-left:4px solid}
+.call-card.urgent{border-left-color:#e94560}
+.call-card.important{border-left-color:#f5a623}
+.call-card.normal{border-left-color:#4a4e69}
+.name{font-size:16px;font-weight:bold}
+.number{font-size:13px;color:#bbb}
+.time{font-size:12px;color:#888;margin-top:4px}
+.reasons{font-size:11px;color:#FFB300;margin-top:2px}
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:bold;margin-top:6px}
 .badge-urgent{background:#e94560;color:#fff}
 .badge-important{background:#f5a623;color:#000}
 .badge-normal{background:#4a4e69;color:#fff}
-.btn{background:#00ff88;color:#000;border:none;padding:6px 14px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:5px}
-.btn-back{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px}
+.btn-call{background:#00ff88;color:#000;border:none;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:bold;cursor:pointer;margin-top:6px}
+.btn-notes{background:#333;color:#fff;border:none;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:bold;cursor:pointer;margin-top:6px;margin-left:6px}
+.empty-state{text-align:center;padding:40px;color:#666}
+.btn{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a}
 .nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
 .nav-item.active{background:#FFB30020;color:#FFB300}
 </style>
 </head>
 <body>
 
+<div class="header">
 <h1>📞 Missed Calls</h1>
-<p style="color:#888;">Calls you missed, sorted by urgency</p>
+<p>Smart urgency detection based on call patterns</p>
+</div>
 
-<div id="callsList"></div>
+<div id="callsList">
+<div class="empty-state">Loading...</div>
+</div>
 
-<button class="btn-back" onclick="window.location.href='gatekeeper_mp_edition.html'">⬅ Back to Inbox</button>
+<button class="btn" onclick="window.location.href='gatekeeper_mp_edition.html'">📥 Go to Inbox</button>
 
 <div class="bottom-nav">
 <div class="nav-item" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
@@ -42,28 +52,32 @@ h1{color:#FFB300}
 
 <script>
 const calls = [
-    { name: "Constituent - Ward 4", number: "+263 77 234 5678", time: "Today 10:30 AM", count: 3, urgency: "URGENT" },
-    { name: "Private Number", number: "Private", time: "Today 9:15 AM", count: 2, urgency: "IMPORTANT" },
-    { name: "Parliament Secretariat", number: "+263 71 234 5678", time: "Today 8:45 AM", count: 1, urgency: "NORMAL" }
+    { name: "Constituent - Ward 4", number: "+263 77 234 5678", time: "10:30 AM, 10:45 AM, 11:00 AM", count: 3, urgency: "URGENT", reasons: "Called 3 times, Also sent a message" },
+    { name: "Parliament Secretariat", number: "+263 71 234 5678", time: "9:00 AM", count: 1, urgency: "IMPORTANT", reasons: "VIP: Parliament Secretariat" },
+    { name: "Unknown", number: "Private", time: "10:30 PM", count: 1, urgency: "IMPORTANT", reasons: "Late night call" },
+    { name: "Constituent - Ward 8", number: "+263 78 345 6789", time: "Yesterday 3:00 PM", count: 1, urgency: "NORMAL", reasons: "No special factors" }
 ];
 
 function loadCalls() {
     const list = document.getElementById('callsList');
     let html = '';
+    
     for (let c of calls) {
         const cls = c.urgency.toLowerCase();
-        const badge = c.urgency === 'URGENT' ? 'badge-urgent' : (c.urgency === 'IMPORTANT' ? 'badge-important' : 'badge-normal');
+        const badgeClass = c.urgency === 'URGENT' ? 'badge-urgent' : (c.urgency === 'IMPORTANT' ? 'badge-important' : 'badge-normal');
         const icon = c.urgency === 'URGENT' ? '🔴' : (c.urgency === 'IMPORTANT' ? '🟠' : '⚪');
-        const countText = c.count > 1 ? `📞 Called ${c.count} times` : '';
+        
         html += `
-            <div class="call ${cls}">
+            <div class="call-card ${cls}">
                 <div class="name">${icon} ${c.name}</div>
                 <div class="number">📱 ${c.number}</div>
                 <div class="time">🕐 ${c.time}</div>
-                ${countText ? `<div class="time">${countText}</div>` : ''}
+                ${c.count > 1 ? `<div class="time">📞 Called ${c.count} times</div>` : ''}
+                <div class="reasons">💡 ${c.reasons}</div>
                 <div>
-                    <span class="badge ${badge}">${c.urgency}</span>
-                    <button class="btn" onclick="callBack('${c.number}')">📞 Call Back</button>
+                    <span class="badge ${badgeClass}">${c.urgency}</span>
+                    <button class="btn-call" onclick="callBack('${c.number}')">📞 Call Back</button>
+                    <button class="btn-notes" onclick="addNote('${c.name}')">📝 Notes</button>
                 </div>
             </div>
         `;
@@ -72,11 +86,18 @@ function loadCalls() {
 }
 
 function callBack(number) {
-    if (number === 'Private') {
+    if (number === 'Private' || number === 'Unknown') {
         alert('Cannot call private numbers.');
         return;
     }
     window.location.href = 'tel:' + number;
+}
+
+function addNote(name) {
+    const note = prompt(`Add a note for ${name}:`);
+    if (note) {
+        alert('✅ Note saved: "' + note + '"');
+    }
 }
 
 loadCalls();
