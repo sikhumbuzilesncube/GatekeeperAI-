@@ -10,6 +10,10 @@ URGENT_EN = [
     'system down', 'server', 'outage', 'breach', 'fraud', 'lawsuit',
     'client crisis', 'customer complaint', 'deal lost',
     'contract signing', 'sign the contract', 'deal deadline',
+    # Meeting Detection
+    'meeting', 'meet', 'briefing', 'conference', 'session',
+    'tomorrow', 'today', 'at 2pm', 'at 3pm', 'at 4pm',
+    'am', 'pm', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm'
     
     # Health & Safety
     'hospital', 'death', 'died', 'accident', 'fire', 'flood',
