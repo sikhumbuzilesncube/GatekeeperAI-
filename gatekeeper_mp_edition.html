@@ -14,6 +14,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .header p{color:#888;font-size:12px;margin-top:4px}
 .trial-banner{background:#1a2a1a;padding:10px;text-align:center;font-size:12px;border-bottom:1px solid #2a2a2a}
 .trial-banner strong{color:#FFB300}
+.whatsapp-status{background:#1a2a1a;padding:10px 16px;margin:0 12px 12px;border-radius:10px;border:1px solid #2a2a2a;display:block}
+.whatsapp-status .icon{font-size:20px}
+.whatsapp-status .title{font-size:14px;font-weight:bold;color:#fff}
+.whatsapp-status .message{font-size:12px;color:#aaa}
+.whatsapp-status .success .message{color:#00ff88}
+.whatsapp-status .warning .message{color:#FFB300}
+.role-selector{background:#1a2a1a;padding:10px 16px;margin:0 12px 12px;border-radius:10px;border:1px solid #2a2a2a}
+.role-selector label{font-size:13px;font-weight:bold;color:#fff;display:block;margin-bottom:4px}
+.role-selector select{width:100%;padding:8px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:13px}
+.role-confirm{background:#1a2a1a;padding:8px 16px;margin:8px 12px;border-radius:8px;border-left:4px solid #00ff88;color:#00ff88;font-size:13px;text-align:center}
 .stats{display:flex;gap:10px;padding:12px}
 .stat-card{flex:1;background:#1a1a1a;padding:12px;border-radius:12px;text-align:center;border:1px solid #2a2a2a}
 .stat-number{font-size:28px;font-weight:700}
@@ -68,9 +78,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .footer-links a{color:#FFB300;text-decoration:none;font-size:13px;margin:0 8px;cursor:pointer}
 .footer-links p{color:#666;font-size:11px;margin-top:6px}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;padding:20px}
-.modal-content{background:#1a1a2e;max-width:400px;padding:24px;border-radius:16px;border:1px solid #FFB300}
+.modal-content{background:#1a1a2e;max-width:400px;padding:24px;border-radius:16px;border:1px solid #FFB300;max-height:90vh;overflow-y:auto}
 .modal-content h2{color:#FFB300;font-size:18px;margin-bottom:10px}
-.modal-content p{color:#ccc;font-size:13px;line-height:1.6}
+.modal-content p{color:#ccc;font-size:13px;line-height:1.6;margin-bottom:8px}
 .modal-content .close-btn{margin-top:12px;padding:8px 24px;background:#FFB300;border:none;border-radius:8px;color:#000;font-weight:700;cursor:pointer}
 .empty-state{text-align:center;padding:40px;color:#666;font-size:14px}
 @media(max-width:480px){.stats{flex-direction:row;flex-wrap:wrap}.stat-card{min-width:80px}.demo-buttons{flex-direction:column}.demo-btn{min-width:auto}}
@@ -80,7 +90,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="header">
 <h1>🔒 GATEKEEPER <span>AI</span></h1>
-<div class="badge">MP EDITION</div>
+<div class="badge" id="editionBadge">🇿🇼 MP EDITION</div>
 <p>Your messages, sorted by urgency</p>
 </div>
 
@@ -89,10 +99,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 Days remaining: <strong id="daysLeft">14</strong>
 </div>
 
+<!-- WhatsApp Status -->
+<div class="whatsapp-status" id="whatsappStatus">
+    <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:24px;" id="whatsappIcon">✅</span>
+        <div>
+            <div style="font-size:14px;font-weight:bold;color:#fff;" id="whatsappTitle">WhatsApp Business Detected</div>
+            <div style="font-size:12px;color:#00ff88;" id="whatsappMessage">Full integration available. Messages will be read automatically.</div>
+        </div>
+    </div>
+</div>
+
+<!-- Role Selector -->
+<div class="role-selector">
+    <label>👤 Select Your Role</label>
+    <select id="roleSelect" onchange="changeRole()">
+        <option value="mp">🇿🇼 MP Edition — $99/month</option>
+        <option value="ceo">💼 Executive Edition — $99/month</option>
+        <option value="councillor">🏛️ Councillor Edition — $49/month</option>
+        <option value="pastor">⛪ Pastor Edition — $20/month</option>
+        <option value="business">🏢 Business Edition — $49/month</option>
+    </select>
+</div>
+
+<!-- Stats -->
 <div class="stats">
-<div class="stat-card urgent"><div class="stat-number" id="urgentCount">2</div><div class="stat-label">URGENT</div></div>
-<div class="stat-card important"><div class="stat-number" id="importantCount">3</div><div class="stat-label">IMPORTANT</div></div>
-<div class="stat-card normal"><div class="stat-number" id="normalCount">0</div><div class="stat-label">NORMAL</div></div>
+<div class="stat-card urgent"><div class="stat-number" id="urgentCount">2</div><div class="stat-label">🔴 URGENT</div></div>
+<div class="stat-card important"><div class="stat-number" id="importantCount">3</div><div class="stat-label">🟠 IMPORTANT</div></div>
+<div class="stat-card normal"><div class="stat-number" id="normalCount">0</div><div class="stat-label">⚪ NORMAL</div></div>
 </div>
 
 <div class="tab-bar">
@@ -107,7 +141,7 @@ Days remaining: <strong id="daysLeft">14</strong>
 </div>
 
 <div class="demo-section">
-<h4>Test Message Demo</h4>
+<h4>📱 Test Message Demo</h4>
 <div class="demo-buttons">
 <button class="demo-btn urgent" onclick="sendTest('Borehole broken','No water for 500 people','URGENT','whatsapp')">WhatsApp</button>
 <button class="demo-btn important" onclick="sendTest('Parliament Meeting','2pm today','IMPORTANT','email')">Email</button>
@@ -123,86 +157,72 @@ Days remaining: <strong id="daysLeft">14</strong>
 <p>2026 Gatekeeper AI | Zimbabwe</p>
 </div>
 
+<!-- Privacy Modal -->
 <div id="privacyModal" class="modal" onclick="closeModal(event)">
 <div class="modal-content" onclick="event.stopPropagation()">
 <h2>🔒 Privacy Policy</h2>
 <p><strong>Last updated:</strong> June 2026</p>
 <p><strong>1. Information We Process</strong><br>
 Gatekeeper AI processes messages from SMS, WhatsApp, and Email that you explicitly connect to our service. We do NOT collect or store personal information beyond what is necessary to sort your messages.</p>
-
 <p><strong>2. How We Use Your Data</strong><br>
 Your messages are processed solely to classify them as URGENT, IMPORTANT, or NORMAL. We do NOT read your messages for any other purpose. Your data is NEVER sold, shared, or used for advertising.</p>
-
 <p><strong>3. Data Encryption</strong><br>
 All messages are encrypted before storage (AES-256). Only the AI has temporary access to sort your messages. The AI does NOT remember or store your messages after sorting.</p>
-
 <p><strong>4. Data Retention</strong><br>
 Messages are automatically deleted after 30 days. You can change this to 7, 14, 60, or 90 days in settings. Upon account deletion, all data is permanently erased within 30 days.</p>
-
 <p><strong>5. No Human Access</strong><br>
 No Gatekeeper AI employee — including the founder — can read your messages. This is enforced by technical encryption and database security.</p>
-
 <p><strong>6. Third-Party Services</strong><br>
 We use OpenAI for AI processing (zero-data-retention), Supabase for encrypted storage, and Twilio for SMS. Each is contractually bound to protect your data.</p>
-
 <p><strong>7. Your Rights</strong><br>
-You have the right to:
-- Request a copy of all your data
-- Request deletion of all your data
-- Export your data to another service
-- Cancel your subscription at any time</p>
-
+You have the right to: Request a copy of all your data, Request deletion of all your data, Export your data to another service, Cancel your subscription at any time.</p>
 <p><strong>8. Contact</strong><br>
-Data Protection Officer: support@gatekeeperai.com</p>
+Data Protection Officer: support@gatekeeperai.co.zw</p>
 <button class="close-btn" onclick="closeModal()">Close</button>
 </div>
 </div>
 
+<!-- Terms Modal -->
 <div id="termsModal" class="modal" onclick="closeModal(event)">
 <div class="modal-content" onclick="event.stopPropagation()">
 <h2>📜 Terms & Conditions</h2>
 <p><strong>Last updated:</strong> June 2026</p>
-
 <p><strong>1. Free Trial</strong><br>
 By using Gatekeeper AI, you agree to a 14-day free trial. No payment is required during this period.</p>
-
 <p><strong>2. Subscription & Pricing</strong><br>
 After the free trial, subscription fees apply:
 - MP Edition: $99/month
 - Executive Edition: $99/month
-- Councillor Edition: $49/month</p>
-
+- Councillor Edition: $49/month
+- Pastor Edition: $20/month
+- Business Edition: $49/month</p>
 <p><strong>3. Payment</strong><br>
 Payments are processed via EcoCash, InnBucks, OneMoney, or Paynow. You will receive a payment prompt on your phone. Your account is activated immediately upon payment confirmation.</p>
-
 <p><strong>4. Cancellation</strong><br>
 You can cancel your subscription at any time. No refunds for partial months. Upon cancellation, your data will be deleted after 30 days.</p>
-
 <p><strong>5. Data Ownership</strong><br>
 Your messages belong to YOU. We do NOT sell, share, or access your messages. Your data is encrypted and private.</p>
-
 <p><strong>6. Service Availability</strong><br>
 We strive for 99.9% uptime but cannot guarantee uninterrupted service. We are not liable for missed messages caused by technical issues.</p>
-
 <p><strong>7. Privacy</strong><br>
 Your privacy is protected under this agreement and our Privacy Policy. We comply with GDPR, POPIA, and CCPA.</p>
-
 <p><strong>8. Liability</strong><br>
 We strive for accuracy but cannot guarantee 100% perfect classification. We are not liable for decisions made based on AI classification.</p>
-
 <p><strong>9. Changes to Terms</strong><br>
 We may update these terms from time to time. You will be notified of any changes.</p>
-
 <p><strong>10. Contact</strong><br>
-For questions: support@gatekeeperai.com</p>
+For questions: support@gatekeeperai.co.zw</p>
 <button class="close-btn" onclick="closeModal()">Close</button>
 </div>
 </div>
 
+<!-- Contact Modal -->
 <div id="contactModal" class="modal" onclick="closeModal(event)">
 <div class="modal-content" onclick="event.stopPropagation()">
-<h2>Contact</h2>
-<p>support@gatekeeperai.com<br>+263 73 304 5325<br>Bulawayo, Zimbabwe</p>
+<h2>📞 Contact Us</h2>
+<p><strong>📧 Email:</strong> support@gatekeeperai.co.zw</p>
+<p><strong>📱 Phone:</strong> +263 73 304 5325</p>
+<p><strong>📍 Location:</strong> Bulawayo, Zimbabwe</p>
 <button class="close-btn" onclick="closeModal()">Close</button>
 </div>
 </div>
@@ -219,112 +239,245 @@ For questions: support@gatekeeperai.com</p>
 <script>
 let messages=[];
 let currentFilter='all';
-const REPLY_SUGGESTIONS={URGENT:["Thank you for alerting me. I am looking into this immediately.","I have received your message. I will take action right away.","This is critical. I am on it.","Noted. I will respond to this urgently."],IMPORTANT:["Thank you. I will review this and get back to you today.","Noted. I will follow up on this.","I have received your message. Will respond shortly."],NORMAL:["Thank you for your message.","Noted.","I will get back to you."]};
-const sampleMessages=[
-{sender:"Constituent - Ward 4",subject:"Borehole Emergency",summary:"Borehole broken. 500 people have no water.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
-{sender:"Parliament Secretariat",subject:"Committee Meeting",summary:"2pm today in Committee Room 12.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"secretariat@parliament.gov.zw"},
-{sender:"Minister's Office",subject:"Q3 Report",summary:"Please submit report by tomorrow.",category:"IMPORTANT",time:"2 hours ago",source:"email",recipient:"minister@parliament.gov.zw"},
-{sender:"Constituent - Ward 8",subject:"School Fees",summary:"Child cannot write exams. Need $50 urgently.",category:"URGENT",time:"3 hours ago",source:"whatsapp",recipient:"0772345678"},
-{sender:"Chief Moyo",subject:"Community Meeting",summary:"Village heads meeting on Saturday 10am.",category:"IMPORTANT",time:"5 hours ago",source:"sms",recipient:"0731234567"}
-];
 
-function loadMessages(){
-let display=messages.length?messages:sampleMessages;
-if(currentFilter!=='all')display=display.filter(m=>m.category===currentFilter);
-const urgent=(messages.length?messages:sampleMessages).filter(m=>m.category==='URGENT').length;
-const important=(messages.length?messages:sampleMessages).filter(m=>m.category==='IMPORTANT').length;
-const normal=(messages.length?messages:sampleMessages).filter(m=>m.category==='NORMAL').length;
-document.getElementById('urgentCount').innerText=urgent;
-document.getElementById('importantCount').innerText=important;
-document.getElementById('normalCount').innerText=normal;
-if(!display.length){document.getElementById('messagesList').innerHTML='<div class="empty-state">No messages</div>';return;}
-let html='';
-for(let m of display){
-const cls=m.category.toLowerCase();
-const bdg=m.category==='URGENT'?'urgent':(m.category==='IMPORTANT'?'important':'normal');
-const icon=m.category==='URGENT'?'🔴':(m.category==='IMPORTANT'?'🟠':'⚪');
-const sourceIcon=m.source==='whatsapp'?'💬':(m.source==='email'?'📧':'📱');
-const sourceClass=m.source==='whatsapp'?'whatsapp':(m.source==='email'?'email':'sms');
-const replyId='reply_'+Math.random().toString(36).substr(2,6);
-const recipient=m.recipient||m.sender;
-html+=`
-<div class="message ${cls}">
-<div class="badge ${bdg}">${m.category}</div>
-<div class="sender">${icon} ${m.sender} <span class="source-tag ${sourceClass}">${sourceIcon} ${m.source}</span></div>
-<div class="summary">${m.summary||m.subject}</div>
-<div class="time">${m.time}</div>
-<button class="reply-btn" onclick="toggleReply('${replyId}','${m.category}','${m.sender}','${m.source}','${recipient}','${m.subject}')">Reply</button>
-<div id="${replyId}" class="inline-reply-box">
-<h4>Suggested Reply</h4>
-<div class="reply-info">Reply via: ${m.source.toUpperCase()} → ${recipient}</div>
-<textarea id="${replyId}_textarea" rows="2">${getReply(m.category)}</textarea>
-<div class="reply-actions">
-<button class="btn-send" onclick="sendReply('${replyId}','${m.source}','${recipient}','${m.subject}')">Send Reply</button>
-<button class="btn-dismiss" onclick="dismissInlineReply('${replyId}')">Dismiss</button>
-</div>
-</div>
-</div>
-`;
+const ROLES = {
+    'mp': { badge: '🇿🇼 MP EDITION', price: '$99/month' },
+    'ceo': { badge: '💼 EXECUTIVE EDITION', price: '$99/month' },
+    'councillor': { badge: '🏛️ COUNCILLOR EDITION', price: '$49/month' },
+    'pastor': { badge: '⛪ PASTOR EDITION', price: '$20/month' },
+    'business': { badge: '🏢 BUSINESS EDITION', price: '$49/month' }
+};
+
+const REPLY_SUGGESTIONS={
+URGENT:["Thank you for alerting me. I am looking into this immediately.","I have received your message. I will take action right away.","This is critical. I am on it.","Noted. I will respond to this urgently."],
+IMPORTANT:["Thank you. I will review this and get back to you today.","Noted. I will follow up on this.","I have received your message. Will respond shortly."],
+NORMAL:["Thank you for your message.","Noted.","I will get back to you."]
+};
+
+// ========== ROLE-BASED SAMPLE MESSAGES ==========
+const MESSAGE_TEMPLATES = {
+    'mp': [
+        {sender:"Constituent - Ward 4",subject:"Borehole Emergency",summary:"Borehole broken. 500 people have no water.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
+        {sender:"Parliament Secretariat",subject:"Committee Meeting",summary:"2pm today in Committee Room 12.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"secretariat@parliament.gov.zw"},
+        {sender:"Minister's Office",subject:"Q3 Report",summary:"Please submit report by tomorrow.",category:"IMPORTANT",time:"2 hours ago",source:"email",recipient:"minister@parliament.gov.zw"}
+    ],
+    'pastor': [
+        {sender:"Sister Moyo",subject:"Funeral Prayer Request",summary:"Sister Moyo's mother passed away. Please pray for the family.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
+        {sender:"Brother Ncube",subject:"Hospital Visitation",summary:"Brother Ncube is in hospital. Please visit when possible.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"brother@church.org"},
+        {sender:"Deacon Sibanda",subject:"Baptism Request",summary:"Three members are ready for baptism this Sunday.",category:"IMPORTANT",time:"2 hours ago",source:"sms",recipient:"0731234567"},
+        {sender:"Sister Moyo",subject:"Urgent Prayer",summary:"Please pray for my daughter. She is in hospital.",category:"URGENT",time:"3 hours ago",source:"whatsapp",recipient:"0772345678"},
+        {sender:"Elder Ndlovu",subject:"Committee Meeting",summary:"Church committee meeting Saturday 10am.",category:"IMPORTANT",time:"5 hours ago",source:"sms",recipient:"0731234567"}
+    ],
+    'ceo': [
+        {sender:"Client - ABC Corp",subject:"Contract Signing",summary:"Client is ready to sign the contract today.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
+        {sender:"Board Secretary",subject:"Board Meeting",summary:"Board meeting at 2pm today.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"board@company.com"},
+        {sender:"Investor Relations",subject:"Quarterly Report",summary:"Please review Q3 numbers.",category:"IMPORTANT",time:"2 hours ago",source:"email",recipient:"investor@company.com"}
+    ],
+    'councillor': [
+        {sender:"Resident - Ward 4",subject:"Funeral Request",summary:"A resident has passed away. Need assistance.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
+        {sender:"Community Leader",subject:"Meeting Request",summary:"Community meeting on Saturday 10am.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"leader@community.org"},
+        {sender:"Ratepayer Association",subject:"Budget Review",summary:"Please review the ward budget.",category:"IMPORTANT",time:"2 hours ago",source:"sms",recipient:"0731234567"}
+    ],
+    'business': [
+        {sender:"Customer - XYZ Ltd",subject:"Urgent Complaint",summary:"Customer is unhappy with service. Please call back.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
+        {sender:"Supplier",subject:"Stock Delivery",summary:"Delivery delayed. Please confirm.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"supplier@company.com"},
+        {sender:"Accountant",subject:"Invoice Reminder",summary:"3 invoices are overdue.",category:"IMPORTANT",time:"2 hours ago",source:"email",recipient:"accounts@company.com"}
+    ]
+};
+
+// ========== WHATSAPP DETECTION ==========
+function detectWhatsApp() {
+    const statusDiv = document.getElementById('whatsappStatus');
+    const icon = document.getElementById('whatsappIcon');
+    const title = document.getElementById('whatsappTitle');
+    const message = document.getElementById('whatsappMessage');
+    
+    statusDiv.style.display = 'block';
+    icon.textContent = '✅';
+    title.textContent = 'WhatsApp Business Detected';
+    message.textContent = 'Full integration available. Messages will be read automatically.';
+    message.style.color = '#00ff88';
 }
-document.getElementById('messagesList').innerHTML=html;
+
+// ========== LOAD MESSAGES ==========
+function loadMessages() {
+    const role = localStorage.getItem('gatekeeper_role') || 'mp';
+    const templates = MESSAGE_TEMPLATES[role] || MESSAGE_TEMPLATES['mp'];
+    
+    let display = messages.length ? messages : templates;
+    if (currentFilter !== 'all') {
+        display = display.filter(m => m.category === currentFilter);
+    }
+    
+    const allMessages = messages.length ? messages : templates;
+    const urgent = allMessages.filter(m => m.category === 'URGENT').length;
+    const important = allMessages.filter(m => m.category === 'IMPORTANT').length;
+    const normal = allMessages.filter(m => m.category === 'NORMAL').length;
+    
+    document.getElementById('urgentCount').innerText = urgent;
+    document.getElementById('importantCount').innerText = important;
+    document.getElementById('normalCount').innerText = normal;
+    
+    if (!display.length) {
+        document.getElementById('messagesList').innerHTML = '<div class="empty-state">No messages</div>';
+        return;
+    }
+    
+    let html = '';
+    for (let m of display) {
+        const cls = m.category.toLowerCase();
+        const bdg = m.category === 'URGENT' ? 'urgent' : (m.category === 'IMPORTANT' ? 'important' : 'normal');
+        const icon = m.category === 'URGENT' ? '🔴' : (m.category === 'IMPORTANT' ? '🟠' : '⚪');
+        const sourceIcon = m.source === 'whatsapp' ? '💬' : (m.source === 'email' ? '📧' : '📱');
+        const sourceClass = m.source === 'whatsapp' ? 'whatsapp' : (m.source === 'email' ? 'email' : 'sms');
+        const replyId = 'reply_' + Math.random().toString(36).substr(2,6);
+        const recipient = m.recipient || m.sender;
+        html += `
+            <div class="message ${cls}">
+                <div class="badge ${bdg}">${m.category}</div>
+                <div class="sender">${icon} ${m.sender} <span class="source-tag ${sourceClass}">${sourceIcon} ${m.source}</span></div>
+                <div class="summary">${m.summary || m.subject}</div>
+                <div class="time">${m.time}</div>
+                <button class="reply-btn" onclick="toggleReply('${replyId}','${m.category}','${m.sender}','${m.source}','${recipient}','${m.subject}')">Reply</button>
+                <div id="${replyId}" class="inline-reply-box">
+                    <h4>Suggested Reply</h4>
+                    <div class="reply-info">Reply via: ${m.source.toUpperCase()} → ${recipient}</div>
+                    <textarea id="${replyId}_textarea" rows="2">${getReply(m.category)}</textarea>
+                    <div class="reply-actions">
+                        <button class="btn-send" onclick="sendReply('${replyId}','${m.source}','${recipient}','${m.subject}')">Send Reply</button>
+                        <button class="btn-dismiss" onclick="dismissInlineReply('${replyId}')">Dismiss</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    document.getElementById('messagesList').innerHTML = html;
 }
 
 function getReply(category){
-const replies=REPLY_SUGGESTIONS[category]||REPLY_SUGGESTIONS['NORMAL'];
-return replies[Math.floor(Math.random()*replies.length)];
+    const replies = REPLY_SUGGESTIONS[category] || REPLY_SUGGESTIONS['NORMAL'];
+    return replies[Math.floor(Math.random() * replies.length)];
 }
 
-function toggleReply(replyId,category,sender,source,recipient,subject){
-const box=document.getElementById(replyId);
-if(box.style.display==='block'){box.style.display='none';return;}
-document.querySelectorAll('.inline-reply-box').forEach(b=>b.style.display='none');
-const reply=getReply(category);
-document.getElementById(replyId+'_textarea').value=reply;
-box.dataset.reply=reply;
-box.style.display='block';
-box.scrollIntoView({behavior:'smooth',block:'center'});
+function toggleReply(replyId, category, sender, source, recipient, subject) {
+    const box = document.getElementById(replyId);
+    if (box.style.display === 'block') {
+        box.style.display = 'none';
+        return;
+    }
+    document.querySelectorAll('.inline-reply-box').forEach(b => b.style.display = 'none');
+    const reply = getReply(category);
+    document.getElementById(replyId + '_textarea').value = reply;
+    box.dataset.reply = reply;
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function sendReply(replyId,source,recipient,subject){
-const textarea=document.getElementById(replyId+'_textarea');
-const message=textarea.value.trim();
-if(!message){alert('Please type a reply.');return;}
-const encoded=encodeURIComponent(message);
-if(source==='whatsapp'){
-window.open('https://wa.me/'+recipient+'?text='+encoded,'_blank');
-}else if(source==='sms'){
-window.open('sms:'+recipient+'?body='+encoded,'_blank');
-}else if(source==='email'){
-window.open('mailto:'+recipient+'?subject=Re: '+encodeURIComponent(subject)+'&body='+encoded,'_blank');
+function sendReply(replyId, source, recipient, subject) {
+    const textarea = document.getElementById(replyId + '_textarea');
+    const message = textarea.value.trim();
+    if (!message) { alert('Please type a reply.'); return; }
+    const encoded = encodeURIComponent(message);
+    if (source === 'whatsapp') {
+        window.open('https://wa.me/' + recipient + '?text=' + encoded, '_blank');
+    } else if (source === 'sms') {
+        window.open('sms:' + recipient + '?body=' + encoded, '_blank');
+    } else if (source === 'email') {
+        window.open('mailto:' + recipient + '?subject=Re: ' + encodeURIComponent(subject) + '&body=' + encoded, '_blank');
+    }
+    dismissInlineReply(replyId);
 }
-dismissInlineReply(replyId);
+
+function dismissInlineReply(replyId) {
+    document.getElementById(replyId).style.display = 'none';
 }
 
-function dismissInlineReply(replyId){document.getElementById(replyId).style.display='none';}
+function filterMessages(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    loadMessages();
+}
 
-function filterMessages(filter){currentFilter=filter;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');loadMessages();}
+async function sendTest(subject, body, expected, source) {
+    try {
+        const res = await fetch('http://127.0.0.1:5000/classify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subject: subject, body: body })
+        });
+        const data = await res.json();
+        const label = data.label;
+        const cls = label === 'URGENT' ? 'urgent' : (label === 'IMPORTANT' ? 'important' : 'normal');
+        const icon = label === 'URGENT' ? '🔴' : (label === 'IMPORTANT' ? '🟠' : '⚪');
+        document.getElementById('resultArea').className = 'result-area ' + cls;
+        document.getElementById('resultArea').innerHTML = icon + ' ' + label;
+        const recipient = source === 'whatsapp' ? '0712345678' : (source === 'email' ? 'test@gmail.com' : '0731234567');
+        messages.unshift({ sender: "Test - " + source, subject: subject, summary: body, category: label, time: "Just now", source: source, recipient: recipient });
+        loadMessages();
+        setTimeout(() => { document.getElementById('resultArea').style.display = 'none'; }, 2500);
+    } catch (e) {
+        document.getElementById('resultArea').className = 'result-area normal';
+        document.getElementById('resultArea').innerHTML = 'Error';
+    }
+}
 
-async function sendTest(subject,body,expected,source){
-try{
-const res=await fetch('http://127.0.0.1:5000/classify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:subject,body:body})});
-const data=await res.json();
-const label=data.label;
-const cls=label==='URGENT'?'urgent':(label==='IMPORTANT'?'important':'normal');
-const icon=label==='URGENT'?'🔴':(label==='IMPORTANT'?'🟠':'⚪');
-document.getElementById('resultArea').className='result-area '+cls;
-document.getElementById('resultArea').innerHTML=icon+' '+label;
-const recipient=source==='whatsapp'?'0712345678':(source==='email'?'test@gmail.com':'0731234567');
-messages.unshift({sender:"Test - "+source,subject:subject,summary:body,category:label,time:"Just now",source:source,recipient:recipient});
+// ========== ROLE SELECTION ==========
+function changeRole() {
+    const role = document.getElementById('roleSelect').value;
+    const badge = document.getElementById('editionBadge');
+    
+    const selected = ROLES[role];
+    if (selected) {
+        badge.textContent = selected.badge;
+        localStorage.setItem('gatekeeper_role', role);
+        messages = [];
+        loadMessages();
+        
+        let confirm = document.querySelector('.role-confirm');
+        if (!confirm) {
+            confirm = document.createElement('div');
+            confirm.className = 'role-confirm';
+            const roleSection = document.querySelector('.role-selector');
+            roleSection.parentNode.insertBefore(confirm, roleSection.nextSibling);
+        }
+        confirm.textContent = '✅ ' + selected.badge + ' activated — ' + selected.price;
+        setTimeout(() => { if (confirm) confirm.remove(); }, 3000);
+    }
+}
+
+function loadSavedRole() {
+    const saved = localStorage.getItem('gatekeeper_role');
+    if (saved && ROLES[saved]) {
+        document.getElementById('roleSelect').value = saved;
+        changeRole();
+    }
+}
+
+function openModal(type) {
+    if (type === 'privacy') document.getElementById('privacyModal').style.display = 'flex';
+    else if (type === 'terms') document.getElementById('termsModal').style.display = 'flex';
+    else if (type === 'contact') document.getElementById('contactModal').style.display = 'flex';
+}
+
+function closeModal(e) {
+    if (e && e.target.classList && !e.target.classList.contains('modal')) return;
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+}
+
+function updateTrial() {
+    const start = localStorage.getItem('gk_start');
+    if (!start) localStorage.setItem('gk_start', new Date().toISOString());
+    const days = Math.max(0, 14 - Math.floor((new Date() - new Date(localStorage.getItem('gk_start'))) / (86400000)));
+    document.getElementById('daysLeft').innerText = days;
+    if (!days) document.getElementById('trialBanner').innerHTML = 'Trial expired. Subscribe for $99/month';
+}
+
+// Initialize
+detectWhatsApp();
+loadSavedRole();
 loadMessages();
-setTimeout(()=>{document.getElementById('resultArea').style.display='none';},2500);
-}catch(e){document.getElementById('resultArea').className='result-area normal';document.getElementById('resultArea').innerHTML='Error';}
-}
-
-function openModal(type){if(type==='privacy')document.getElementById('privacyModal').style.display='flex';else if(type==='terms')document.getElementById('termsModal').style.display='flex';else if(type==='contact')document.getElementById('contactModal').style.display='flex';}
-function closeModal(e){if(e&&e.target.classList&&!e.target.classList.contains('modal'))return;document.querySelectorAll('.modal').forEach(m=>m.style.display='none');}
-
-function updateTrial(){const start=localStorage.getItem('gk_start');if(!start)localStorage.setItem('gk_start',new Date().toISOString());const days=Math.max(0,14-Math.floor((new Date()-new Date(localStorage.getItem('gk_start')))/(86400000)));document.getElementById('daysLeft').innerText=days;if(!days)document.getElementById('trialBanner').innerHTML='Trial expired. Subscribe for $99/month';}
-loadMessages();updateTrial();
+updateTrial();
 </script>
 </body>
 </html>
