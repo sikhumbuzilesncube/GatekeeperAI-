@@ -1,57 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Gatekeeper AI</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:sans-serif;background:#0a0a0a;color:#fff;padding-bottom:70px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;padding-bottom:70px}
 .header{background:#1a1a2e;padding:16px;text-align:center;border-bottom:2px solid #FFB300}
-.header h1{color:#FFB300;font-size:22px}
-.header .badge{background:#006400;color:#fff;padding:2px 12px;border-radius:12px;font-size:10px}
+.header h1{font-size:22px;color:#FFB300}
+.header h1 span{color:#fff}
+.header .badge{background:#006400;color:#fff;padding:2px 12px;border-radius:12px;font-size:10px;display:inline-block;margin-top:4px}
+.header p{color:#888;font-size:12px;margin-top:4px}
+.trial-banner{background:#1a2a1a;padding:10px;text-align:center;font-size:12px;border-bottom:1px solid #2a2a2a}
+.trial-banner strong{color:#FFB300}
 .stats{display:flex;gap:10px;padding:12px}
-.stat-card{flex:1;background:#1a1a1a;padding:12px;border-radius:12px;text-align:center}
-.stat-number{font-size:28px;font-weight:bold}
-.stat-label{font-size:10px;color:#888}
-.urgent .stat-number{color:#e94560}
-.important .stat-number{color:#f5a623}
-.normal .stat-number{color:#4a4e69}
+.stat-card{flex:1;background:#1a1a1a;padding:12px;border-radius:12px;text-align:center;border:1px solid #2a2a2a}
+.stat-number{font-size:28px;font-weight:700}
+.stat-label{font-size:10px;color:#888;margin-top:2px}
+.stat-card.urgent .stat-number{color:#e94560}
+.stat-card.important .stat-number{color:#f5a623}
+.stat-card.normal .stat-number{color:#4a4e69}
 .tab-bar{display:flex;gap:6px;padding:0 12px 12px}
-.tab{flex:1;text-align:center;padding:10px;border-radius:20px;color:#888;font-size:12px;cursor:pointer;background:#1a1a1a}
+.tab{flex:1;text-align:center;padding:10px;border-radius:20px;color:#888;font-size:12px;font-weight:600;cursor:pointer;background:#1a1a1a}
 .tab.active{background:#FFB300;color:#000}
 .messages{padding:0 12px}
-.message{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border-left:4px solid}
+.message{background:#1a1a1a;border-radius:12px;padding:14px;margin-bottom:10px;border-left:4px solid}
 .message.urgent{border-left-color:#e94560}
 .message.important{border-left-color:#f5a623}
 .message.normal{border-left-color:#4a4e69}
-.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:bold}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;margin-bottom:6px}
 .badge.urgent{background:#e94560;color:#fff}
 .badge.important{background:#f5a623;color:#000}
 .badge.normal{background:#4a4e69;color:#fff}
-.sender{font-weight:bold;font-size:14px}
-.summary{color:#bbb;font-size:13px}
-.time{color:#666;font-size:10px;margin-top:4px}
-.reply-btn{background:#FFB300;color:#000;border:none;padding:4px 14px;border-radius:14px;font-size:12px;cursor:pointer;margin-top:8px}
+.sender{font-size:14px;font-weight:600;margin-bottom:4px}
+.summary{font-size:13px;color:#bbb}
+.source-tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:9px;font-weight:600;margin-left:8px;background:#2a2a2a;color:#888}
+.source-tag.whatsapp{background:#25D36620;color:#25D366}
+.source-tag.email{background:#EA433520;color:#EA4335}
+.source-tag.sms{background:#2196F320;color:#2196F3}
+.time{font-size:10px;color:#666;margin-top:6px}
+.reply-btn{background:#FFB300;color:#000;border:none;padding:4px 14px;border-radius:14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px}
+.reply-btn:active{transform:scale(0.95)}
+.inline-reply-box{background:#1a2a2a;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #FFB300;display:none}
+.inline-reply-box h4{color:#FFB300;font-size:13px;margin-bottom:4px}
+.inline-reply-box .reply-info{font-size:11px;color:#888;margin-bottom:6px}
+.inline-reply-box textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;resize:vertical;min-height:60px;margin:6px 0}
+.inline-reply-box .reply-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.inline-reply-box .reply-actions button{padding:6px 16px;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:12px}
+.btn-send{background:#00ff88;color:#000}
+.btn-dismiss{background:#333;color:#fff}
 .demo-section{background:#1a1a2e;margin:12px;padding:16px;border-radius:12px}
-.demo-btn{padding:12px;border:none;border-radius:10px;font-size:12px;font-weight:bold;cursor:pointer;margin:4px}
+.demo-section h4{color:#FFB300;font-size:14px;margin-bottom:10px}
+.demo-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.demo-btn{flex:1;padding:12px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;min-width:100px}
 .demo-btn.urgent{background:#e94560;color:#fff}
 .demo-btn.important{background:#f5a623;color:#000}
 .demo-btn.normal{background:#4a4e69;color:#fff}
+.result-area{margin-top:10px;padding:12px;border-radius:10px;text-align:center;font-size:18px;font-weight:700;display:none}
+.result-area.urgent{background:#e94560;display:block}
+.result-area.important{background:#f5a623;display:block;color:#000}
+.result-area.normal{background:#4a4e69;display:block}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a}
 .nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
 .nav-item.active{background:#FFB30020;color:#FFB300}
 .footer-links{margin-top:20px;padding:16px;text-align:center;border-top:1px solid #2a2a2a}
 .footer-links a{color:#FFB300;text-decoration:none;font-size:13px;margin:0 8px;cursor:pointer}
 .footer-links p{color:#666;font-size:11px;margin-top:6px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;padding:20px}
+.modal-content{background:#1a1a2e;max-width:400px;padding:24px;border-radius:16px;border:1px solid #FFB300}
+.modal-content h2{color:#FFB300;font-size:18px;margin-bottom:10px}
+.modal-content p{color:#ccc;font-size:13px;line-height:1.6}
+.modal-content .close-btn{margin-top:12px;padding:8px 24px;background:#FFB300;border:none;border-radius:8px;color:#000;font-weight:700;cursor:pointer}
+.empty-state{text-align:center;padding:40px;color:#666;font-size:14px}
+@media(max-width:480px){.stats{flex-direction:row;flex-wrap:wrap}.stat-card{min-width:80px}.demo-buttons{flex-direction:column}.demo-btn{min-width:auto}}
 </style>
 </head>
 <body>
 
 <div class="header">
-<h1>🔒 GATEKEEPER AI</h1>
+<h1>🔒 GATEKEEPER <span>AI</span></h1>
 <div class="badge">MP EDITION</div>
-<p style="color:#888;font-size:12px;margin-top:4px;">Your messages, sorted by urgency</p>
+<p>Your messages, sorted by urgency</p>
+</div>
+
+<div class="trial-banner" id="trialBanner">
+14-DAY FREE TRIAL<br>
+Days remaining: <strong id="daysLeft">14</strong>
 </div>
 
 <div class="stats">
@@ -61,60 +96,235 @@ body{font-family:sans-serif;background:#0a0a0a;color:#fff;padding-bottom:70px}
 </div>
 
 <div class="tab-bar">
-<div class="tab active">All</div>
-<div class="tab">Urgent</div>
-<div class="tab">Important</div>
-<div class="tab">Normal</div>
+<div class="tab active" onclick="filterMessages('all')">All</div>
+<div class="tab" onclick="filterMessages('URGENT')">Urgent</div>
+<div class="tab" onclick="filterMessages('IMPORTANT')">Important</div>
+<div class="tab" onclick="filterMessages('NORMAL')">Normal</div>
 </div>
 
-<div class="messages">
-<div class="message urgent">
-<span class="badge urgent">URGENT</span>
-<div class="sender">🔴 Constituent - Ward 4</div>
-<div class="summary">Borehole broken. 500 people have no water.</div>
-<div class="time">2 min ago</div>
-<button class="reply-btn">💬 Reply</button>
-</div>
-<div class="message important">
-<span class="badge important">IMPORTANT</span>
-<div class="sender">🟠 Parliament Secretariat</div>
-<div class="summary">2pm today in Committee Room 12.</div>
-<div class="time">1 hour ago</div>
-<button class="reply-btn">💬 Reply</button>
-</div>
-<div class="message important">
-<span class="badge important">IMPORTANT</span>
-<div class="sender">🟠 Minister's Office</div>
-<div class="summary">Please submit report by tomorrow.</div>
-<div class="time">2 hours ago</div>
-<button class="reply-btn">💬 Reply</button>
-</div>
+<div class="messages" id="messagesList">
+<div class="empty-state">Loading messages...</div>
 </div>
 
 <div class="demo-section">
-<h4 style="color:#FFB300;">📱 Test Message Demo</h4>
-<button class="demo-btn urgent">🔴 Borehole</button>
-<button class="demo-btn important">🟠 Meeting</button>
-<button class="demo-btn normal">⚪ Hello</button>
+<h4>Test Message Demo</h4>
+<div class="demo-buttons">
+<button class="demo-btn urgent" onclick="sendTest('Borehole broken','No water for 500 people','URGENT','whatsapp')">WhatsApp</button>
+<button class="demo-btn important" onclick="sendTest('Parliament Meeting','2pm today','IMPORTANT','email')">Email</button>
+<button class="demo-btn normal" onclick="sendTest('Hello','How are you?','NORMAL','sms')">SMS</button>
+</div>
+<div id="resultArea" class="result-area"></div>
 </div>
 
 <div class="footer-links">
-<a>Privacy Policy</a>
-<a>Terms & Conditions</a>
-<a>Contact Us</a>
+<a onclick="openModal('privacy')">Privacy Policy</a>
+<a onclick="openModal('terms')">Terms & Conditions</a>
+<a onclick="openModal('contact')">Contact Us</a>
 <p>2026 Gatekeeper AI | Zimbabwe</p>
 </div>
 
+<div id="privacyModal" class="modal" onclick="closeModal(event)">
+<div class="modal-content" onclick="event.stopPropagation()">
+<h2>🔒 Privacy Policy</h2>
+<p><strong>Last updated:</strong> June 2026</p>
+<p><strong>1. Information We Process</strong><br>
+Gatekeeper AI processes messages from SMS, WhatsApp, and Email that you explicitly connect to our service. We do NOT collect or store personal information beyond what is necessary to sort your messages.</p>
+
+<p><strong>2. How We Use Your Data</strong><br>
+Your messages are processed solely to classify them as URGENT, IMPORTANT, or NORMAL. We do NOT read your messages for any other purpose. Your data is NEVER sold, shared, or used for advertising.</p>
+
+<p><strong>3. Data Encryption</strong><br>
+All messages are encrypted before storage (AES-256). Only the AI has temporary access to sort your messages. The AI does NOT remember or store your messages after sorting.</p>
+
+<p><strong>4. Data Retention</strong><br>
+Messages are automatically deleted after 30 days. You can change this to 7, 14, 60, or 90 days in settings. Upon account deletion, all data is permanently erased within 30 days.</p>
+
+<p><strong>5. No Human Access</strong><br>
+No Gatekeeper AI employee — including the founder — can read your messages. This is enforced by technical encryption and database security.</p>
+
+<p><strong>6. Third-Party Services</strong><br>
+We use OpenAI for AI processing (zero-data-retention), Supabase for encrypted storage, and Twilio for SMS. Each is contractually bound to protect your data.</p>
+
+<p><strong>7. Your Rights</strong><br>
+You have the right to:
+- Request a copy of all your data
+- Request deletion of all your data
+- Export your data to another service
+- Cancel your subscription at any time</p>
+
+<p><strong>8. Contact</strong><br>
+Data Protection Officer: support@gatekeeperai.com</p>
+<button class="close-btn" onclick="closeModal()">Close</button>
+</div>
+</div>
+
+<div id="termsModal" class="modal" onclick="closeModal(event)">
+<div class="modal-content" onclick="event.stopPropagation()">
+<h2>📜 Terms & Conditions</h2>
+<p><strong>Last updated:</strong> June 2026</p>
+
+<p><strong>1. Free Trial</strong><br>
+By using Gatekeeper AI, you agree to a 14-day free trial. No payment is required during this period.</p>
+
+<p><strong>2. Subscription & Pricing</strong><br>
+After the free trial, subscription fees apply:
+- MP Edition: $99/month
+- Executive Edition: $99/month
+- Councillor Edition: $49/month</p>
+
+<p><strong>3. Payment</strong><br>
+Payments are processed via EcoCash, InnBucks, OneMoney, or Paynow. You will receive a payment prompt on your phone. Your account is activated immediately upon payment confirmation.</p>
+
+<p><strong>4. Cancellation</strong><br>
+You can cancel your subscription at any time. No refunds for partial months. Upon cancellation, your data will be deleted after 30 days.</p>
+
+<p><strong>5. Data Ownership</strong><br>
+Your messages belong to YOU. We do NOT sell, share, or access your messages. Your data is encrypted and private.</p>
+
+<p><strong>6. Service Availability</strong><br>
+We strive for 99.9% uptime but cannot guarantee uninterrupted service. We are not liable for missed messages caused by technical issues.</p>
+
+<p><strong>7. Privacy</strong><br>
+Your privacy is protected under this agreement and our Privacy Policy. We comply with GDPR, POPIA, and CCPA.</p>
+
+<p><strong>8. Liability</strong><br>
+We strive for accuracy but cannot guarantee 100% perfect classification. We are not liable for decisions made based on AI classification.</p>
+
+<p><strong>9. Changes to Terms</strong><br>
+We may update these terms from time to time. You will be notified of any changes.</p>
+
+<p><strong>10. Contact</strong><br>
+For questions: support@gatekeeperai.com</p>
+<button class="close-btn" onclick="closeModal()">Close</button>
+</div>
+</div>
+
+<div id="contactModal" class="modal" onclick="closeModal(event)">
+<div class="modal-content" onclick="event.stopPropagation()">
+<h2>Contact</h2>
+<p>support@gatekeeperai.com<br>+263 73 304 5325<br>Bulawayo, Zimbabwe</p>
+<button class="close-btn" onclick="closeModal()">Close</button>
+</div>
+</div>
+
 <div class="bottom-nav">
-<div class="nav-item active">📥 Inbox</div>
-<div class="nav-item" onclick="window.location.href='meetings.html'">📅 Meetings</div>
-<div class="nav-item" onclick="window.location.href='calls.html'">📞 Calls</div>
-<div class="nav-item" onclick="window.location.href='daily_summary.html'">📊 Summary</div>
+<div class="nav-item active" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
+<div class="nav-item" onclick="window.location.href='meetings.html'">Meetings</div>
+<div class="nav-item" onclick="window.location.href='calls.html'">Calls</div>
+<div class="nav-item" onclick="window.location.href='daily_summary.html'">Summary</div>
+<div class="nav-item" onclick="window.location.href='weekly_report.html'">Weekly</div>
+<div class="nav-item" onclick="window.location.href='settings.html'">⚙️</div>
 </div>
 
 <script>
-// Simple demo
-console.log('Gatekeeper AI loaded');
+let messages=[];
+let currentFilter='all';
+const REPLY_SUGGESTIONS={URGENT:["Thank you for alerting me. I am looking into this immediately.","I have received your message. I will take action right away.","This is critical. I am on it.","Noted. I will respond to this urgently."],IMPORTANT:["Thank you. I will review this and get back to you today.","Noted. I will follow up on this.","I have received your message. Will respond shortly."],NORMAL:["Thank you for your message.","Noted.","I will get back to you."]};
+const sampleMessages=[
+{sender:"Constituent - Ward 4",subject:"Borehole Emergency",summary:"Borehole broken. 500 people have no water.",category:"URGENT",time:"2 min ago",source:"whatsapp",recipient:"0712345678"},
+{sender:"Parliament Secretariat",subject:"Committee Meeting",summary:"2pm today in Committee Room 12.",category:"IMPORTANT",time:"1 hour ago",source:"email",recipient:"secretariat@parliament.gov.zw"},
+{sender:"Minister's Office",subject:"Q3 Report",summary:"Please submit report by tomorrow.",category:"IMPORTANT",time:"2 hours ago",source:"email",recipient:"minister@parliament.gov.zw"},
+{sender:"Constituent - Ward 8",subject:"School Fees",summary:"Child cannot write exams. Need $50 urgently.",category:"URGENT",time:"3 hours ago",source:"whatsapp",recipient:"0772345678"},
+{sender:"Chief Moyo",subject:"Community Meeting",summary:"Village heads meeting on Saturday 10am.",category:"IMPORTANT",time:"5 hours ago",source:"sms",recipient:"0731234567"}
+];
+
+function loadMessages(){
+let display=messages.length?messages:sampleMessages;
+if(currentFilter!=='all')display=display.filter(m=>m.category===currentFilter);
+const urgent=(messages.length?messages:sampleMessages).filter(m=>m.category==='URGENT').length;
+const important=(messages.length?messages:sampleMessages).filter(m=>m.category==='IMPORTANT').length;
+const normal=(messages.length?messages:sampleMessages).filter(m=>m.category==='NORMAL').length;
+document.getElementById('urgentCount').innerText=urgent;
+document.getElementById('importantCount').innerText=important;
+document.getElementById('normalCount').innerText=normal;
+if(!display.length){document.getElementById('messagesList').innerHTML='<div class="empty-state">No messages</div>';return;}
+let html='';
+for(let m of display){
+const cls=m.category.toLowerCase();
+const bdg=m.category==='URGENT'?'urgent':(m.category==='IMPORTANT'?'important':'normal');
+const icon=m.category==='URGENT'?'🔴':(m.category==='IMPORTANT'?'🟠':'⚪');
+const sourceIcon=m.source==='whatsapp'?'💬':(m.source==='email'?'📧':'📱');
+const sourceClass=m.source==='whatsapp'?'whatsapp':(m.source==='email'?'email':'sms');
+const replyId='reply_'+Math.random().toString(36).substr(2,6);
+const recipient=m.recipient||m.sender;
+html+=`
+<div class="message ${cls}">
+<div class="badge ${bdg}">${m.category}</div>
+<div class="sender">${icon} ${m.sender} <span class="source-tag ${sourceClass}">${sourceIcon} ${m.source}</span></div>
+<div class="summary">${m.summary||m.subject}</div>
+<div class="time">${m.time}</div>
+<button class="reply-btn" onclick="toggleReply('${replyId}','${m.category}','${m.sender}','${m.source}','${recipient}','${m.subject}')">Reply</button>
+<div id="${replyId}" class="inline-reply-box">
+<h4>Suggested Reply</h4>
+<div class="reply-info">Reply via: ${m.source.toUpperCase()} → ${recipient}</div>
+<textarea id="${replyId}_textarea" rows="2">${getReply(m.category)}</textarea>
+<div class="reply-actions">
+<button class="btn-send" onclick="sendReply('${replyId}','${m.source}','${recipient}','${m.subject}')">Send Reply</button>
+<button class="btn-dismiss" onclick="dismissInlineReply('${replyId}')">Dismiss</button>
+</div>
+</div>
+</div>
+`;
+}
+document.getElementById('messagesList').innerHTML=html;
+}
+
+function getReply(category){
+const replies=REPLY_SUGGESTIONS[category]||REPLY_SUGGESTIONS['NORMAL'];
+return replies[Math.floor(Math.random()*replies.length)];
+}
+
+function toggleReply(replyId,category,sender,source,recipient,subject){
+const box=document.getElementById(replyId);
+if(box.style.display==='block'){box.style.display='none';return;}
+document.querySelectorAll('.inline-reply-box').forEach(b=>b.style.display='none');
+const reply=getReply(category);
+document.getElementById(replyId+'_textarea').value=reply;
+box.dataset.reply=reply;
+box.style.display='block';
+box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function sendReply(replyId,source,recipient,subject){
+const textarea=document.getElementById(replyId+'_textarea');
+const message=textarea.value.trim();
+if(!message){alert('Please type a reply.');return;}
+const encoded=encodeURIComponent(message);
+if(source==='whatsapp'){
+window.open('https://wa.me/'+recipient+'?text='+encoded,'_blank');
+}else if(source==='sms'){
+window.open('sms:'+recipient+'?body='+encoded,'_blank');
+}else if(source==='email'){
+window.open('mailto:'+recipient+'?subject=Re: '+encodeURIComponent(subject)+'&body='+encoded,'_blank');
+}
+dismissInlineReply(replyId);
+}
+
+function dismissInlineReply(replyId){document.getElementById(replyId).style.display='none';}
+
+function filterMessages(filter){currentFilter=filter;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');loadMessages();}
+
+async function sendTest(subject,body,expected,source){
+try{
+const res=await fetch('http://127.0.0.1:5000/classify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:subject,body:body})});
+const data=await res.json();
+const label=data.label;
+const cls=label==='URGENT'?'urgent':(label==='IMPORTANT'?'important':'normal');
+const icon=label==='URGENT'?'🔴':(label==='IMPORTANT'?'🟠':'⚪');
+document.getElementById('resultArea').className='result-area '+cls;
+document.getElementById('resultArea').innerHTML=icon+' '+label;
+const recipient=source==='whatsapp'?'0712345678':(source==='email'?'test@gmail.com':'0731234567');
+messages.unshift({sender:"Test - "+source,subject:subject,summary:body,category:label,time:"Just now",source:source,recipient:recipient});
+loadMessages();
+setTimeout(()=>{document.getElementById('resultArea').style.display='none';},2500);
+}catch(e){document.getElementById('resultArea').className='result-area normal';document.getElementById('resultArea').innerHTML='Error';}
+}
+
+function openModal(type){if(type==='privacy')document.getElementById('privacyModal').style.display='flex';else if(type==='terms')document.getElementById('termsModal').style.display='flex';else if(type==='contact')document.getElementById('contactModal').style.display='flex';}
+function closeModal(e){if(e&&e.target.classList&&!e.target.classList.contains('modal'))return;document.querySelectorAll('.modal').forEach(m=>m.style.display='none');}
+
+function updateTrial(){const start=localStorage.getItem('gk_start');if(!start)localStorage.setItem('gk_start',new Date().toISOString());const days=Math.max(0,14-Math.floor((new Date()-new Date(localStorage.getItem('gk_start')))/(86400000)));document.getElementById('daysLeft').innerText=days;if(!days)document.getElementById('trialBanner').innerHTML='Trial expired. Subscribe for $99/month';}
+loadMessages();updateTrial();
 </script>
 </body>
 </html>
