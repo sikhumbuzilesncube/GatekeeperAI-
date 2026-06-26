@@ -10,34 +10,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .header{text-align:center;margin-bottom:20px}
 .header h1{color:#FFB300;font-size:24px}
 .header p{color:#888;font-size:13px}
-.header .week{color:#FFB300;font-weight:700;font-size:14px;margin-top:4px}
+.header .week{color:#FFB300;font-weight:bold;font-size:14px;margin-top:4px}
 .report-card{background:#1a1a2e;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a}
 .report-card h3{color:#FFB300;font-size:15px;margin-bottom:10px}
 .report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px}
 .report-item{background:#0a0a0a;padding:12px;border-radius:8px;text-align:center}
-.report-item .number{font-size:24px;font-weight:700}
+.report-item .number{font-size:22px;font-weight:bold}
 .report-item .label{font-size:10px;color:#888;margin-top:4px}
 .report-item.urgent .number{color:#e94560}
 .report-item.important .number{color:#f5a623}
 .report-item.normal .number{color:#4a4e69}
 .report-item.total .number{color:#FFB300}
 .report-item.green .number{color:#00ff88}
-.chart-bar{display:flex;gap:4px;align-items:flex-end;height:120px;padding:10px 0}
+.chart-bar{display:flex;gap:4px;align-items:flex-end;height:100px;padding:10px 0}
 .chart-bar .bar{flex:1;display:flex;flex-direction:column;align-items:center}
-.chart-bar .bar .fill{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.5s}
-.chart-bar .bar .day{font-size:9px;color:#888;margin-top:4px}
+.chart-bar .bar .fill{width:100%;border-radius:4px 4px 0 0;min-height:4px;background:#FFB300}
+.chart-bar .bar .day{font-size:8px;color:#888;margin-top:4px}
 .sender-list{list-style:none;padding:0}
-.sender-list li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:13px}
+.sender-list li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:13px}
 .sender-list li:last-child{border-bottom:none}
-.sender-list .count{color:#FFB300;font-weight:700}
-.progress-bar{background:#2a2a2a;border-radius:10px;height:20px;overflow:hidden;margin-top:8px}
-.progress-bar .fill{height:100%;background:#00ff88;border-radius:10px;transition:width 1s;width:0%}
-.progress-label{display:flex;justify-content:space-between;font-size:12px;color:#888;margin-top:4px}
-.btn{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
+.sender-list .count{color:#FFB300;font-weight:bold}
+.progress-bar{background:#2a2a2a;border-radius:10px;height:16px;overflow:hidden;margin-top:6px}
+.progress-bar .fill{height:100%;background:#00ff88;border-radius:10px;width:0%}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:4px}
+.btn{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px}
 .btn:hover{background:#e6a300}
 .btn-secondary{background:#333;color:#fff}
 .btn-secondary:hover{background:#444}
-.footer{text-align:center;margin-top:20px;color:#666;font-size:12px}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a}
 .nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
 .nav-item.active{background:#FFB30020;color:#FFB300}
@@ -46,113 +45,72 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <body>
 
 <div class="header">
-<h1>📊 Weekly Report</h1>
-<p>Your productivity overview for the week</p>
-<div class="week" id="weekRange">Jun 13 – Jun 19, 2026</div>
+    <h1>📊 Weekly Report</h1>
+    <p>Your productivity overview for the week</p>
+    <div class="week" id="weekRange">Jun 13 – Jun 19, 2026</div>
 </div>
 
-<!-- Stats Overview -->
 <div class="report-card">
-<h3>📈 Week Overview</h3>
-<div class="report-grid">
-<div class="report-item total">
-<div class="number" id="totalMessages">0</div>
-<div class="label">Total Messages</div>
-</div>
-<div class="report-item urgent">
-<div class="number" id="urgentCount">0</div>
-<div class="label">🔴 URGENT</div>
-</div>
-<div class="report-item important">
-<div class="number" id="importantCount">0</div>
-<div class="label">🟠 IMPORTANT</div>
-</div>
-<div class="report-item normal">
-<div class="number" id="normalCount">0</div>
-<div class="label">⚪ NORMAL</div>
-</div>
-<div class="report-item green">
-<div class="number" id="responseRate">0%</div>
-<div class="label">✅ Response Rate</div>
-</div>
-<div class="report-item total">
-<div class="number" id="productivityScore">0</div>
-<div class="label">📊 Productivity Score</div>
-</div>
-</div>
+    <h3>📈 Week Overview</h3>
+    <div class="report-grid">
+        <div class="report-item total"><div class="number" id="totalMessages">0</div><div class="label">Total</div></div>
+        <div class="report-item urgent"><div class="number" id="urgentCount">0</div><div class="label">🔴 URGENT</div></div>
+        <div class="report-item important"><div class="number" id="importantCount">0</div><div class="label">🟠 IMPORTANT</div></div>
+        <div class="report-item normal"><div class="number" id="normalCount">0</div><div class="label">⚪ NORMAL</div></div>
+        <div class="report-item green"><div class="number" id="responseRate">0%</div><div class="label">✅ Response Rate</div></div>
+        <div class="report-item total"><div class="number" id="productivityScore">0</div><div class="label">📊 Productivity Score</div></div>
+    </div>
 </div>
 
-<!-- Daily Breakdown -->
 <div class="report-card">
-<h3>📅 Daily Breakdown</h3>
-<div class="chart-bar" id="dailyChart">
-<div class="bar"><div class="fill" style="height:20%;background:#FFB300"></div><div class="day">Mon</div></div>
-<div class="bar"><div class="fill" style="height:40%;background:#FFB300"></div><div class="day">Tue</div></div>
-<div class="bar"><div class="fill" style="height:60%;background:#FFB300"></div><div class="day">Wed</div></div>
-<div class="bar"><div class="fill" style="height:80%;background:#FFB300"></div><div class="day">Thu</div></div>
-<div class="bar"><div class="fill" style="height:100%;background:#FFB300"></div><div class="day">Fri</div></div>
-<div class="bar"><div class="fill" style="height:50%;background:#FFB300"></div><div class="day">Sat</div></div>
-<div class="bar"><div class="fill" style="height:30%;background:#FFB300"></div><div class="day">Sun</div></div>
-</div>
+    <h3>📅 Daily Breakdown</h3>
+    <div class="chart-bar" id="dailyChart">
+        <div class="bar"><div class="fill" style="height:20%"></div><div class="day">Mon</div></div>
+        <div class="bar"><div class="fill" style="height:40%"></div><div class="day">Tue</div></div>
+        <div class="bar"><div class="fill" style="height:60%"></div><div class="day">Wed</div></div>
+        <div class="bar"><div class="fill" style="height:80%"></div><div class="day">Thu</div></div>
+        <div class="bar"><div class="fill" style="height:100%"></div><div class="day">Fri</div></div>
+        <div class="bar"><div class="fill" style="height:50%"></div><div class="day">Sat</div></div>
+        <div class="bar"><div class="fill" style="height:30%"></div><div class="day">Sun</div></div>
+    </div>
 </div>
 
-<!-- Channel Breakdown -->
 <div class="report-card">
-<h3>📱 By Channel</h3>
-<div class="report-grid">
-<div class="report-item total">
-<div class="number" id="whatsappCount">0</div>
-<div class="label">💬 WhatsApp</div>
-</div>
-<div class="report-item total">
-<div class="number" id="emailCount">0</div>
-<div class="label">📧 Email</div>
-</div>
-<div class="report-item total">
-<div class="number" id="smsCount">0</div>
-<div class="label">📱 SMS</div>
-</div>
-</div>
+    <h3>📱 By Channel</h3>
+    <div class="report-grid">
+        <div class="report-item total"><div class="number" id="whatsappCount">0</div><div class="label">💬 WhatsApp</div></div>
+        <div class="report-item total"><div class="number" id="emailCount">0</div><div class="label">📧 Email</div></div>
+        <div class="report-item total"><div class="number" id="smsCount">0</div><div class="label">📱 SMS</div></div>
+    </div>
 </div>
 
-<!-- Top Senders -->
 <div class="report-card">
-<h3>👤 Top Senders</h3>
-<ul class="sender-list" id="senderList">
-<li style="color:#888;text-align:center;padding:20px;">Loading...</li>
-</ul>
+    <h3>👤 Top Senders</h3>
+    <ul class="sender-list" id="senderList">
+        <li style="color:#888;text-align:center;padding:20px;">Loading...</li>
+    </ul>
 </div>
 
-<!-- Productivity Score -->
 <div class="report-card">
-<h3>📊 Productivity Score</h3>
-<div class="progress-bar">
-<div class="fill" id="productivityBar" style="width:75%"></div>
-</div>
-<div class="progress-label">
-<span>0%</span>
-<span id="productivityLabel">Good</span>
-<span>100%</span>
-</div>
+    <h3>📊 Productivity Score</h3>
+    <div class="progress-bar"><div class="fill" id="productivityBar" style="width:75%"></div></div>
+    <div class="progress-label"><span>0%</span><span id="productivityLabel">Good</span><span>100%</span></div>
 </div>
 
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-<button class="btn" onclick="window.location.href='gatekeeper_mp_edition.html'">📥 Go to Inbox</button>
-<button class="btn btn-secondary" onclick="generateReport()">📄 Export Report</button>
-</div>
-
-<div class="footer">
-2026 Gatekeeper AI | Weekly Report
+    <button class="btn" onclick="window.location.href='gatekeeper_mp_edition.html'">📥 Go to Inbox</button>
+    <button class="btn btn-secondary" onclick="generateReport()">📄 Export Report</button>
 </div>
 
 <div class="bottom-nav">
 <div class="nav-item" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
-<div class="nav-item" onclick="window.location.href='meetings.html'">📅 Meetings</div>
+<div class="nav-item" onclick="window.location.href='meetings.html'">Meetings</div>
+<div class="nav-item" onclick="window.location.href='calls.html'">Calls</div>
 <div class="nav-item" onclick="window.location.href='daily_summary.html'">Summary</div>
+<div class="nav-item active">Weekly</div>
 </div>
 
 <script>
-// Sample weekly data — in production, this would come from your database
 const weeklyData = {
     weekStart: "2026-06-13",
     weekEnd: "2026-06-19",
@@ -175,18 +133,17 @@ const weeklyData = {
     ]
 };
 
-function loadWeeklyReport(data) {
-    document.getElementById('totalMessages').textContent = data.total;
-    document.getElementById('urgentCount').textContent = data.urgent;
-    document.getElementById('importantCount').textContent = data.important;
-    document.getElementById('normalCount').textContent = data.normal;
-    document.getElementById('responseRate').textContent = data.responseRate + '%';
-    document.getElementById('whatsappCount').textContent = data.whatsapp;
-    document.getElementById('emailCount').textContent = data.email;
-    document.getElementById('smsCount').textContent = data.sms;
+function loadWeeklyReport() {
+    document.getElementById('totalMessages').textContent = weeklyData.total;
+    document.getElementById('urgentCount').textContent = weeklyData.urgent;
+    document.getElementById('importantCount').textContent = weeklyData.important;
+    document.getElementById('normalCount').textContent = weeklyData.normal;
+    document.getElementById('responseRate').textContent = weeklyData.responseRate + '%';
+    document.getElementById('whatsappCount').textContent = weeklyData.whatsapp;
+    document.getElementById('emailCount').textContent = weeklyData.email;
+    document.getElementById('smsCount').textContent = weeklyData.sms;
 
-    // Productivity Score
-    const score = Math.min(100, Math.round((data.responseRate + (data.urgent > 0 ? 10 : 0)) / 1.1));
+    const score = Math.min(100, Math.round((weeklyData.responseRate + (weeklyData.urgent > 0 ? 10 : 0)) / 1.1));
     document.getElementById('productivityScore').textContent = score;
     document.getElementById('productivityBar').style.width = score + '%';
     
@@ -198,30 +155,24 @@ function loadWeeklyReport(data) {
     }
     document.getElementById('productivityLabel').textContent = label;
 
-    // Daily Chart
-    const maxDaily = Math.max(...data.daily);
+    const maxDaily = Math.max(...weeklyData.daily);
     const bars = document.querySelectorAll('.chart-bar .bar .fill');
-    data.daily.forEach((val, i) => {
+    weeklyData.daily.forEach((val, i) => {
         if (bars[i]) {
             const pct = maxDaily > 0 ? Math.max(4, (val / maxDaily) * 100) : 4;
             bars[i].style.height = pct + '%';
         }
     });
 
-    // Senders
     let html = '';
-    for (let s of data.senders) {
+    for (let s of weeklyData.senders) {
         html += `<li><span>${s.name}</span><span class="count">${s.count}</span></li>`;
     }
     document.getElementById('senderList').innerHTML = html;
 }
 
 function generateReport() {
-    const date = new Date().toLocaleDateString('en-ZW', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    });
+    const date = new Date().toLocaleDateString('en-ZW', { year: 'numeric', month: 'long', day: 'numeric' });
     const report = `
 📊 GATEKEEPER AI WEEKLY REPORT
 📅 Week: Jun 13 – Jun 19, 2026
@@ -245,15 +196,11 @@ ${weeklyData.senders.map(s => `${s.name}: ${s.count}`).join('\n')}
 📅 DAILY BREAKDOWN
 Mon: ${weeklyData.daily[0]} | Tue: ${weeklyData.daily[1]} | Wed: ${weeklyData.daily[2]}
 Thu: ${weeklyData.daily[3]} | Fri: ${weeklyData.daily[4]} | Sat: ${weeklyData.daily[5]} | Sun: ${weeklyData.daily[6]}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${weeklyData.urgent > 0 ? `🔴 You had ${weeklyData.urgent} URGENT messages this week.` : '✅ No urgent messages this week.'}
-${weeklyData.responseRate > 70 ? '✅ Great response rate! Keep it up.' : '⚠️ Try to respond faster to urgent messages.'}
-Have a productive week! 🔒
     `;
     alert(report);
 }
 
-loadWeeklyReport(weeklyData);
+loadWeeklyReport();
 </script>
 </body>
 </html>
