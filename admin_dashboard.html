@@ -1,137 +1,224 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Gatekeeper AI - Admin Dashboard</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0a0a0a; color: white; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        .header h1 { color: #FFB300; font-size: 28px; }
-        .header h1 span { color: white; }
-        .header .badge { background: #FFB300; color: black; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: #1a1a2e; padding: 20px; border-radius: 16px; text-align: center; border: 1px solid #2a2a2a; }
-        .stat-number { font-size: 36px; font-weight: bold; color: #FFB300; }
-        .stat-label { color: #888; font-size: 13px; margin-top: 5px; }
-        .stat-card.urgent .stat-number { color: #e94560; }
-        .stat-card.success .stat-number { color: #00ff88; }
-        .stat-card.warning .stat-number { color: #FFB300; }
-        
-        .section-title { color: #FFB300; font-size: 20px; margin: 25px 0 15px 0; border-bottom: 1px solid #2a2a2a; padding-bottom: 10px; }
-        
-        table { width: 100%; border-collapse: collapse; background: #1a1a2e; border-radius: 16px; overflow: hidden; }
-        th { background: #2a2a2a; color: #FFB300; padding: 14px; text-align: left; font-size: 13px; }
-        td { padding: 14px; border-bottom: 1px solid #2a2a2a; font-size: 14px; }
-        tr:hover { background: #222244; }
-        .status-active { color: #00ff88; }
-        .status-trial { color: #FFB300; }
-        .status-expired { color: #e94560; }
-        
-        .role-badge { background: #2a2a2a; padding: 3px 10px; border-radius: 12px; font-size: 11px; display: inline-block; }
-        .role-badge.mp { background: #e94560; color: white; }
-        .role-badge.ceo { background: #00d4ff; color: black; }
-        .role-badge.councillor { background: #FFB300; color: black; }
-        .role-badge.business { background: #00ff88; color: black; }
-        
-        .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #2a2a2a; padding-top: 20px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatekeeper AI - Admin Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;padding:20px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px}
+.header h1{color:#FFB300;font-size:28px}
+.header h1 span{color:#fff}
+.header .badge{background:#FFB300;color:#000;padding:5px 15px;border-radius:20px;font-size:12px;font-weight:bold}
+.currency-bar{background:#1a2a1a;padding:8px 16px;display:flex;justify-content:flex-end;align-items:center;border-bottom:1px solid #2a2a2a;gap:10px;margin-bottom:20px}
+.currency-bar span{color:#888;font-size:12px}
+.currency-bar .btn-curr{background:#333;color:#fff;border:none;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px}
+.currency-bar .btn-curr.active{background:#FFB300;color:#000;font-weight:bold}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:20px}
+.stat-card{background:#1a1a2e;padding:18px;border-radius:16px;text-align:center;border:1px solid #2a2a2a}
+.stat-card .num{font-size:30px;font-weight:bold}
+.stat-card .label{color:#888;font-size:12px;margin-top:4px}
+.stat-card.users .num{color:#00d4ff}
+.stat-card.active .num{color:#00ff88}
+.stat-card.trial .num{color:#FFB300}
+.stat-card.revenue .num{color:#e94560}
+.stat-card.valuation .num{color:#9b59b6}
+.stat-card.valuation-high .num{color:#f39c12}
+.stat-card.dev-cost .num{color:#1abc9c}
+.stat-card.platform-value .num{color:#2ecc71}
+.section-title{color:#FFB300;font-size:18px;margin:20px 0 12px 0;border-bottom:1px solid #2a2a2a;padding-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.section-title span{font-size:12px;color:#888;font-weight:normal}
+table{width:100%;border-collapse:collapse;background:#1a1a2e;border-radius:16px;overflow:hidden;font-size:13px}
+th{background:#2a2a2a;color:#FFB300;padding:12px;text-align:left}
+td{padding:12px;border-bottom:1px solid #2a2a2a}
+tr:hover{background:#222244}
+.status-active{color:#00ff88}
+.status-trial{color:#FFB300}
+.role-badge{background:#2a2a2a;padding:3px 10px;border-radius:12px;font-size:11px;display:inline-block}
+.role-badge.mp{background:#e94560;color:#fff}
+.role-badge.ceo{background:#00d4ff;color:#000}
+.role-badge.councillor{background:#FFB300;color:#000}
+.role-badge.business{background:#00ff88;color:#000}
+.role-badge.pastor{background:#9b59b6;color:#fff}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.btn{background:#FFB300;color:#000;border:none;padding:8px 20px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px}
+.btn:hover{background:#e6a300}
+.btn-outline{background:transparent;border:1px solid #FFB300;color:#FFB300}
+.btn-outline:hover{background:#FFB300;color:#000}
+.btn-logout{background:#e94560;color:#fff}
+.btn-logout:hover{background:#cc2244}
+.footer{margin-top:30px;text-align:center;color:#666;font-size:12px;border-top:1px solid #2a2a2a;padding-top:15px}
+.loading{text-align:center;padding:30px;color:#888}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>🔒 Gatekeeper <span>AI</span></h1>
+<div class="header">
+    <h1>🔒 Gatekeeper <span>AI</span></h1>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <div class="badge">🇿🇼 Admin Dashboard</div>
+        <button class="btn btn-logout" onclick="logout()">🚪 Logout</button>
     </div>
+</div>
 
-    <div class="stats">
-        <div class="stat-card success">
-            <div class="stat-number" id="totalUsers">0</div>
-            <div class="stat-label">👥 Total Users</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="activeUsers">0</div>
-            <div class="stat-label">✅ Active Subscriptions</div>
-        </div>
-        <div class="stat-card warning">
-            <div class="stat-number" id="trialUsers">0</div>
-            <div class="stat-label">⏳ Free Trial</div>
-        </div>
-        <div class="stat-card urgent">
-            <div class="stat-number" id="revenue">$0</div>
-            <div class="stat-label">💰 Monthly Revenue</div>
-        </div>
-    </div>
+<!-- Currency Bar -->
+<div class="currency-bar">
+    <span>💳 Currency:</span>
+    <button class="btn-curr active" onclick="setCurrency('USD')" id="currUSD">USD</button>
+    <button class="btn-curr" onclick="setCurrency('ZWG')" id="currZWG">ZWG</button>
+</div>
 
-    <div class="section-title">📋 Users</div>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Trial Ends</th>
-                <th>Subscription</th>
-            </tr>
-        </thead>
-        <tbody id="userTable">
-            <tr>
-                <td colspan="6" style="text-align:center; color:#888; padding:30px;">No users yet. Load sample data below.</td>
-            </tr>
-        </tbody>
-    </table>
+<!-- Stats Row 1 -->
+<div class="stats">
+    <div class="stat-card users"><div class="num" id="totalUsers">0</div><div class="label">👥 Total Users</div></div>
+    <div class="stat-card active"><div class="num" id="activeUsers">0</div><div class="label">✅ Active</div></div>
+    <div class="stat-card trial"><div class="num" id="trialUsers">0</div><div class="label">⏳ Trial</div></div>
+    <div class="stat-card revenue"><div class="num" id="revenue">$0</div><div class="label">💰 Monthly Revenue</div></div>
+</div>
 
-    <div class="section-title" style="margin-top:30px;">📊 Sample Data (Demo Mode)</div>
-    <button onclick="loadDemoData()" style="background:#FFB300; color:black; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:10px;">Load Sample Users</button>
+<!-- Stats Row 2 -->
+<div class="stats">
+    <div class="stat-card valuation"><div class="num" id="valuation5">$0</div><div class="label">📊 Valuation (5x ARR)</div></div>
+    <div class="stat-card valuation-high"><div class="num" id="valuation10">$0</div><div class="label">📈 Valuation (10x ARR)</div></div>
+</div>
 
-    <div class="footer">
-        © 2026 Gatekeeper AI | Built with ❤️ in Zimbabwe 🇿🇼
-    </div>
+<!-- Stats Row 3 -->
+<div class="stats">
+    <div class="stat-card dev-cost"><div class="num" id="devCost">$0</div><div class="label">🛠️ Development Cost Saved</div></div>
+    <div class="stat-card platform-value"><div class="num" id="platformValue">$0</div><div class="label">💰 Platform Value (Current)</div></div>
+</div>
 
-    <script>
-        function loadDemoData() {
-            const users = [
-                { name: "Hon. T. Moyo", phone: "0733xxxxxx", role: "MP", status: "Active", trial: "14 days", subscription: "$99/month" },
-                { name: "Cllr. S. Ncube", phone: "0772xxxxxx", role: "Councillor", status: "Trial", trial: "7 days", subscription: "Free" },
-                { name: "Mrs. R. Chikwanha", phone: "0783xxxxxx", role: "CEO", status: "Active", trial: "21 days", subscription: "$99/month" },
-                { name: "Mr. D. Moyo", phone: "0712xxxxxx", role: "Business Owner", status: "Expired", trial: "0 days", subscription: "Expired" },
-                { name: "Hon. P. Ndlovu", phone: "0734xxxxxx", role: "MP", status: "Trial", trial: "3 days", subscription: "Free" },
-                { name: "Ms. L. Sibanda", phone: "0784xxxxxx", role: "CEO", status: "Active", trial: "28 days", subscription: "$99/month" },
-            ];
+<!-- Users Section -->
+<div class="section-title">📋 Users <span id="userCount">0 total</span></div>
 
-            const total = users.length;
-            const active = users.filter(u => u.status === "Active").length;
-            const trial = users.filter(u => u.status === "Trial").length;
-            const revenue = users.filter(u => u.status === "Active").length * 99;
+<div class="toolbar">
+    <button class="btn" onclick="loadUsers()">🔄 Refresh</button>
+    <button class="btn btn-outline" onclick="window.location.href='gatekeeper_mp_edition.html'">📱 Go to App</button>
+</div>
 
-            document.getElementById('totalUsers').textContent = total;
-            document.getElementById('activeUsers').textContent = active;
-            document.getElementById('trialUsers').textContent = trial;
-            document.getElementById('revenue').textContent = `$${revenue}`;
+<div id="userTableContainer"><div class="loading">Loading users...</div></div>
 
-            let html = '';
-            for (let u of users) {
-                const statusClass = u.status === 'Active' ? 'status-active' : (u.status === 'Trial' ? 'status-trial' : 'status-expired');
-                const statusIcon = u.status === 'Active' ? '✅' : (u.status === 'Trial' ? '⏳' : '❌');
-                const roleClass = u.role === 'MP' ? 'mp' : (u.role === 'CEO' ? 'ceo' : (u.role === 'Councillor' ? 'councillor' : 'business'));
-                
-                html += `
-                    <tr>
-                        <td><strong>${u.name}</strong></td>
-                        <td>${u.phone}</td>
-                        <td><span class="role-badge ${roleClass}">${u.role}</span></td>
-                        <td class="${statusClass}">${statusIcon} ${u.status}</td>
-                        <td>${u.trial}</td>
-                        <td>${u.subscription}</td>
-                    </tr>
-                `;
+<div class="footer">© 2026 Gatekeeper AI | Built with ❤️ in Zimbabwe 🇿🇼</div>
+
+<script>
+// ========== AUTHENTICATION ==========
+function checkAuth() {
+    const auth = localStorage.getItem('admin_auth');
+    if (auth !== 'true') {
+        window.location.href = 'admin_login.html';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('admin_auth');
+    window.location.href = 'admin_login.html';
+}
+
+// ========== SUPABASE ==========
+const SUPABASE_URL = "https://vwvnpolkichrfriiisoi.supabase.co";
+const SUPABASE_KEY = "sb_publishable_cyTcbRQTpLQe1wxY0i-j7w_Wj1C2A--";
+const RATE = 35;
+const DEV_COST_ESTIMATE = 83000;
+
+let currentCurrency = localStorage.getItem('adminCurrency') || 'USD';
+let revenueUSD = 0;
+
+// ========== CURRENCY ==========
+function setCurrency(currency) {
+    currentCurrency = currency;
+    localStorage.setItem('adminCurrency', currency);
+    document.getElementById('currUSD').className = currency === 'USD' ? 'btn-curr active' : 'btn-curr';
+    document.getElementById('currZWG').className = currency === 'ZWG' ? 'btn-curr active' : 'btn-curr';
+    updateDisplay();
+}
+
+function formatCurrency(amount) {
+    if (currentCurrency === 'ZWG') {
+        return 'ZWG ' + Math.round(amount * RATE).toLocaleString();
+    }
+    return '$' + amount.toLocaleString();
+}
+
+function updateDisplay() {
+    document.getElementById('revenue').textContent = formatCurrency(revenueUSD);
+    const annualRevenue = revenueUSD * 12;
+    const val5 = annualRevenue * 5;
+    const val10 = annualRevenue * 10;
+    document.getElementById('valuation5').textContent = formatCurrency(val5);
+    document.getElementById('valuation10').textContent = formatCurrency(val10);
+    const platformValue = Math.max(10000, annualRevenue * 5);
+    document.getElementById('devCost').textContent = formatCurrency(DEV_COST_ESTIMATE);
+    document.getElementById('platformValue').textContent = formatCurrency(platformValue);
+}
+
+// ========== LOAD USERS ==========
+async function loadUsers() {
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
+            headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+        });
+        const messages = await response.json();
+        
+        const userMap = {};
+        messages.forEach(msg => {
+            const userId = msg.user_id || 'unknown';
+            if (!userMap[userId]) {
+                userMap[userId] = { id: userId, name: msg.sender || userId, messages: 0, urgent: 0, important: 0, normal: 0 };
             }
-            document.getElementById('userTable').innerHTML = html;
+            userMap[userId].messages++;
+            if (msg.category === 'URGENT') userMap[userId].urgent++;
+            else if (msg.category === 'IMPORTANT') userMap[userId].important++;
+            else userMap[userId].normal++;
+        });
+        
+        const users = Object.values(userMap);
+        const totalUsers = users.length;
+        const activeUsers = users.filter(u => u.messages > 0).length;
+        const trialUsers = Math.max(0, totalUsers - activeUsers);
+        revenueUSD = activeUsers * 99;
+        
+        document.getElementById('totalUsers').textContent = totalUsers;
+        document.getElementById('activeUsers').textContent = activeUsers;
+        document.getElementById('trialUsers').textContent = trialUsers;
+        document.getElementById('userCount').textContent = totalUsers + ' total';
+        updateDisplay();
+        
+        if (users.length === 0) {
+            document.getElementById('userTableContainer').innerHTML = `
+                <div style="background:#1a1a2e;padding:30px;border-radius:16px;text-align:center;border:1px solid #2a2a2a;">
+                    <p style="color:#888;">No users yet. Your first customer is coming soon.</p>
+                </div>
+            `;
+            return;
         }
+        
+        let html = `<table><thead><tr><th>#</th><th>User</th><th>Role</th><th>Status</th><th>Messages</th><th>Subscription</th></tr></thead><tbody>`;
+        users.forEach((user, index) => {
+            const role = user.id === 'test_user' ? 'MP' : 'User';
+            const status = user.messages > 0 ? 'Active' : 'Trial';
+            const statusClass = status === 'Active' ? 'status-active' : 'status-trial';
+            html += `<tr><td>${index + 1}</td><td><strong>${user.name}</strong> <span style="color:#666;font-size:12px;">(${user.id})</span></td>
+                <td><span class="role-badge mp">${role}</span></td>
+                <td class="${statusClass}">${status}</td>
+                <td>${user.messages} (🔴${user.urgent} 🟠${user.important} ⚪${user.normal})</td>
+                <td>${status === 'Active' ? '$99/month' : 'Free Trial'}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        document.getElementById('userTableContainer').innerHTML = html;
+        
+    } catch (error) {
+        document.getElementById('userTableContainer').innerHTML = `
+            <div style="background:#1a1a2e;padding:30px;border-radius:16px;text-align:center;border:1px solid #2a2a2a;">
+                <p style="color:#e94560;">❌ Error: ${error.message}</p>
+            </div>
+        `;
+    }
+}
 
-        loadDemoData();
-    </script>
+// ========== INITIALIZE ==========
+checkAuth();
+setCurrency(currentCurrency);
+loadUsers();
+</script>
 </body>
-</html>
+        </html>
