@@ -240,17 +240,15 @@ function updatePrices(currency) {
         'mp': 99,
         'executive': 99
     };
+    const rate = 35;
     for (const [key, value] of Object.entries(prices)) {
         const usdEl = document.getElementById(`price-${key}`);
         const zwgEl = document.getElementById(`price-${key}-zwg`);
-        if (currency === 'USD') {
-            usdEl.style.display = 'block';
-            zwgEl.style.display = 'block';
-            zwgEl.textContent = `≈ ZWG ${Math.round(value * RATE).toLocaleString()} /month`;
-        } else {
-            usdEl.style.display = 'block';
-            zwgEl.style.display = 'block';
-            const zwgValue = Math.round(value * RATE);
+        if (usdEl) {
+            usdEl.innerHTML = `$${value} <small>/month</small>`;
+        }
+        if (zwgEl) {
+            const zwgValue = Math.round(value * rate);
             zwgEl.textContent = `≈ ZWG ${zwgValue.toLocaleString()} /month`;
         }
     }
