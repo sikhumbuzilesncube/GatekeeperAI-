@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Login - Gatekeeper AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.login-box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:400px;width:100%}
+.login-box .logo{text-align:center;margin-bottom:20px}
+.login-box .logo h1{color:#FFB300;font-size:28px}
+.login-box .logo h1 span{color:#fff}
+.login-box .logo p{color:#888;font-size:13px;margin-top:4px}
+.login-box .input-group{margin-bottom:14px}
+.login-box .input-group label{display:block;color:#aaa;font-size:13px;font-weight:600;margin-bottom:4px}
+.login-box .input-group input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:15px;outline:none}
+.login-box .input-group input:focus{border-color:#FFB300}
+.login-box .btn{width:100%;padding:14px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:8px}
+.login-box .btn:hover{background:#e6a300}
+.login-box .error{color:#e94560;font-size:13px;margin-top:8px;display:none}
+.login-box .hint{color:#666;font-size:12px;margin-top:12px;text-align:center;line-height:1.6}
+.login-box .hint a{color:#FFB300;text-decoration:none;font-weight:bold}
+.login-box .divider{display:flex;align-items:center;margin:15px 0;color:#666;font-size:12px}
+.login-box .divider::before,.login-box .divider::after{content:'';flex:1;height:1px;background:#2a2a2a}
+.login-box .divider span{padding:0 10px}
+</style>
+</head>
+<body>
+<div class="login-box">
+    <div class="logo">
+        <h1>🔒 Gatekeeper <span>AI</span></h1>
+        <p>Welcome back</p>
+    </div>
+
+    <div id="loginForm">
+        <div class="input-group">
+            <label>📱 Phone Number</label>
+            <input type="tel" id="phoneInput" placeholder="e.g. 0777123456" onkeydown="if(event.key==='Enter') login()">
+        </div>
+        <div id="loginError" class="error">❌ Phone number not found. Please sign up first.</div>
+        <button class="btn" id="loginBtn" onclick="login()">Log In</button>
+    </div>
+
+    <div class="divider"><span>or</span></div>
+
+    <div class="hint">
+        Don't have an account? <a href="signup.html">Sign Up</a>
+    </div>
+
+    <div class="hint" style="margin-top:8px;font-size:11px;color:#444;">
+        No verification code needed. Just enter your phone number.
+    </div>
+</div>
+
+<script>
+function login() {
+    const phone = document.getElementById('phoneInput').value.trim();
+    const error = document.getElementById('loginError');
+    
+    if (!phone) {
+        error.textContent = '❌ Please enter your phone number.';
+        error.style.display = 'block';
+        return;
+    }
+    
+    const userData = localStorage.getItem('gatekeeper_user');
+    const verified = localStorage.getItem('gatekeeper_verified');
+    
+    if (verified === 'true' && userData) {
+        const user = JSON.parse(userData);
+        if (user.phone === phone) {
+            error.style.display = 'none';
+            document.getElementById('loginBtn').textContent = '✅ Logging in...';
+            document.getElementById('loginBtn').disabled = true;
+            localStorage.setItem('gatekeeper_role', user.role);
+            setTimeout(() => {
+                window.location.href = 'gatekeeper_mp_edition.html';
+            }, 1000);
+        } else {
+            error.textContent = '❌ Phone number not found. Please sign up first.';
+            error.style.display = 'block';
+            document.getElementById('loginBtn').disabled = false;
+            document.getElementById('loginBtn').textContent = 'Log In';
+        }
+    } else {
+        error.textContent = '❌ No account found. Please sign up first.';
+        error.style.display = 'block';
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').textContent = 'Log In';
+    }
+}
+
+function checkLoggedIn() {
+    const verified = localStorage.getItem('gatekeeper_verified');
+    if (verified === 'true') {
+        window.location.href = 'gatekeeper_mp_edition.html';
+    }
+}
+
+checkLoggedIn();
+</script>
+</body>
+  </html>
