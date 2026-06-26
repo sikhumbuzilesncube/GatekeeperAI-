@@ -86,10 +86,10 @@
 <header class="header">
     <h1>🔒 Gatekeeper <span>AI</span></h1>
     <nav class="nav">
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#contact">Contact</a>
-    <a href="signup.html" class="demo-btn">Sign Up</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
+        <a href="signup.html" class="demo-btn">Sign Up</a>
     </nav>
 </header>
 
@@ -98,8 +98,8 @@
     <h1>Never Miss <span>an Important Message</span> Again</h1>
     <p>Gatekeeper AI sorts your SMS, WhatsApp, and Email by urgency — so you always see what matters first.</p>
     <div class="hero-buttons">
-    <a href="signup.html" class="btn">Start Free Trial</a>
-    <a href="#features" class="btn btn-outline">Learn More</a>
+        <a href="signup.html" class="btn">Start Free Trial</a>
+        <a href="#features" class="btn btn-outline">Learn More</a>
     </div>
 </section>
 
@@ -122,6 +122,8 @@
     <p class="pricing-sub">All editions include a 14-day free trial</p>
 
     <div class="pricing-grid">
+
+        <!-- Pastor -->
         <div class="pricing-card">
             <h3>⛪ Pastor Edition</h3>
             <div class="price" id="price-pastor">$20 <small>/month</small></div>
@@ -130,6 +132,7 @@
             <a href="signup.html" class="btn">Get Started</a>
         </div>
 
+        <!-- Councillor -->
         <div class="pricing-card">
             <h3>🏛️ Councillor Edition</h3>
             <div class="price" id="price-councillor">$49 <small>/month</small></div>
@@ -138,6 +141,7 @@
             <a href="signup.html" class="btn">Get Started</a>
         </div>
 
+        <!-- Business -->
         <div class="pricing-card">
             <h3>🏢 Business Edition</h3>
             <div class="price" id="price-business">$49 <small>/month</small></div>
@@ -146,6 +150,7 @@
             <a href="signup.html" class="btn">Get Started</a>
         </div>
 
+        <!-- MP -->
         <div class="pricing-card featured">
             <h3>🇿🇼 MP Edition</h3>
             <div class="price" id="price-mp">$99 <small>/month</small></div>
@@ -154,6 +159,7 @@
             <a href="signup.html" class="btn">Get Started</a>
         </div>
 
+        <!-- Executive -->
         <div class="pricing-card">
             <h3>💼 Executive Edition</h3>
             <div class="price" id="price-executive">$99 <small>/month</small></div>
@@ -161,6 +167,7 @@
             <ul><li>✅ Unlimited Messages</li><li>✅ Board & Investor Alerts</li><li>✅ Business Analytics</li><li>✅ 14-Day Free Trial</li><li>✅ Priority Support</li></ul>
             <a href="signup.html" class="btn">Get Started</a>
         </div>
+
     </div>
 </section>
 
@@ -224,11 +231,16 @@
 
 <script>
 const RATE = 35;
+let currentCurrency = localStorage.getItem('currency') || 'USD';
 
 function setCurrency(currency) {
+    currentCurrency = currency;
     localStorage.setItem('currency', currency);
+    
+    // Update button styles
     document.getElementById('currUSD').className = currency === 'USD' ? 'btn-curr active' : 'btn-curr';
     document.getElementById('currZWG').className = currency === 'ZWG' ? 'btn-curr active' : 'btn-curr';
+    
     updatePrices(currency);
 }
 
@@ -254,7 +266,7 @@ function updatePrices(currency) {
             zwgEl.textContent = `≈ ZWG ${zwgValue.toLocaleString()} /month`;
         }
     }
-    }
+}
 
 function openModal(type) {
     if (type === 'privacy') document.getElementById('privacyModal').style.display = 'flex';
@@ -271,8 +283,8 @@ function closeModal(event) {
     }
 }
 
-const savedCurrency = localStorage.getItem('currency') || 'USD';
-setCurrency(savedCurrency);
+// Initialize
+setCurrency(currentCurrency);
 </script>
 </body>
-    </html>
+        </html>
