@@ -1,0 +1,180 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Sign Up - Gatekeeper AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.signup-box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:400px;width:100%}
+.signup-box .logo{text-align:center;margin-bottom:20px}
+.signup-box .logo h1{color:#FFB300;font-size:28px}
+.signup-box .logo h1 span{color:#fff}
+.signup-box .logo p{color:#888;font-size:13px;margin-top:4px}
+.signup-box .input-group{margin-bottom:14px}
+.signup-box .input-group label{display:block;color:#aaa;font-size:13px;font-weight:600;margin-bottom:4px}
+.signup-box .input-group input,.signup-box .input-group select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:15px;outline:none}
+.signup-box .input-group input:focus,.signup-box .input-group select:focus{border-color:#FFB300}
+.signup-box .input-group select option{background:#1a1a2e;color:#fff}
+.signup-box .btn{width:100%;padding:14px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:8px}
+.signup-box .btn:hover{background:#e6a300}
+.signup-box .btn:disabled{opacity:0.5;cursor:not-allowed}
+.signup-box .error{color:#e94560;font-size:13px;margin-top:8px;display:none}
+.signup-box .success{color:#00ff88;font-size:13px;margin-top:8px;display:none}
+.signup-box .hint{color:#666;font-size:12px;margin-top:12px;text-align:center;line-height:1.6}
+.signup-box .hint strong{color:#FFB300}
+.verification-section{display:none;margin-top:15px;padding-top:15px;border-top:1px solid #2a2a2a}
+.verification-section .code-input{display:flex;gap:10px;justify-content:center;margin:10px 0}
+.verification-section .code-input input{width:50px;height:55px;text-align:center;font-size:22px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;outline:none}
+.verification-section .code-input input:focus{border-color:#FFB300}
+.role-locked{background:#1a2a1a;padding:12px;border-radius:8px;border-left:4px solid #FFB300;margin-top:10px;display:none}
+.role-locked .label{color:#888;font-size:12px}
+.role-locked .value{color:#FFB300;font-weight:bold;font-size:15px}
+</style>
+</head>
+<body>
+<div class="signup-box">
+    <div class="logo">
+        <h1>🔒 Gatekeeper <span>AI</span></h1>
+        <p>Create your account</p>
+    </div>
+
+    <div id="signupForm">
+        <div class="input-group">
+            <label>📱 Phone Number</label>
+            <input type="tel" id="phoneInput" placeholder="e.g. 0777123456">
+        </div>
+        <div class="input-group">
+            <label>📧 Email Address</label>
+            <input type="email" id="emailInput" placeholder="you@example.com">
+        </div>
+        <div class="input-group">
+            <label>👤 Select Your Role</label>
+            <select id="roleSelect">
+                <option value="">— Select Role —</option>
+                <option value="mp">🇿🇼 MP Edition</option>
+                <option value="ceo">💼 Executive Edition</option>
+                <option value="councillor">🏛️ Councillor Edition</option>
+                <option value="pastor">⛪ Pastor Edition</option>
+                <option value="business">🏢 Business Edition</option>
+            </select>
+        </div>
+        <div id="signupError" class="error">❌ Please fill in all fields.</div>
+        <button class="btn" id="signupBtn" onclick="startSignUp()">Sign Up</button>
+    </div>
+
+    <div id="verificationSection" class="verification-section">
+        <p style="color:#888;font-size:13px;text-align:center;">Enter the 6-digit code sent to your phone</p>
+        <div class="code-input">
+            <input type="text" maxlength="1" oninput="moveNext(this, 0)">
+            <input type="text" maxlength="1" oninput="moveNext(this, 1)">
+            <input type="text" maxlength="1" oninput="moveNext(this, 2)">
+            <input type="text" maxlength="1" oninput="moveNext(this, 3)">
+            <input type="text" maxlength="1" oninput="moveNext(this, 4)">
+            <input type="text" maxlength="1" oninput="moveNext(this, 5)">
+        </div>
+        <div id="verifyError" class="error">❌ Invalid code. Please try again.</div>
+        <div id="verifySuccess" class="success">✅ Verified! Redirecting...</div>
+        <button class="btn" id="verifyBtn" onclick="verifyCode()">Verify</button>
+        <p style="color:#666;font-size:12px;text-align:center;margin-top:10px;">
+            Didn't receive code? <span style="color:#FFB300;cursor:pointer;" onclick="resendCode()">Resend</span>
+        </p>
+    </div>
+
+    <div id="roleLocked" class="role-locked">
+        <div class="label">✅ Your role is locked</div>
+        <div class="value" id="lockedRole">MP Edition</div>
+        <p style="color:#888;font-size:12px;margin-top:4px;">Role cannot be changed after sign up.</p>
+    </div>
+
+    <div class="hint">
+        💡 Your role will be <strong>locked</strong> after sign up.<br>
+        A verification code will be sent to your phone.
+    </div>
+</div>
+
+<script>
+let generatedCode = '';
+let userData = {};
+
+function moveNext(input, index) {
+    if (input.value.length === 1) {
+        const next = document.querySelectorAll('.code-input input')[index + 1];
+        if (next) next.focus();
+    }
+}
+
+function startSignUp() {
+    const phone = document.getElementById('phoneInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const role = document.getElementById('roleSelect').value;
+
+    if (!phone || !email || !role) {
+        document.getElementById('signupError').style.display = 'block';
+        return;
+    }
+
+    document.getElementById('signupError').style.display = 'none';
+    generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+    userData = { phone, email, role };
+
+    document.getElementById('verificationSection').style.display = 'block';
+    document.getElementById('signupBtn').disabled = true;
+    document.getElementById('signupBtn').textContent = 'Code Sent ✅';
+    document.querySelector('.code-input input').focus();
+    alert('📱 Verification code: ' + generatedCode + '\n(For testing only)');
+}
+
+function verifyCode() {
+    const inputs = document.querySelectorAll('.code-input input');
+    let code = '';
+    for (let inp of inputs) { code += inp.value; }
+
+    if (code === generatedCode) {
+        document.getElementById('verifySuccess').style.display = 'block';
+        document.getElementById('verifyError').style.display = 'none';
+
+        localStorage.setItem('gatekeeper_user', JSON.stringify(userData));
+        localStorage.setItem('gatekeeper_role', userData.role);
+        localStorage.setItem('gatekeeper_verified', 'true');
+
+        const roleNames = {
+            'mp': '🇿🇼 MP Edition',
+            'ceo': '💼 Executive Edition',
+            'councillor': '🏛️ Councillor Edition',
+            'pastor': '⛪ Pastor Edition',
+            'business': '🏢 Business Edition'
+        };
+        document.getElementById('lockedRole').textContent = roleNames[userData.role] || userData.role;
+        document.getElementById('roleLocked').style.display = 'block';
+
+        setTimeout(() => {
+            window.location.href = 'gatekeeper_mp_edition.html';
+        }, 2000);
+    } else {
+        document.getElementById('verifyError').style.display = 'block';
+        document.getElementById('verifySuccess').style.display = 'none';
+        document.querySelectorAll('.code-input input').forEach(inp => inp.value = '');
+        document.querySelector('.code-input input').focus();
+    }
+}
+
+function resendCode() {
+    generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+    alert('📱 New verification code: ' + generatedCode + '\n(For testing only)');
+    document.querySelectorAll('.code-input input').forEach(inp => inp.value = '');
+    document.querySelector('.code-input input').focus();
+    document.getElementById('verifyError').style.display = 'none';
+}
+
+function checkSignedIn() {
+    const verified = localStorage.getItem('gatekeeper_verified');
+    if (verified === 'true') {
+        window.location.href = 'gatekeeper_mp_edition.html';
+    }
+}
+
+checkSignedIn();
+</script>
+</body>
+</html>
