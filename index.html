@@ -241,9 +241,11 @@ function updatePrices(currency) {
         'executive': 99
     };
     const rate = 35;
+    
     for (const [key, value] of Object.entries(prices)) {
         const usdEl = document.getElementById(`price-${key}`);
         const zwgEl = document.getElementById(`price-${key}-zwg`);
+        
         if (usdEl) {
             usdEl.innerHTML = `$${value} <small>/month</small>`;
         }
@@ -252,7 +254,7 @@ function updatePrices(currency) {
             zwgEl.textContent = `≈ ZWG ${zwgValue.toLocaleString()} /month`;
         }
     }
-}
+    }
 
 function openModal(type) {
     if (type === 'privacy') document.getElementById('privacyModal').style.display = 'flex';
