@@ -14,20 +14,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .meeting-card.upcoming{border-left-color:#00ff88}
 .meeting-card.today{border-left-color:#f5a623}
 .meeting-card.overdue{border-left-color:#e94560}
-.meeting-card .title{font-size:16px;font-weight:700;margin-bottom:4px}
+.meeting-card .title{font-size:16px;font-weight:bold;margin-bottom:4px}
 .meeting-card .details{font-size:13px;color:#bbb;margin-bottom:4px}
 .meeting-card .time{font-size:12px;color:#888}
-.meeting-card .badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:600;margin-top:6px}
+.meeting-card .badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:bold;margin-top:6px}
 .badge-upcoming{background:#00ff8820;color:#00ff88}
 .badge-today{background:#f5a62320;color:#f5a623}
 .badge-overdue{background:#e9456020;color:#e94560}
 .empty-state{text-align:center;padding:40px;color:#666}
-.empty-state .icon{font-size:48px;margin-bottom:12px}
-.btn{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
-.btn:hover{background:#e6a300}
+.empty-state .icon{font-size:48px;margin-bottom:10px}
+.btn{background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px}
 .btn-danger{background:#e94560;color:#fff}
 .btn-danger:hover{background:#cc2244}
-.footer{text-align:center;margin-top:20px;color:#666;font-size:12px}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a}
 .nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
 .nav-item.active{background:#FFB30020;color:#FFB300}
@@ -36,37 +34,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <body>
 
 <div class="header">
-<h1>📅 Meeting Reminders</h1>
-<p>Your upcoming meetings, automatically detected</p>
+    <h1>📅 Meeting Reminders</h1>
+    <p>Your upcoming meetings, automatically detected</p>
 </div>
 
 <div id="meetingsList">
-<div class="empty-state">
-<div class="icon">📭</div>
-<p>No meetings detected yet.</p>
-<p style="font-size:12px;margin-top:4px;">When you receive a meeting message, it will appear here.</p>
-</div>
+    <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>No meetings detected yet.</p>
+        <p style="font-size:12px;margin-top:4px;">When you receive a meeting message, it will appear here.</p>
+    </div>
 </div>
 
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
-<button class="btn" onclick="window.location.href='gatekeeper_mp_edition.html'">📥 Go to Inbox</button>
-<button class="btn btn-danger" onclick="clearMeetings()">🗑️ Clear All</button>
-</div>
-
-<div class="footer">
-2026 Gatekeeper AI | Meeting Reminders
+    <button class="btn" onclick="window.location.href='gatekeeper_mp_edition.html'">📥 Go to Inbox</button>
+    <button class="btn btn-danger" onclick="clearMeetings()">🗑️ Clear All</button>
 </div>
 
 <div class="bottom-nav">
 <div class="nav-item" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
-<div class="nav-item active">📅 Meetings</div>
+<div class="nav-item active">Meetings</div>
+<div class="nav-item" onclick="window.location.href='calls.html'">Calls</div>
 <div class="nav-item" onclick="window.location.href='daily_summary.html'">Summary</div>
 </div>
 
 <script>
 let meetings = [];
 
-// Sample meetings (these would normally be auto-detected)
 const sampleMeetings = [
     {
         title: "Parliament Budget Committee",
@@ -117,11 +111,7 @@ function loadMeetings() {
         const badgeClass = statusClass === 'upcoming' ? 'badge-upcoming' : (statusClass === 'today' ? 'badge-today' : 'badge-overdue');
         const badgeText = statusClass === 'upcoming' ? '⏳ Upcoming' : (statusClass === 'today' ? '📅 Today' : '⚠️ Overdue');
         const timeDisplay = m.time ? new Date('2000-01-01T' + m.time + ':00').toLocaleTimeString('en-ZW', {hour:'2-digit',minute:'2-digit'}) : 'Time TBD';
-        const dateDisplay = new Date(m.date + 'T' + (m.time || '12:00')).toLocaleDateString('en-ZW', { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric' 
-        });
+        const dateDisplay = new Date(m.date + 'T' + (m.time || '12:00')).toLocaleDateString('en-ZW', { weekday: 'short', month: 'short', day: 'numeric' });
         
         html += `
             <div class="meeting-card ${statusClass}">
@@ -129,7 +119,6 @@ function loadMeetings() {
                 <div class="details">📅 ${dateDisplay} at ${timeDisplay}</div>
                 ${m.location ? `<div class="details">📍 ${m.location}</div>` : ''}
                 <div class="details">${m.sourceText || m.source}</div>
-                <div class="time">${m.sourceText || ''}</div>
                 <div class="badge ${badgeClass}">${badgeText}</div>
             </div>
         `;
