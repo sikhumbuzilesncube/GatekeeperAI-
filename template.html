@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Templates - Gatekeeper AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;padding:20px;padding-bottom:80px}
+.header{text-align:center;margin-bottom:20px}
+.header h1{color:#FFB300;font-size:24px}
+.header p{color:#888;font-size:13px}
+.template-card{background:#1a1a2e;padding:16px;border-radius:12px;margin-bottom:10px;border:1px solid #2a2a2a;cursor:pointer}
+.template-card:active{transform:scale(0.98)}
+.template-card .title{font-weight:bold;font-size:15px;color:#fff}
+.template-card .preview{color:#888;font-size:13px;margin-top:4px}
+.template-card .badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:bold;margin-top:6px}
+.badge-urgent{background:#e9456020;color:#e94560}
+.badge-important{background:#f5a62320;color:#f5a623}
+.badge-normal{background:#4a4e6920;color:#4a4e69}
+.add-btn{position:fixed;bottom:80px;right:20px;background:#FFB300;color:#000;width:56px;height:56px;border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;box-shadow:0 4px 12px rgba(255,179,0,0.3);cursor:pointer;border:none;z-index:1000}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a}
+.nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
+.nav-item.active{background:#FFB30020;color:#FFB300}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;padding:20px}
+.modal-content{background:#1a1a2e;max-width:400px;padding:24px;border-radius:16px;border:1px solid #FFB300;width:100%}
+.modal-content h2{color:#FFB300;font-size:18px;margin-bottom:10px}
+.modal-content input,.modal-content textarea,.modal-content select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px}
+.modal-content textarea{min-height:60px;resize:vertical}
+.modal-content .btn{background:#FFB300;color:#000;border:none;padding:10px;border-radius:8px;font-weight:bold;cursor:pointer;width:100%}
+.modal-content .btn-danger{background:#e94560;color:#fff}
+.modal-content .close-btn{background:#333;color:#fff;border:none;padding:8px;border-radius:8px;cursor:pointer;width:100%;margin-top:8px}
+.empty-state{text-align:center;padding:40px;color:#666}
+.empty-state .icon{font-size:48px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>📋 Quick Templates</h1>
+    <p>Pre-written replies for common situations</p>
+</div>
+
+<div id="templatesList">
+    <div class="empty-state">
+        <div class="icon">📝</div>
+        <p>No templates yet</p>
+        <p style="font-size:12px;margin-top:4px;">Tap + to create your first template</p>
+    </div>
+</div>
+
+<button class="add-btn" onclick="openModal()">+</button>
+
+<div class="bottom-nav">
+<div class="nav-item" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
+<div class="nav-item" onclick="window.location.href='meetings.html'">Meetings</div>
+<div class="nav-item" onclick="window.location.href='calls.html'">Calls</div>
+<div class="nav-item active">Templates</div>
+</div>
+
+<!-- Add Template Modal -->
+<div id="templateModal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2>✏️ New Template</h2>
+        <input type="text" id="templateTitle" placeholder="Template name (e.g., Constituent Reply)">
+        <select id="templateCategory">
+            <option value="URGENT">🔴 URGENT</option>
+            <option value="IMPORTANT">🟠 IMPORTANT</option>
+            <option value="NORMAL">⚪ NORMAL</option>
+        </select>
+        <textarea id="templateBody" placeholder="Write your reply template..."></textarea>
+        <button class="btn" onclick="saveTemplate()">💾 Save Template</button>
+        <button class="close-btn" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script>
+let templates = [];
+
+function loadTemplates() {
+    const saved = localStorage.getItem('quick_templates');
+    if (saved) {
+        templates = JSON.parse(saved);
+    } else {
+        templates = [
+            { id: 1, title: "Borehole Emergency", category: "URGENT", body: "Thank you for alerting me. I will contact the relevant authority immediately and get back to you." },
+            { id: 2, title: "Meeting Confirmation", category: "IMPORTANT", body: "Thank you. I confirm attendance for the meeting. See you there." },
+            { id: 3, title: "General Acknowledgment", category: "NORMAL", body: "Thank you for your message. I will get back to you shortly." }
+        ];
+        localStorage.setItem('quick_templates', JSON.stringify(templates));
+    }
+    renderTemplates();
+}
+
+function renderTemplates() {
+    const container = document.getElementById('templatesList');
+    
+    if (templates.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">📝</div>
+                <p>No templates yet</p>
+                <p style="font-size:12px;margin-top:4px;">Tap + to create your first template</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    for (let t of templates) {
+        const badge = t.category === 'URGENT' ? 'badge-urgent' : (t.category === 'IMPORTANT' ? 'badge-important' : 'badge-normal');
+        const icon = t.category === 'URGENT' ? '🔴' : (t.category === 'IMPORTANT' ? '🟠' : '⚪');
+        html += `
+            <div class="template-card" onclick="useTemplate(${t.id})">
+                <div class="title">${icon} ${t.title}</div>
+                <div class="preview">${t.body.substring(0, 60)}...</div>
+                <span class="badge ${badge}">${t.category}</span>
+                <span style="float:right;color:#666;font-size:12px;cursor:pointer;" onclick="event.stopPropagation();deleteTemplate(${t.id})">🗑️</span>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+}
+
+function openModal() {
+    document.getElementById('templateModal').style.display = 'flex';
+    document.getElementById('templateTitle').value = '';
+    document.getElementById('templateBody').value = '';
+}
+
+function closeModal() {
+    document.getElementById('templateModal').style.display = 'none';
+}
+
+function saveTemplate() {
+    const title = document.getElementById('templateTitle').value.trim();
+    const category = document.getElementById('templateCategory').value;
+    const body = document.getElementById('templateBody').value.trim();
+    
+    if (!title || !body) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    
+    const newTemplate = {
+        id: Date.now(),
+        title: title,
+        category: category,
+        body: body
+    };
+    
+    templates.push(newTemplate);
+    localStorage.setItem('quick_templates', JSON.stringify(templates));
+    renderTemplates();
+    closeModal();
+    alert('✅ Template saved!');
+}
+
+function deleteTemplate(id) {
+    if (confirm('Delete this template?')) {
+        templates = templates.filter(t => t.id !== id);
+        localStorage.setItem('quick_templates', JSON.stringify(templates));
+        renderTemplates();
+    }
+}
+
+function useTemplate(id) {
+    const template = templates.find(t => t.id === id);
+    if (template) {
+        const el = document.createElement('textarea');
+        el.value = template.body;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('✅ Template copied to clipboard!');
+    }
+}
+
+loadTemplates();
+</script>
+</body>
+          </html>
