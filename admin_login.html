@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Gatekeeper AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a0a0a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.login-box{background:#1a1a2e;padding:40px;border-radius:16px;border:1px solid #2a2a2a;max-width:400px;width:100%;text-align:center}
+.login-box .logo{color:#FFB300;font-size:28px;font-weight:bold;margin-bottom:5px}
+.login-box .sub{color:#888;font-size:13px;margin-bottom:25px}
+.login-box input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:15px;margin-bottom:12px;outline:none}
+.login-box input:focus{border-color:#FFB300}
+.login-box .btn{width:100%;padding:12px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer}
+.login-box .btn:hover{background:#e6a300}
+.login-box .error{color:#e94560;font-size:13px;margin-top:10px;display:none}
+.login-box .hint{color:#666;font-size:12px;margin-top:15px}
+.login-box .hint strong{color:#FFB300}
+</style>
+</head>
+<body>
+<div class="login-box">
+    <div class="logo">🔒 Gatekeeper AI</div>
+    <div class="sub">Admin Dashboard Login</div>
+    <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') login()">
+    <button class="btn" onclick="login()">Login</button>
+    <div class="error" id="errorMsg">❌ Incorrect password. Please try again.</div>
+    <div class="hint">Hint: Default password is <strong>admin123</strong></div>
+</div>
+
+<script>
+function login() {
+    const password = document.getElementById('passwordInput').value;
+    const error = document.getElementById('errorMsg');
+    const correctPassword = 'admin123';
+    
+    if (password === correctPassword) {
+        localStorage.setItem('admin_auth', 'true');
+        window.location.href = 'admin_dashboard.html';
+    } else {
+        error.style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+    }
+}
+</script>
+</body>
+  </html>
