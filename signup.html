@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,10 +8,18 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
 .signup-box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:400px;width:100%}
-.signup-box .logo{text-align:center;margin-bottom:20px}
+.signup-box .logo{text-align:center;margin-bottom:15px}
 .signup-box .logo h1{color:#FFB300;font-size:28px}
 .signup-box .logo h1 span{color:#fff}
 .signup-box .logo p{color:#888;font-size:13px;margin-top:4px}
+.signup-box .intro{background:#1a2a1a;padding:12px 16px;border-radius:10px;margin-bottom:15px;border-left:4px solid #FFB300}
+.signup-box .intro .text{font-size:13px;color:#aaa;line-height:1.6}
+.signup-box .intro .text strong{color:#FFB300}
+.signup-box .intro .tags{display:flex;gap:15px;margin-top:8px;flex-wrap:wrap}
+.signup-box .intro .tags span{font-size:11px;font-weight:bold}
+.signup-box .intro .tags .urgent{color:#e94560}
+.signup-box .intro .tags .important{color:#f5a623}
+.signup-box .intro .tags .normal{color:#4a4e69}
 .signup-box .input-group{margin-bottom:14px}
 .signup-box .input-group label{display:block;color:#aaa;font-size:13px;font-weight:600;margin-bottom:4px}
 .signup-box .input-group input,.signup-box .input-group select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:15px;outline:none}
@@ -21,8 +30,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .signup-box .btn:disabled{opacity:0.5;cursor:not-allowed}
 .signup-box .error{color:#e94560;font-size:13px;margin-top:8px;display:none}
 .signup-box .success{color:#00ff88;font-size:13px;margin-top:8px;display:none}
+.signup-box .trust-signals{display:flex;gap:12px;justify-content:center;margin-top:10px;flex-wrap:wrap;font-size:11px;color:#666}
 .signup-box .hint{color:#666;font-size:12px;margin-top:12px;text-align:center;line-height:1.6}
 .signup-box .hint strong{color:#FFB300}
+.signup-box .hint a{color:#FFB300;text-decoration:none;font-weight:bold}
+.signup-box .terms{text-align:center;margin-top:15px;font-size:10px;color:#444;border-top:1px solid #2a2a2a;padding-top:12px}
+.signup-box .terms a{color:#FFB300;text-decoration:none}
 .verification-section{display:none;margin-top:15px;padding-top:15px;border-top:1px solid #2a2a2a}
 .verification-section .code-input{display:flex;gap:10px;justify-content:center;margin:10px 0}
 .verification-section .code-input input{width:50px;height:55px;text-align:center;font-size:22px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;outline:none}
@@ -36,9 +49,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="signup-box">
     <div class="logo">
         <h1>🔒 Gatekeeper <span>AI</span></h1>
-        <p>Create your account</p>
+        <p>Your AI Personal Assistant</p>
     </div>
 
+    <!-- App Intro -->
+    <div class="intro">
+        <div class="text">
+            <strong>🔒 Gatekeeper AI</strong> automatically sorts your messages by urgency — so you never miss what matters most.
+        </div>
+        <div class="tags">
+            <span class="urgent">🔴 URGENT</span>
+            <span class="important">🟠 IMPORTANT</span>
+            <span class="normal">⚪ NORMAL</span>
+        </div>
+    </div>
+
+    <!-- Sign Up Form -->
     <div id="signupForm">
         <div class="input-group">
             <label>📱 Phone Number</label>
@@ -63,6 +89,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <button class="btn" id="signupBtn" onclick="startSignUp()">Sign Up</button>
     </div>
 
+    <!-- Trust Signals -->
+    <div class="trust-signals">
+        <span>🔒 Privacy First</span>
+        <span>🇿🇼 Built for Zimbabwe</span>
+        <span>📱 SMS • WhatsApp • Email</span>
+    </div>
+
+    <!-- Verification Section -->
     <div id="verificationSection" class="verification-section">
         <p style="color:#888;font-size:13px;text-align:center;">Enter the 6-digit code sent to your phone</p>
         <div class="code-input">
@@ -81,6 +115,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </p>
     </div>
 
+    <!-- Role Locked Message -->
     <div id="roleLocked" class="role-locked">
         <div class="label">✅ Your role is locked</div>
         <div class="value" id="lockedRole">MP Edition</div>
@@ -90,6 +125,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="hint">
         💡 Your role will be <strong>locked</strong> after sign up.<br>
         A verification code will be sent to your phone.
+    </div>
+
+    <!-- Terms & Privacy -->
+    <div class="terms">
+        By signing up, you agree to our
+        <a href="privacy_policy.html">Privacy Policy</a>
+        and
+        <a href="terms.html">Terms & Conditions</a>
     </div>
 </div>
 
@@ -177,4 +220,4 @@ function checkSignedIn() {
 checkSignedIn();
 </script>
 </body>
-</html>
+                                      </html>
