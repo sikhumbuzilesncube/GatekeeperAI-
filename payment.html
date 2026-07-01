@@ -14,12 +14,24 @@
         .payment-methods{display:flex;flex-direction:column;gap:10px;margin:15px 0}
         .payment-methods button{padding:12px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px}
         .payment-methods button:hover{border-color:#FFB300}
+        .currency-selector{display:flex;gap:10px;justify-content:center;margin:10px 0}
+        .currency-selector button{padding:8px 20px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;cursor:pointer;font-weight:bold}
+        .currency-selector button.active{background:#FFB300;color:#000;border-color:#FFB300}
+        .back-link{display:block;margin-top:15px;color:#666;font-size:12px;text-decoration:none}
+        .back-link:hover{color:#FFB300}
     </style>
 </head>
 <body>
 <div class="payment-box">
     <h1>🔒 Gatekeeper AI</h1>
     <p>Subscribe to continue using Gatekeeper AI</p>
+
+    <!-- Currency Selector -->
+    <div class="currency-selector">
+        <button onclick="setCurrency('USD')" id="currUSD" class="active">USD</button>
+        <button onclick="setCurrency('ZWG')" id="currZWG">ZWG</button>
+    </div>
+
     <div class="amount" id="priceDisplay">$99 / month</div>
     <p style="font-size:12px;color:#666;">Your role: <span id="roleDisplay">MP Edition</span></p>
     
@@ -32,10 +44,14 @@
     
     <button class="btn" onclick="payWith('paynow')">Pay Now</button>
     <p style="font-size:11px;color:#444;margin-top:15px;">Secure payment via Paynow. 14-day free trial included.</p>
+
+    <a href="settings.html" class="back-link">← Back to Settings</a>
 </div>
 
 <script>
 const role = localStorage.getItem('gatekeeper_role') || 'mp';
+let currentCurrency = localStorage.getItem('appCurrency') || 'USD';
+
 const roles = {
     'mp': { name: 'MP Edition', price_usd: 99, price_zwg: 3465 },
     'ceo': { name: 'Executive Edition', price_usd: 99, price_zwg: 3465 },
@@ -44,21 +60,33 @@ const roles = {
     'business': { name: 'Business Edition', price_usd: 49, price_zwg: 1715 }
 };
 
-document.getElementById('roleDisplay').textContent = roles[role]?.name || 'MP Edition';
-const currency = localStorage.getItem('appCurrency') || 'USD';
-const price = currency === 'USD' ? 
-    `$${roles[role]?.price_usd || 99} / month` : 
-    `ZWG ${roles[role]?.price_zwg || 3465} / month`;
-document.getElementById('priceDisplay').textContent = price;
+function setCurrency(currency) {
+    currentCurrency = currency;
+    localStorage.setItem('appCurrency', currency);
+    document.getElementById('currUSD').className = currency === 'USD' ? 'active' : '';
+    document.getElementById('currZWG').className = currency === 'ZWG' ? 'active' : '';
+    updateDisplay();
+}
+
+function updateDisplay() {
+    const roleData = roles[role];
+    const price = currentCurrency === 'USD' ? 
+        `$${roleData.price_usd} / month` : 
+        `ZWG ${roleData.price_zwg} / month`;
+    document.getElementById('priceDisplay').textContent = price;
+    document.getElementById('roleDisplay').textContent = roleData.name;
+}
 
 function payWith(method) {
     const roleData = roles[role];
-    const amount = currency === 'USD' ? roleData.price_usd : roleData.price_zwg;
-    const currencyCode = currency === 'USD' ? 'USD' : 'ZWG';
-    const phone = localStorage.getItem('gatekeeper_phone') || 'Enter phone number';
+    const amount = currentCurrency === 'USD' ? roleData.price_usd : roleData.price_zwg;
+    const currencyCode = currentCurrency === 'USD' ? 'USD' : 'ZWG';
+    const phone = localStorage.getItem('gatekeeper_phone') || '0777803517';
     
     alert(`🔒 Payment Initiated\n\nMethod: ${method}\nAmount: ${amount} ${currencyCode}\nRole: ${roleData.name}\n\n📱 You will receive a payment prompt on your phone.\n\n(Coming soon: Full Paynow integration)`);
 }
+
+updateDisplay();
 </script>
 </body>
-  </html>
+</html>
