@@ -84,7 +84,6 @@ function payWith(method) {
     const amount = currentCurrency === 'USD' ? roleData.price_usd : roleData.price_zwg;
     const currencyCode = currentCurrency === 'USD' ? 'USD' : 'ZWG';
     
-    // Get user phone
     const userData = localStorage.getItem('gatekeeper_user');
     let phone = '0777803517';
     if (userData) {
@@ -94,22 +93,16 @@ function payWith(method) {
         } catch(e) {}
     }
     
-    // Paynow credentials
     const merchant_id = currencyCode === 'USD' ? '25438' : '25439';
     const merchant_key = currencyCode === 'USD' ? 'e845ff38-8afa-4898-bc84-10623af0a2a2' : '6d2661a1-2d18-4b83-8ae5-37dd0860b461';
     const reference = 'GK-' + Date.now();
     
-    // Build Paynow URL with all parameters
     const paynowUrl = `https://www.paynow.co.zw/interface/initiate?merchant_id=${merchant_id}&merchant_key=${merchant_key}&reference=${reference}&amount=${amount}&currency=${currencyCode}&phone=${phone}&email=info@gatekeeperai.co.zw&description=Gatekeeper%20AI%20Subscription&return_url=https://gatekeeperai.co.zw/payment_success.html&cancel_url=https://gatekeeperai.co.zw/payment_cancel.html`;
     
-    // Open Paynow in new window
-    window.open(paynowUrl, '_blank');
-    
-    // Also show alert for testing
-    alert(`🔒 Paynow Redirect\n\nAmount: ${amount} ${currencyCode}\nRole: ${roleData.name}\n\n📱 You will be redirected to Paynow.\n\n(Test Mode: Select "Faked Success")`);
+    window.location.href = paynowUrl;
 }
 
 updateDisplay();
 </script>
 </body>
-    </html>
+                                                    </html>
