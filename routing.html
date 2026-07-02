@@ -5,147 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Routing Center - Gatekeeper AI</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            padding: 20px;
-            padding-bottom: 80px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .header h1 {
-            color: #FFB300;
-            font-size: 26px;
-        }
-        .header p {
-            color: #888;
-            font-size: 14px;
-        }
-
-        /* Cards */
-        .card {
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 14px;
-            border: 1px solid #2a2a2a;
-        }
-        .card h3 {
-            color: #FFB300;
-            font-size: 16px;
-            margin-bottom: 6px;
-        }
-        .card p {
-            color: #aaa;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .card .badge {
-            display: inline-block;
-            background: #006400;
-            color: #fff;
-            font-size: 10px;
-            padding: 2px 10px;
-            border-radius: 10px;
-            margin-top: 6px;
-        }
-
-        /* Buttons */
-        .btn {
-            background: #FFB300;
-            color: #000;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 8px;
-        }
-        .btn-danger {
-            background: #e94560;
-            color: #fff;
-        }
-        .btn-secondary {
-            background: #2a2a2a;
-            color: #fff;
-        }
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-
-        /* Inputs */
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #0a0a0a;
-            color: #fff;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        .flex {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* Log */
-        .log-item {
-            background: #0a0a0a;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 4px solid #FFB300;
-            font-size: 13px;
-            color: #ccc;
-        }
-        .log-item .time {
-            color: #666;
-            font-size: 11px;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #1a1a2e;
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #2a2a2a;
-        }
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            border-radius: 8px;
-            color: #888;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .nav-item.active {
-            background: #FFB30020;
-            color: #FFB300;
-        }
-        .empty {
-            text-align: center;
-            color: #666;
-            padding: 30px 10px;
-            font-size: 14px;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;padding:20px;padding-bottom:80px}
+        .header{text-align:center;margin-bottom:25px}
+        .header h1{color:#FFB300;font-size:26px}
+        .header p{color:#888;font-size:14px}
+        .card{background:#1a1a2e;border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid #2a2a2a}
+        .card h3{color:#FFB300;font-size:16px;margin-bottom:6px}
+        .card p{color:#aaa;font-size:13px;line-height:1.5}
+        .btn{background:#FFB300;color:#000;border:none;padding:10px 18px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;margin-top:8px}
+        .btn-danger{background:#e94560;color:#fff}
+        .btn-secondary{background:#2a2a2a;color:#fff}
+        .btn-sm{padding:6px 14px;font-size:12px}
+        input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px}
+        .flex{display:flex;gap:10px;flex-wrap:wrap}
+        .log-item{background:#0a0a0a;padding:12px;border-radius:8px;margin-bottom:8px;border-left:4px solid #FFB300;font-size:13px;color:#ccc}
+        .log-item .time{color:#666;font-size:11px}
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a;overflow-x:auto;gap:2px}
+        .nav-item{flex:0 0 auto;text-align:center;padding:6px 10px;border-radius:8px;color:#888;font-size:11px;cursor:pointer;white-space:nowrap}
+        .nav-item.active{background:#FFB30020;color:#FFB300}
+        .empty{text-align:center;color:#666;padding:30px 10px;font-size:14px}
+        .contact-btn{background:#00d4ff;color:#000;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:bold;margin-top:5px}
+        .contact-btn:hover{background:#00bbee}
+        .input-group{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+        .input-group input{flex:1;min-width:120px}
     </style>
 </head>
 <body>
@@ -159,7 +42,12 @@
     <div class="card">
         <h3>➕ Add Department</h3>
         <input type="text" id="deptName" placeholder="Department name (e.g. Water, Welfare)">
-        <input type="text" id="deptContact" placeholder="Contact name or number">
+
+        <div class="input-group">
+            <input type="text" id="deptContact" placeholder="Contact name or number">
+            <button class="contact-btn" onclick="openContactPicker()">📇 Pick from Contacts</button>
+        </div>
+
         <input type="text" id="deptKeywords" placeholder="Keywords (comma separated: borehole, water, broken)">
         <button class="btn" onclick="addDepartment()">Add Department</button>
     </div>
@@ -262,27 +150,57 @@
             }
         }
 
-        // Sample log entry (for demo)
-        function addSampleLog() {
-            const sample = {
-                department: 'Water Department',
-                message: 'Borehole broken in Ward 4. Forwarded to Cllr Moyo.',
-                time: new Date().toLocaleString()
-            };
-            logs.push(sample);
-            localStorage.setItem('routing_logs', JSON.stringify(logs));
-            renderLogs();
+        // ========== CONTACT PICKER ==========
+        function openContactPicker() {
+            // Check if the browser supports the Contacts API
+            if ('contacts' in navigator && 'select' in navigator.contacts) {
+                navigator.contacts.select(['name', 'tel'], { multiple: false })
+                    .then(contacts => {
+                        if (contacts.length > 0) {
+                            const contact = contacts[0];
+                            const name = contact.name && contact.name.length > 0 ? contact.name[0] : '';
+                            const phone = contact.tel && contact.tel.length > 0 ? contact.tel[0] : '';
+                            document.getElementById('deptContact').value = name + ' - ' + phone;
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Contact picker error:', err);
+                        alert('❌ Could not access contacts. Please allow permission or enter manually.');
+                    });
+            } else {
+                // Fallback: Manual entry prompt
+                const name = prompt('Enter contact name:');
+                if (name) {
+                    const phone = prompt('Enter phone number for ' + name + ':');
+                    if (phone) {
+                        document.getElementById('deptContact').value = name + ' - ' + phone;
+                    }
+                }
+            }
         }
 
-        // Load on page open
+        // ========== SAMPLE LOG ==========
+        function addSampleLog() {
+            if (logs.length === 0) {
+                const sample = {
+                    department: 'Water Department',
+                    message: 'Borehole broken in Ward 4. Forwarded to Cllr Moyo.',
+                    time: new Date().toLocaleString()
+                };
+                logs.push(sample);
+                localStorage.setItem('routing_logs', JSON.stringify(logs));
+                renderLogs();
+            }
+        }
+
+        // Initialize
         renderDepartments();
         renderLogs();
+        addSampleLog();
 
-        // Add a sample log if empty (for demo purposes)
-        if (logs.length === 0) {
-            addSampleLog();
-        }
+        // Check if Contacts API is supported
+        console.log('Contacts API supported:', 'contacts' in navigator);
     </script>
 
 </body>
-  </html>
+    </html>
