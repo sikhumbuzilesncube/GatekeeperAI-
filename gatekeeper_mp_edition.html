@@ -76,9 +76,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .result-area.urgent{background:#e94560;display:block}
 .result-area.important{background:#f5a623;display:block;color:#000}
 .result-area.normal{background:#4a4e69;display:block}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:10px;border-top:1px solid #2a2a2a}
-.nav-item{flex:1;text-align:center;padding:8px;border-radius:8px;color:#888;font-size:12px;cursor:pointer}
+
+/* ===== FIXED BOTTOM NAV ===== */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:4px 4px;border-top:1px solid #2a2a2a;overflow-x:auto;gap:2px;flex-wrap:nowrap}
+.nav-item{flex:0 0 auto;text-align:center;padding:4px 6px;border-radius:6px;color:#888;font-size:10px;cursor:pointer;white-space:nowrap}
 .nav-item.active{background:#FFB30020;color:#FFB300}
+@media(max-width:480px){.nav-item{font-size:9px;padding:3px 5px}}
+
 .footer-links{margin-top:20px;padding:16px;text-align:center;border-top:1px solid #2a2a2a}
 .footer-links a{color:#FFB300;text-decoration:none;font-size:13px;margin:0 8px;cursor:pointer}
 .footer-links p{color:#666;font-size:11px;margin-top:6px}
@@ -218,6 +222,7 @@ Days remaining: <strong id="daysLeft">14</strong>
 </div>
 </div>
 
+<!-- ===== BOTTOM NAV WITH ROUTING ===== -->
 <div class="bottom-nav">
 <div class="nav-item" onclick="window.location.href='gatekeeper_mp_edition.html'">Inbox</div>
 <div class="nav-item" onclick="window.location.href='meetings.html'">Meetings</div>
@@ -226,7 +231,7 @@ Days remaining: <strong id="daysLeft">14</strong>
 <div class="nav-item" onclick="window.location.href='weekly_report.html'">Weekly</div>
 <div class="nav-item" onclick="window.location.href='search.html'">🔍</div>
 <div class="nav-item" onclick="window.location.href='templates.html'">📋</div>
-<div class="nav-item" onclick="window.location.href='routing.html'">📡 Routing</div>
+<div class="nav-item" onclick="window.location.href='routing.html'">📡</div>
 </div>
 
 <script>
@@ -557,4 +562,4 @@ loadMessages();
 updateTrial();
 </script>
 </body>
-        </html>
+    </html>
