@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ContiPay Test - Gatekeeper AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{font-family:sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+        .box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:450px;width:100%;text-align:center}
+        .box h1{color:#FFB300;font-size:24px}
+        .box p{color:#888;font-size:14px;margin:10px 0;line-height:1.6}
+        .box .btn{width:100%;padding:14px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
+        .box .btn:hover{background:#e6a300}
+        .box .btn-secondary{background:#333;color:#fff}
+        .box .btn-secondary:hover{background:#444}
+        .box .info{background:#1a2a1a;padding:15px;border-radius:8px;margin:15px 0;text-align:left;font-size:13px;color:#aaa}
+        .box .info strong{color:#FFB300}
+        .box .info .highlight{color:#00ff88}
+        .status-bar{background:#1a2a1a;padding:10px;border-radius:8px;margin-bottom:15px;font-size:13px}
+        .status-bar .pending{color:#FFB300}
+        .status-bar .live{color:#00ff88}
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>🔒 Gatekeeper AI</h1>
+    <p>ContiPay Test Integration</p>
+
+    <div class="status-bar">
+        📋 Status: <span class="pending">⏳ PENDING (Awaiting ContiPay Approval)</span>
+    </div>
+
+    <div class="info">
+        <strong>📋 Test Instructions:</strong><br>
+        1. Click <strong>"Test Payment"</strong> below<br>
+        2. Enter test phone number: <span class="highlight">0771111111</span><br>
+        3. Complete the test transaction<br>
+        4. Check ContiPay dashboard for results
+    </div>
+
+    <button class="btn" onclick="testPayment()">💳 Test Payment ($1)</button>
+    <button class="btn btn-secondary" onclick="testZWG()" style="margin-top:5px;">💳 Test Payment (ZWG 35)</button>
+
+    <p style="font-size:11px;color:#444;margin-top:15px;">
+        🔒 Test Mode: No real money is moved.<br>
+        Use 0771111111 for test phone number.
+    </p>
+
+    <a href="settings.html" style="color:#666;font-size:12px;text-decoration:none;display:block;margin-top:10px;">← Back to Settings</a>
+</div>
+
+<script>
+// ContiPay Credentials
+const MERCHANT_ID = '952';
+const API_KEY = 'VjIzb2lIK1o0VjZyRXdPUXZHNhoyz';
+const API_SECRET = ''; // Add your API Secret here (click eye icon in ContiPay)
+
+function testPayment() {
+    const amount = '1.00';
+    const currency = 'USD';
+    const phone = '0771111111';
+    const reference = 'TEST-USD-' + Date.now();
+    
+    // Show test details
+    alert(`🔒 ContiPay Test Payment\n\nMerchant ID: ${MERCHANT_ID}\nAmount: $${amount}\nCurrency: ${currency}\nPhone: ${phone}\nReference: ${reference}\n\n📋 This is a test transaction.\nNo real money will be moved.\n\n📌 After test, check ContiPay dashboard.`);
+    
+    // Log for debugging
+    console.log('ContiPay Test Initiated:', {
+        merchant_id: MERCHANT_ID,
+        amount: amount,
+        currency: currency,
+        phone: phone,
+        reference: reference
+    });
+}
+
+function testZWG() {
+    const amount = '35.00';
+    const currency = 'ZWG';
+    const phone = '0771111111';
+    const reference = 'TEST-ZWG-' + Date.now();
+    
+    alert(`🔒 ContiPay Test Payment\n\nMerchant ID: ${MERCHANT_ID}\nAmount: ZWG ${amount}\nCurrency: ${currency}\nPhone: ${phone}\nReference: ${reference}\n\n📋 This is a test transaction.\nNo real money will be moved.\n\n📌 After test, check ContiPay dashboard.`);
+    
+    console.log('ContiPay Test Initiated:', {
+        merchant_id: MERCHANT_ID,
+        amount: amount,
+        currency: currency,
+        phone: phone,
+        reference: reference
+    });
+}
+</script>
+</body>
+      </html>
