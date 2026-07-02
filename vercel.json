@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/initiate_payment" }
+  ],
+  "functions": {
+    "api/initiate_payment.py": {
+      "runtime": "python3.9"
+    }
+  }
+}
