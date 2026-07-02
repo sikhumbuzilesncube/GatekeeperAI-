@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Subscribe - Gatekeeper AI</title>
@@ -19,6 +19,7 @@
         .currency-selector button.active{background:#FFB300;color:#000;border-color:#FFB300}
         .back-link{display:block;margin-top:15px;color:#666;font-size:12px;text-decoration:none}
         .back-link:hover{color:#FFB300}
+        .test-note{font-size:10px;color:#444;margin-top:10px}
     </style>
 </head>
 <body>
@@ -46,6 +47,7 @@
     <p style="font-size:11px;color:#444;margin-top:15px;">Secure payment via Paynow. 14-day free trial included.</p>
 
     <a href="settings.html" class="back-link">← Back to Settings</a>
+    <p class="test-note">🔒 Test Mode: Use "Faked Success" for testing</p>
 </div>
 
 <script>
@@ -77,57 +79,37 @@ function updateDisplay() {
     document.getElementById('roleDisplay').textContent = roleData.name;
 }
 
-async function payWith(method) {
+function payWith(method) {
     const roleData = roles[role];
     const amount = currentCurrency === 'USD' ? roleData.price_usd : roleData.price_zwg;
     const currencyCode = currentCurrency === 'USD' ? 'USD' : 'ZWG';
     
-    // Get user phone from localStorage
+    // Get user phone
     const userData = localStorage.getItem('gatekeeper_user');
     let phone = '0777803517';
-    let userId = 'test_user';
     if (userData) {
         try {
             const user = JSON.parse(userData);
             phone = user.phone || '0777803517';
-            userId = user.phone || 'test_user';
         } catch(e) {}
     }
     
-    // Disable button to prevent double click
-    const btns = document.querySelectorAll('.btn');
-    btns.forEach(b => b.disabled = true);
+    // Paynow credentials
+    const merchant_id = currencyCode === 'USD' ? '25438' : '25439';
+    const merchant_key = currencyCode === 'USD' ? 'e845ff38-8afa-4898-bc84-10623af0a2a2' : '6d2661a1-2d18-4b83-8ae5-37dd0860b461';
+    const reference = 'GK-' + Date.now();
     
-    try {
-        const response = await fetch('/api/initiate_payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_id: userId,
-                user_phone: phone,
-                amount: amount,
-                role: roleData.name,
-                currency: currencyCode,
-                method: method
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Redirect to Paynow payment page
-            window.location.href = result.browser_url;
-        } else {
-            alert('❌ Payment failed: ' + result.error);
-            btns.forEach(b => b.disabled = false);
-        }
-    } catch (error) {
-        alert('❌ Error: ' + error.message);
-        btns.forEach(b => b.disabled = false);
-    }
+    // Build Paynow URL with all parameters
+    const paynowUrl = `https://www.paynow.co.zw/interface/initiate?merchant_id=${merchant_id}&merchant_key=${merchant_key}&reference=${reference}&amount=${amount}&currency=${currencyCode}&phone=${phone}&email=info@gatekeeperai.co.zw&description=Gatekeeper%20AI%20Subscription&return_url=https://gatekeeperai.co.zw/payment_success.html&cancel_url=https://gatekeeperai.co.zw/payment_cancel.html`;
+    
+    // Open Paynow in new window
+    window.open(paynowUrl, '_blank');
+    
+    // Also show alert for testing
+    alert(`🔒 Paynow Redirect\n\nAmount: ${amount} ${currencyCode}\nRole: ${roleData.name}\n\n📱 You will be redirected to Paynow.\n\n(Test Mode: Select "Faked Success")`);
 }
 
 updateDisplay();
 </script>
 </body>
-</html>
+    </html>
