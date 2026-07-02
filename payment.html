@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html>
 <head>
     <title>Subscribe - Gatekeeper AI</title>
@@ -77,13 +77,54 @@ function updateDisplay() {
     document.getElementById('roleDisplay').textContent = roleData.name;
 }
 
-function payWith(method) {
+async function payWith(method) {
     const roleData = roles[role];
     const amount = currentCurrency === 'USD' ? roleData.price_usd : roleData.price_zwg;
     const currencyCode = currentCurrency === 'USD' ? 'USD' : 'ZWG';
-    const phone = localStorage.getItem('gatekeeper_phone') || '0777803517';
     
-    alert(`🔒 Payment Initiated\n\nMethod: ${method}\nAmount: ${amount} ${currencyCode}\nRole: ${roleData.name}\n\n📱 You will receive a payment prompt on your phone.\n\n(Coming soon: Full Paynow integration)`);
+    // Get user phone from localStorage
+    const userData = localStorage.getItem('gatekeeper_user');
+    let phone = '0777803517';
+    let userId = 'test_user';
+    if (userData) {
+        try {
+            const user = JSON.parse(userData);
+            phone = user.phone || '0777803517';
+            userId = user.phone || 'test_user';
+        } catch(e) {}
+    }
+    
+    // Disable button to prevent double click
+    const btns = document.querySelectorAll('.btn');
+    btns.forEach(b => b.disabled = true);
+    
+    try {
+        const response = await fetch('/api/initiate_payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                user_phone: phone,
+                amount: amount,
+                role: roleData.name,
+                currency: currencyCode,
+                method: method
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Redirect to Paynow payment page
+            window.location.href = result.browser_url;
+        } else {
+            alert('❌ Payment failed: ' + result.error);
+            btns.forEach(b => b.disabled = false);
+        }
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+        btns.forEach(b => b.disabled = false);
+    }
 }
 
 updateDisplay();
