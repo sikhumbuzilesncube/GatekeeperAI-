@@ -76,13 +76,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .result-area.urgent{background:#e94560;display:block}
 .result-area.important{background:#f5a623;display:block;color:#000}
 .result-area.normal{background:#4a4e69;display:block}
-
-/* ===== FIXED BOTTOM NAV ===== */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;display:flex;padding:4px 4px;border-top:1px solid #2a2a2a;overflow-x:auto;gap:2px;flex-wrap:nowrap}
 .nav-item{flex:0 0 auto;text-align:center;padding:4px 6px;border-radius:6px;color:#888;font-size:10px;cursor:pointer;white-space:nowrap}
 .nav-item.active{background:#FFB30020;color:#FFB300}
 @media(max-width:480px){.nav-item{font-size:9px;padding:3px 5px}}
-
 .footer-links{margin-top:20px;padding:16px;text-align:center;border-top:1px solid #2a2a2a}
 .footer-links a{color:#FFB300;text-decoration:none;font-size:13px;margin:0 8px;cursor:pointer}
 .footer-links p{color:#666;font-size:11px;margin-top:6px}
@@ -251,6 +248,12 @@ let messages = [];
 let currentFilter = 'all';
 let currentCurrency = 'USD';
 const RATE = 35;
+
+// ========== API CONFIGURATION ==========
+// Use cloud API (Vercel) for production
+const API_URL = 'https://gatekeeperai.co.zw/api/classify';
+// Fallback to local server if cloud fails
+const LOCAL_API_URL = 'http://127.0.0.1:5000/classify';
 
 // ========== ROLE NAMES ==========
 const ROLE_NAMES = {
@@ -440,26 +443,56 @@ function filterMessages(filter) {
     loadMessages();
 }
 
+// ========== SEND TEST WITH CLOUD API ==========
 async function sendTest(subject, body, expected, source) {
     try {
-        const res = await fetch('http://127.0.0.1:5000/classify', {
+        // Try cloud API first
+        const res = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ subject: subject, body: body })
         });
+        
+        if (!res.ok) throw new Error('Cloud API failed');
         const data = await res.json();
         const label = data.label;
         const cls = label === 'URGENT' ? 'urgent' : (label === 'IMPORTANT' ? 'important' : 'normal');
         const icon = label === 'URGENT' ? '🔴' : (label === 'IMPORTANT' ? '🟠' : '⚪');
         document.getElementById('resultArea').className = 'result-area ' + cls;
         document.getElementById('resultArea').innerHTML = icon + ' ' + label;
+        
         const recipient = source === 'whatsapp' ? '0712345678' : (source === 'email' ? 'test@gmail.com' : '0731234567');
         messages.unshift({ sender: "Test - " + source, subject: subject, summary: body, category: label, time: "Just now", source: source, recipient: recipient });
         loadMessages();
         setTimeout(() => { document.getElementById('resultArea').style.display = 'none'; }, 2500);
-    } catch (e) {
-        document.getElementById('resultArea').className = 'result-area normal';
-        document.getElementById('resultArea').innerHTML = 'Error';
+        
+    } catch (cloudError) {
+        console.log('Cloud API failed, trying local fallback:', cloudError);
+        
+        // Try local fallback
+        try {
+            const res = await fetch(LOCAL_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject: subject, body: body })
+            });
+            const data = await res.json();
+            const label = data.label;
+            const cls = label === 'URGENT' ? 'urgent' : (label === 'IMPORTANT' ? 'important' : 'normal');
+            const icon = label === 'URGENT' ? '🔴' : (label === 'IMPORTANT' ? '🟠' : '⚪');
+            document.getElementById('resultArea').className = 'result-area ' + cls;
+            document.getElementById('resultArea').innerHTML = icon + ' ' + label + ' (Local)';
+            
+            const recipient = source === 'whatsapp' ? '0712345678' : (source === 'email' ? 'test@gmail.com' : '0731234567');
+            messages.unshift({ sender: "Test - " + source, subject: subject, summary: body, category: label, time: "Just now", source: source, recipient: recipient });
+            loadMessages();
+            setTimeout(() => { document.getElementById('resultArea').style.display = 'none'; }, 2500);
+            
+        } catch (localError) {
+            console.log('Local fallback also failed:', localError);
+            document.getElementById('resultArea').className = 'result-area normal';
+            document.getElementById('resultArea').innerHTML = '⚠️ API Error. Please check connection.';
+        }
     }
 }
 
@@ -562,4 +595,4 @@ loadMessages();
 updateTrial();
 </script>
 </body>
-    </html>
+</html>
