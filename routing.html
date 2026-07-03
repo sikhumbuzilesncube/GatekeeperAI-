@@ -11,13 +11,15 @@
         .header h1{color:#FFB300;font-size:26px}
         .header p{color:#888;font-size:14px}
         .card{background:#1a1a2e;border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid #2a2a2a}
-        .card h3{color:#FFB300;font-size:16px;margin-bottom:6px}
+        .card h3{color:#FFB300;font-size:16px;margin-bottom:10px}
         .card p{color:#aaa;font-size:13px;line-height:1.5}
         .btn{background:#FFB300;color:#000;border:none;padding:10px 18px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;margin-top:8px}
         .btn-danger{background:#e94560;color:#fff}
         .btn-danger:hover{background:#cc2244}
         .btn-secondary{background:#2a2a2a;color:#fff}
         .btn-sm{padding:6px 14px;font-size:12px}
+        .btn-add-contact{background:#00d4ff;color:#000;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:bold}
+        .btn-add-contact:hover{background:#00bbee}
         input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px}
         .flex{display:flex;gap:10px;flex-wrap:wrap}
         .log-item{background:#0a0a0a;padding:12px;border-radius:8px;margin-bottom:8px;border-left:4px solid #FFB300;font-size:13px;color:#ccc}
@@ -30,11 +32,15 @@
         .contact-btn:hover{background:#00bbee}
         .input-group{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
         .input-group input{flex:1;min-width:120px}
-        .dept-item{background:#0a0a0a;padding:12px;border-radius:8px;margin-bottom:8px;border-left:4px solid #FFB300;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-        .dept-item .info{flex:1}
+        .dept-item{background:#0a0a0a;padding:12px;border-radius:8px;margin-bottom:8px;border-left:4px solid #FFB300}
         .dept-item .info strong{color:#fff}
         .dept-item .info .detail{color:#888;font-size:12px}
-        .dept-item .actions{display:flex;gap:8px}
+        .dept-item .contacts-list{margin-top:8px;padding-left:10px}
+        .dept-item .contacts-list .contact-item{color:#aaa;font-size:12px;padding:3px 0;display:flex;justify-content:space-between;align-items:center}
+        .dept-item .contacts-list .contact-item .remove-contact{color:#e94560;cursor:pointer;font-size:11px}
+        .dept-item .actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+        .contact-input-group{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+        .contact-input-group input{flex:1;min-width:100px;margin-bottom:0}
     </style>
 </head>
 <body>
@@ -48,14 +54,18 @@
     <div class="card">
         <h3>➕ Add Department</h3>
         <input type="text" id="deptName" placeholder="Department name (e.g. Water, Welfare)">
+        <input type="text" id="deptKeywords" placeholder="Keywords (comma separated: borehole, water, broken)">
 
-        <div class="input-group">
-            <input type="text" id="deptContact" placeholder="Contact name or number">
-            <button class="contact-btn" onclick="openContactPicker()">📇 Pick from Contacts</button>
+        <div style="margin-top:5px;font-size:13px;color:#888;">Contacts for this department:</div>
+        <div id="contactListPreview" style="color:#aaa;font-size:12px;margin-bottom:5px;">No contacts added yet.</div>
+
+        <div class="contact-input-group">
+            <input type="text" id="tempContact" placeholder="Contact name or number">
+            <button class="btn-add-contact" onclick="addTempContact()">➕ Add</button>
+            <button class="contact-btn" onclick="pickContact()">📇 Pick</button>
         </div>
 
-        <input type="text" id="deptKeywords" placeholder="Keywords (comma separated: borehole, water, broken)">
-        <button class="btn" onclick="addDepartment()">Add Department</button>
+        <button class="btn" onclick="addDepartment()">💾 Save Department</button>
     </div>
 
     <!-- My Departments -->
@@ -84,9 +94,70 @@
     </div>
 
     <script>
-        // Load saved data
+        // Temporary contacts for the new department
+        let tempContacts = [];
         let departments = JSON.parse(localStorage.getItem('routing_departments') || '[]');
         let logs = JSON.parse(localStorage.getItem('routing_logs') || '[]');
+
+        function renderTempContacts() {
+            const preview = document.getElementById('contactListPreview');
+            if (tempContacts.length === 0) {
+                preview.textContent = 'No contacts added yet.';
+                return;
+            }
+            let html = '';
+            tempContacts.forEach((c, i) => {
+                html += `<span style="background:#2a2a2a;padding:2px 8px;border-radius:4px;margin-right:5px;display:inline-block;margin-bottom:3px;">
+                    ${c} <span style="color:#e94560;cursor:pointer;" onclick="removeTempContact(${i})">✕</span>
+                </span>`;
+            });
+            preview.innerHTML = html;
+        }
+
+        function addTempContact() {
+            const input = document.getElementById('tempContact');
+            const value = input.value.trim();
+            if (!value) {
+                alert('Please enter a contact name or number.');
+                return;
+            }
+            tempContacts.push(value);
+            input.value = '';
+            renderTempContacts();
+        }
+
+        function removeTempContact(index) {
+            tempContacts.splice(index, 1);
+            renderTempContacts();
+        }
+
+        function pickContact() {
+            if ('contacts' in navigator && 'select' in navigator.contacts) {
+                navigator.contacts.select(['name', 'tel'], { multiple: false })
+                    .then(contacts => {
+                        if (contacts.length > 0) {
+                            const contact = contacts[0];
+                            const name = contact.name && contact.name.length > 0 ? contact.name[0] : '';
+                            const phone = contact.tel && contact.tel.length > 0 ? contact.tel[0] : '';
+                            const full = name + ' - ' + phone;
+                            tempContacts.push(full);
+                            renderTempContacts();
+                        }
+                    })
+                    .catch(err => {
+                        alert('❌ Could not access contacts. Please allow permission or enter manually.');
+                    });
+            } else {
+                const name = prompt('Enter contact name:');
+                if (name) {
+                    const phone = prompt('Enter phone number for ' + name + ':');
+                    if (phone) {
+                        tempContacts.push(name + ' - ' + phone);
+                        renderTempContacts();
+                    }
+                }
+            }
+        }
 
         function renderDepartments() {
             const container = document.getElementById('departmentList');
@@ -96,12 +167,27 @@
             }
             let html = '';
             departments.forEach((dept, index) => {
+                let contactsHtml = '';
+                if (dept.contacts && dept.contacts.length > 0) {
+                    dept.contacts.forEach((c, ci) => {
+                        contactsHtml += `<div class="contact-item">
+                            <span>📞 ${c}</span>
+                            <span class="remove-contact" onclick="removeContact(${index}, ${ci})">✕ Remove</span>
+                        </div>`;
+                    });
+                } else {
+                    contactsHtml = `<div style="color:#666;font-size:11px;">No contacts</div>`;
+                }
+
                 html += `
                     <div class="dept-item">
                         <div class="info">
                             <strong>${dept.name}</strong>
-                            <div class="detail">📞 ${dept.contact}</div>
                             <div class="detail">🔑 ${dept.keywords}</div>
+                            <div class="contacts-list">
+                                <div style="color:#888;font-size:11px;margin-top:4px;">📞 Contacts:</div>
+                                ${contactsHtml}
+                            </div>
                         </div>
                         <div class="actions">
                             <button class="btn btn-danger btn-sm" onclick="removeDepartment(${index})">🗑️ Remove</button>
@@ -110,6 +196,12 @@
                 `;
             });
             container.innerHTML = html;
+        }
+
+        function removeContact(deptIndex, contactIndex) {
+            departments[deptIndex].contacts.splice(contactIndex, 1);
+            localStorage.setItem('routing_departments', JSON.stringify(departments));
+            renderDepartments();
         }
 
         function renderLogs() {
@@ -133,23 +225,35 @@
 
         function addDepartment() {
             const name = document.getElementById('deptName').value.trim();
-            const contact = document.getElementById('deptContact').value.trim();
             const keywords = document.getElementById('deptKeywords').value.trim();
 
-            if (!name || !contact || !keywords) {
-                alert('Please fill in all fields.');
+            if (!name || !keywords) {
+                alert('Please fill in department name and keywords.');
                 return;
             }
 
-            departments.push({ name, contact, keywords });
+            if (tempContacts.length === 0) {
+                alert('Please add at least one contact.');
+                return;
+            }
+
+            const newDept = {
+                name: name,
+                keywords: keywords,
+                contacts: [...tempContacts]
+            };
+
+            departments.push(newDept);
             localStorage.setItem('routing_departments', JSON.stringify(departments));
 
+            // Clear form
             document.getElementById('deptName').value = '';
-            document.getElementById('deptContact').value = '';
             document.getElementById('deptKeywords').value = '';
+            tempContacts = [];
+            renderTempContacts();
 
             renderDepartments();
-            alert('✅ Department added!');
+            alert('✅ Department added with ' + newDept.contacts.length + ' contact(s)!');
         }
 
         function removeDepartment(index) {
@@ -157,33 +261,6 @@
                 departments.splice(index, 1);
                 localStorage.setItem('routing_departments', JSON.stringify(departments));
                 renderDepartments();
-            }
-        }
-
-        // ========== CONTACT PICKER ==========
-        function openContactPicker() {
-            if ('contacts' in navigator && 'select' in navigator.contacts) {
-                navigator.contacts.select(['name', 'tel'], { multiple: false })
-                    .then(contacts => {
-                        if (contacts.length > 0) {
-                            const contact = contacts[0];
-                            const name = contact.name && contact.name.length > 0 ? contact.name[0] : '';
-                            const phone = contact.tel && contact.tel.length > 0 ? contact.tel[0] : '';
-                            document.getElementById('deptContact').value = name + ' - ' + phone;
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Contact picker error:', err);
-                        alert('❌ Could not access contacts. Please allow permission or enter manually.');
-                    });
-            } else {
-                const name = prompt('Enter contact name:');
-                if (name) {
-                    const phone = prompt('Enter phone number for ' + name + ':');
-                    if (phone) {
-                        document.getElementById('deptContact').value = name + ' - ' + phone;
-                    }
-                }
             }
         }
 
@@ -204,8 +281,9 @@
         // Initialize
         renderDepartments();
         renderLogs();
+        renderTempContacts();
         addSampleLog();
     </script>
 
 </body>
-</html>
+    </html>
