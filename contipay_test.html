@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body{font-family:sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-        .box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:450px;width:100%;text-align:center}
+        .box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:500px;width:100%;text-align:center}
         .box h1{color:#FFB300;font-size:24px}
         .box p{color:#888;font-size:14px;margin:10px 0;line-height:1.6}
         .box .btn{width:100%;padding:14px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
         .box .btn:hover{background:#e6a300}
-        .box .btn-secondary{background:#333;color:#fff}
-        .box .btn-secondary:hover{background:#444}
         .box .info{background:#1a2a1a;padding:15px;border-radius:8px;margin:15px 0;text-align:left;font-size:13px;color:#aaa}
         .box .info strong{color:#FFB300}
         .box .info .highlight{color:#00ff88}
@@ -19,7 +17,7 @@
         .box .status-bar .pending{color:#FFB300}
         .box .status-bar .live{color:#00ff88}
         .box .status-bar .error{color:#e94560}
-        .box .result{background:#0a0a0a;padding:12px;border-radius:8px;margin-top:12px;font-size:12px;color:#aaa;text-align:left;display:none}
+        .box .result{background:#0a0a0a;padding:12px;border-radius:8px;margin-top:12px;font-size:12px;color:#aaa;text-align:left;display:none;max-height:300px;overflow:auto}
         .box .result .success{color:#00ff88}
         .box .result .error{color:#e94560}
         .box input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
@@ -29,13 +27,11 @@
         .debug-info .success-text{color:#00ff88}
         .debug-info .error-text{color:#e94560}
         .endpoint-select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
-        .endpoint-select:focus{outline:1px solid #FFB300;border-color:#FFB300}
         .loading{display:inline-block;width:14px;height:14px;border:2px solid #FFB300;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
         @keyframes spin{to{transform:rotate(360deg)}}
         .test-mode{border:1px solid #FFB30033;padding:8px;border-radius:5px;margin-top:12px}
         .btn:disabled{opacity:0.6;cursor:not-allowed}
-        .troubleshoot{background:#1a0a0a;padding:10px;border-radius:5px;margin-top:10px;font-size:11px;color:#888;border:1px solid #e9456033}
-        .troubleshoot strong{color:#e94560}
+        .provider-select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
     </style>
 </head>
 <body>
@@ -51,20 +47,19 @@
         <strong>📋 Test Instructions:</strong><br>
         1. Enter amount (e.g. 1.00)<br>
         2. Enter phone number: <span class="highlight">0771111111</span><br>
-        3. Click <strong>"Initiate Payment"</strong><br>
-        4. Check ContiPay dashboard for results
+        3. Select payment provider<br>
+        4. Click <strong>"Initiate Payment"</strong><br>
+        5. Check ContiPay dashboard for results
     </div>
 
     <input type="number" id="amount" value="1.00" step="0.01" placeholder="Amount (USD)">
     <input type="tel" id="phone" value="0771111111" placeholder="Phone number">
-
-    <select class="endpoint-select" id="endpointSelect">
-        <option value="/api/contipay.php?endpoint=initialize">Proxy - Initialize</option>
-        <option value="/api/contipay.php?endpoint=payment/initiate" selected>Proxy - Payment Initiate</option>
-        <option value="/api/contipay.php?endpoint=v1/payments/initiate">Proxy - v1 Payments</option>
-        <option value="/api/contipay.php?endpoint=transaction/initiate">Proxy - Transaction Initiate</option>
-        <option value="https://api-uat.contipay.net/initialize">Direct - Initialize</option>
-        <option value="https://api-uat.contipay.net/payment/initiate">Direct - Payment Initiate</option>
+    
+    <select class="provider-select" id="providerSelect">
+        <option value="ecocash">EcoCash</option>
+        <option value="innbucks">Innbucks</option>
+        <option value="onemoney">OneMoney</option>
+        <option value="zipit">Zipit</option>
     </select>
 
     <button class="btn" id="payButton" onclick="initiatePayment()">💳 Initiate Payment</button>
@@ -72,14 +67,6 @@
     <div id="result" class="result"></div>
     
     <div id="debugInfo" class="debug-info"></div>
-
-    <div id="troubleshoot" class="troubleshoot" style="display:none;">
-        <strong>🔧 Troubleshooting Tips:</strong><br>
-        1. Try different endpoint options from the dropdown<br>
-        2. Check if your merchant account is active<br>
-        3. Verify API credentials in the backend<br>
-        4. Contact ContiPay support with error details
-    </div>
 
     <div class="test-mode">
         <p style="font-size:11px;color:#666;margin:0;">
@@ -92,143 +79,97 @@
 </div>
 
 <script>
-// ✅ CORRECTED ContiPay Credentials
+// ContiPay Credentials
 const MERCHANT_ID = '952';
 const API_KEY = 'VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09';
 const API_SECRET = '764cc5e8-3d34-45ea-b9f0-66df7fff19fe';
 
-// Track if we're currently processing
 let isProcessing = false;
 
 function initiatePayment() {
-    // Prevent multiple clicks
     if (isProcessing) return;
     
     const amount = document.getElementById('amount').value || '1.00';
     const phone = document.getElementById('phone').value || '0771111111';
+    const provider = document.getElementById('providerSelect').value;
     const reference = 'TEST-' + Date.now();
-    const endpoint = document.getElementById('endpointSelect').value;
     const resultDiv = document.getElementById('result');
     const debugDiv = document.getElementById('debugInfo');
     const statusBar = document.getElementById('statusBar');
     const payButton = document.getElementById('payButton');
-    const troubleshootDiv = document.getElementById('troubleshoot');
     
-    // Reset UI
     isProcessing = true;
     payButton.disabled = true;
     payButton.innerHTML = '<span class="loading"></span> Processing...';
-    troubleshootDiv.style.display = 'none';
     
-    // Show result area
     resultDiv.style.display = 'block';
     resultDiv.innerHTML = '⏳ Initiating payment... Please wait.';
     resultDiv.className = 'result';
     debugDiv.style.display = 'block';
     
-    // Prepare the payload
+    // Build payload according to ContiPay documentation
     const payload = {
-        merchant_id: MERCHANT_ID,
-        amount: amount,
-        currency: 'USD',
         phone: phone,
+        amount: amount,
         reference: reference,
-        description: 'Gatekeeper AI Test Payment',
-        return_url: 'https://gatekeeperai.co.zw/payment_success.html',
-        cancel_url: 'https://gatekeeperai.co.zw/payment_cancel.html',
-        webhook_url: 'https://gatekeeperai.co.zw/api/webhook'
+        provider: provider,
+        // The backend will format this properly
     };
     
-    // If using proxy, add endpoint parameter
-    if (endpoint.includes('/api/')) {
-        const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
-        const apiEndpoint = urlParams.get('endpoint') || 'initialize';
-        payload.endpoint = apiEndpoint;
-        payload.test_mode = true;
-    }
-    
-    // Show debug info
     debugDiv.innerHTML = `
         <strong>🔍 Debug Info:</strong><br>
-        <span class="success-text">✅ Using endpoint: ${endpoint}</span><br>
+        <span class="success-text">✅ Using correct ContiPay format</span><br>
         Merchant ID: ${MERCHANT_ID}<br>
         Amount: $${amount}<br>
         Phone: ${phone}<br>
+        Provider: ${provider}<br>
         Reference: ${reference}<br>
-        <span class="success-text">✅ API Key fixed and correct</span><br>
-        <span style="color:#FFB300;">⏳ Sending request...</span>
+        <span style="color:#FFB300;">⏳ Sending request to proxy...</span>
     `;
     
-    // Determine if we're using the proxy or direct API
-    let headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    };
+    // Use the proxy
+    const endpoint = '/api/contipay.php';
     
-    // If using direct API (not proxy), add authentication
-    if (!endpoint.includes('/api/')) {
-        const authString = API_KEY + ':' + API_SECRET;
-        const authBase64 = btoa(authString);
-        headers['Authorization'] = 'Basic ' + authBase64;
-        debugDiv.innerHTML += `<br>🔑 Using Basic Auth (direct API)`;
-    } else {
-        debugDiv.innerHTML += `<br>🔄 Using backend proxy (no CORS issues)`;
-    }
-    
-    // Make the request
     fetch(endpoint, {
         method: 'POST',
-        headers: headers,
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
         body: JSON.stringify(payload)
     })
     .then(response => {
         debugDiv.innerHTML += `<br>📡 Response Status: ${response.status} ${response.statusText}`;
-        
-        // Check if response is JSON
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json();
-        } else {
-            // If not JSON, return text
-            return response.text().then(text => {
-                throw new Error('Server returned non-JSON: ' + text.substring(0, 100));
-            });
-        }
+        return response.json();
     })
     .then(data => {
         console.log('ContiPay Response:', data);
         debugDiv.innerHTML += `<br>📦 Response Data: ${JSON.stringify(data, null, 2)}`;
         
-        // Check for success in various response formats
+        // Check for success
         const isSuccess = data.status === 'success' || 
-                         data.status === 'pending' || 
-                         data.success === true ||
-                         data.data || 
-                         data.payment_url ||
-                         (data.message && data.message.toLowerCase().includes('success')) ||
-                         (data.responseCode && data.responseCode === '00');
+                         data.status === 'Paid' ||
+                         data.statusCode === 200 ||
+                         data.statusCode === 1 ||
+                         data.transaction ||
+                         data.data;
         
         if (isSuccess) {
-            // Extract payment URL if available
-            const paymentUrl = data.data?.payment_url || data.payment_url || data.redirectUrl || null;
-            
             resultDiv.innerHTML = `
                 <div style="color:#00ff88;font-size:16px;font-weight:bold;">✅ Payment Initiated!</div>
                 <div style="font-size:12px;margin-top:8px;line-height:1.8;">
                     <strong>Reference:</strong> ${reference}<br>
                     <strong>Amount:</strong> $${amount}<br>
                     <strong>Phone:</strong> ${phone}<br>
+                    <strong>Provider:</strong> ${provider}<br>
                     <strong>Status:</strong> ${data.status || data.message || 'pending'}
                 </div>
-                ${paymentUrl ? `
-                    <div style="margin-top:12px;padding:10px;background:#1a2a1a;border-radius:8px;">
-                        <a href="${paymentUrl}" target="_blank" style="color:#FFB300;font-size:14px;font-weight:bold;text-decoration:none;">🔗 Click here to complete payment</a>
+                ${data.transaction ? `
+                    <div style="margin-top:8px;padding:8px;background:#1a2a1a;border-radius:5px;font-size:11px;">
+                        <strong>Transaction Details:</strong><br>
+                        ${JSON.stringify(data.transaction, null, 2)}
                     </div>
-                ` : `
-                    <div style="margin-top:8px;color:#888;font-size:11px;">
-                        ℹ️ No payment URL returned. Check ContiPay dashboard.
-                    </div>
-                `}
+                ` : ''}
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
                     📌 Check ContiPay dashboard for test transaction status.
                 </div>
@@ -239,8 +180,7 @@ function initiatePayment() {
                 📋 Status: <span class="live">✅ Test Initiated - ${reference}</span>
             `;
         } else {
-            // Handle error response
-            const errorMsg = data.message || data.error || data.statusMessage || JSON.stringify(data);
+            const errorMsg = data.message || data.error || JSON.stringify(data);
             
             resultDiv.innerHTML = `
                 <div style="color:#e94560;font-size:16px;font-weight:bold;">❌ Payment Failed</div>
@@ -248,67 +188,39 @@ function initiatePayment() {
                     ${errorMsg}
                 </div>
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
-                    📌 Check debug info below for details.<br>
-                    📌 Try different endpoint from dropdown.
+                    📌 Check debug info for details.<br>
+                    📌 Try different provider from dropdown.
                 </div>
             `;
             resultDiv.className = 'result';
             
             statusBar.innerHTML = `
-                📋 Status: <span class="error">❌ Failed - ${reference}</span>
+                📋 Status: <span class="error">❌ Failed</span>
             `;
-            
-            // Show troubleshooting tips
-            troubleshootDiv.style.display = 'block';
         }
     })
     .catch(error => {
-        // Network or parsing error
         resultDiv.innerHTML = `
             <div style="color:#f5a623;font-size:16px;font-weight:bold;">⚠️ Connection Error</div>
             <div style="font-size:12px;margin-top:8px;color:#888;line-height:1.6;">
-                ${error.message || 'Network error - failed to connect to server'}
-            </div>
-            <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
-                📌 If using direct API, try the proxy option.<br>
-                📌 Make sure you have internet connection.<br>
-                📌 Check if ContiPay API is accessible.
+                ${error.message || 'Network error'}
             </div>
         `;
         resultDiv.className = 'result';
         debugDiv.innerHTML += `<br><span class="error-text">❌ Error: ${error.message}</span>`;
-        console.log('Error:', error);
-        
-        statusBar.innerHTML = `
-            📋 Status: <span class="error">⚠️ Connection Error</span>
-        `;
-        
-        troubleshootDiv.style.display = 'block';
     })
     .finally(() => {
-        // Re-enable button
         isProcessing = false;
         payButton.disabled = false;
         payButton.innerHTML = '💳 Initiate Payment';
     });
 }
 
-// Add keyboard support - Enter key triggers payment
 document.addEventListener('DOMContentLoaded', function() {
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                initiatePayment();
-            }
-        });
-    });
-    
     console.log('🔵 Gatekeeper AI - ContiPay Test Page');
+    console.log('📋 Using correct ContiPay API format');
     console.log('📋 Merchant ID:', MERCHANT_ID);
-    console.log('🔑 API Key:', API_KEY.substring(0, 10) + '...');
-    console.log('💡 Tip: Try different endpoints from the dropdown');
 });
 </script>
 </body>
-        </html>
+    </html>
