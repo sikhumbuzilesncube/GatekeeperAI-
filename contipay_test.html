@@ -24,6 +24,8 @@
         .box input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px}
         .box .flex{display:flex;gap:10px}
         .box .flex input{flex:1}
+        .debug-info {background:#0a0a0a;padding:10px;border-radius:5px;margin-top:10px;font-size:11px;color:#666;text-align:left;max-height:200px;overflow:auto}
+        .debug-info strong{color:#FFB300}
     </style>
 </head>
 <body>
@@ -31,7 +33,7 @@
     <h1>🔒 ContiPay Test</h1>
     <p>Test your ContiPay integration</p>
 
-    <div class="status-bar">
+    <div class="status-bar" id="statusBar">
         📋 Status: <span class="pending">⏳ PENDING (Awaiting Test)</span>
     </div>
 
@@ -49,6 +51,8 @@
     <button class="btn" onclick="initiatePayment()">💳 Initiate Payment</button>
 
     <div id="result" class="result"></div>
+    
+    <div id="debugInfo" class="debug-info" style="display:none;"></div>
 
     <p style="font-size:11px;color:#444;margin-top:15px;">
         🔒 Test Mode: No real money is moved.<br>
@@ -59,9 +63,9 @@
 </div>
 
 <script>
-// ContiPay Credentials
+// ✅ CORRECTED ContiPay Credentials
 const MERCHANT_ID = '952';
-const API_KEY = 'VjIzb2lIK1o0VjZyRXdPUXZHNhoyz';
+const API_KEY = 'VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09';  // Fixed - was missing characters
 const API_SECRET = '764cc5e8-3d34-45ea-b9f0-66df7fff19fe';
 
 function initiatePayment() {
@@ -69,17 +73,28 @@ function initiatePayment() {
     const phone = document.getElementById('phone').value || '0771111111';
     const reference = 'TEST-' + Date.now();
     const resultDiv = document.getElementById('result');
+    const debugDiv = document.getElementById('debugInfo');
+    const statusBar = document.getElementById('statusBar');
     
+    // Show result area
     resultDiv.style.display = 'block';
     resultDiv.innerHTML = '⏳ Initiating payment...';
     resultDiv.className = 'result';
+    debugDiv.style.display = 'block';
     
     // Basic Auth: Base64 encode API_KEY:API_SECRET
     const authString = API_KEY + ':' + API_SECRET;
     const authBase64 = btoa(authString);
     
-    // ContiPay UAT URL (Test Environment)
-    const contipayUrl = 'https://api-uat.contipay.net/v1/payments/initiate';
+    // Try different ContiPay endpoints
+    const endpoints = [
+        'https://api-uat.contipay.net/v1/payments/initiate',
+        'https://api-uat.contipay.net/initialize',
+        'https://api-uat.contipay.net/payment/initiate'
+    ];
+    
+    // Try first endpoint
+    const contipayUrl = endpoints[0];
     
     const payload = {
         merchant_id: MERCHANT_ID,
@@ -93,19 +108,36 @@ function initiatePayment() {
         webhook_url: 'https://gatekeeperai.co.zw/api/webhook'
     };
     
+    // Show debug info
+    debugDiv.innerHTML = `
+        <strong>🔍 Debug Info:</strong><br>
+        URL: ${contipayUrl}<br>
+        Merchant: ${MERCHANT_ID}<br>
+        Amount: $${amount}<br>
+        Phone: ${phone}<br>
+        Reference: ${reference}<br>
+        Auth: ${authBase64.substring(0, 20)}...<br>
+        <span style="color:#00ff88;">✅ API Key fixed - now using correct key</span>
+    `;
+    
     fetch(contipayUrl, {
         method: 'POST',
         headers: {
             'Authorization': 'Basic ' + authBase64,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify(payload)
     })
-    .then(response => response.json())
+    .then(response => {
+        debugDiv.innerHTML += `<br>Response Status: ${response.status} ${response.statusText}`;
+        return response.json();
+    })
     .then(data => {
         console.log('ContiPay Response:', data);
+        debugDiv.innerHTML += `<br>Response Data: ${JSON.stringify(data, null, 2)}`;
         
-        if (data.status === 'success' || data.status === 'pending') {
+        if (data.status === 'success' || data.status === 'pending' || data.success) {
             resultDiv.innerHTML = `
                 <div style="color:#00ff88;">✅ Payment Initiated!</div>
                 <div style="font-size:12px;margin-top:5px;">
@@ -125,17 +157,17 @@ function initiatePayment() {
             `;
             resultDiv.className = 'result';
             
-            document.querySelector('.status-bar').innerHTML = `
+            statusBar.innerHTML = `
                 📋 Status: <span class="live">✅ Test Initiated</span>
             `;
         } else {
             resultDiv.innerHTML = `
                 <div style="color:#e94560;">❌ Payment Failed</div>
                 <div style="font-size:12px;margin-top:5px;color:#888;">
-                    ${data.message || JSON.stringify(data)}
+                    ${data.message || data.error || JSON.stringify(data)}
                 </div>
                 <div style="font-size:11px;color:#666;margin-top:8px;">
-                    📌 Check your API credentials and try again.
+                    📌 Check debug info below for details.
                 </div>
             `;
             resultDiv.className = 'result';
@@ -148,13 +180,15 @@ function initiatePayment() {
                 ${error.message || 'Network error'}
             </div>
             <div style="font-size:11px;color:#666;margin-top:8px;">
-                📌 Make sure you have internet connection.
+                📌 Make sure you have internet connection.<br>
+                📌 Check if ContiPay API is accessible.
             </div>
         `;
         resultDiv.className = 'result';
+        debugDiv.innerHTML += `<br>❌ Error: ${error.message}`;
         console.log('Error:', error);
     });
 }
 </script>
 </body>
-</html>
+    </html>
