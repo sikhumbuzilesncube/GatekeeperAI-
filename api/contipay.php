@@ -19,17 +19,24 @@ $merchantId = '952';
 $apiKey = 'VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09';
 $apiSecret = '764cc5e8-3d34-45ea-b9f0-66df7fff19fe';
 
-// Get phone and amount from input
+// Get parameters from input
 $phone = $input['phone'] ?? '0771111111';
 $amount = $input['amount'] ?? '1.00';
 $reference = $input['reference'] ?? 'TEST-' . time();
+$provider = $input['provider'] ?? 'ecocash';
 
-// Get the endpoint from input or use default
-$endpoint = $input['endpoint'] ?? 'initialize';
+// Provider mapping
+$providerMap = [
+    'ecocash' => ['code' => 'ecocash', 'name' => 'EcoCash'],
+    'innbucks' => ['code' => 'innbucks', 'name' => 'Innbucks'],
+    'onemoney' => ['code' => 'onemoney', 'name' => 'OneMoney'],
+    'zipit' => ['code' => 'zipit', 'name' => 'Zipit']
+];
 
-// ContiPay API URL
-$baseUrl = 'https://api-uat.contipay.net';
-$contipayUrl = $baseUrl . '/acquire/payment/initiate';
+$providerInfo = $providerMap[$provider] ?? $providerMap['ecocash'];
+
+// ContiPay API URL - using the correct endpoint from docs
+$contipayUrl = 'https://api-uat.contipay.net/acquire/payment/initiate';
 
 // Build the correct payload structure based on ContiPay docs
 $payload = [
@@ -42,8 +49,8 @@ $payload = [
         'cell' => $phone
     ],
     'transaction' => [
-        'providerCode' => 'ecocash',  // Based on documentation
-        'providerName' => 'EcoCash',
+        'providerCode' => $providerInfo['code'],
+        'providerName' => $providerInfo['name'],
         'currencyCode' => 'USD',
         'merchantId' => (int)$merchantId,
         'reference' => $reference,
@@ -82,11 +89,11 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
-// Log the request for debugging
+// Log for debugging
 $debug = [
     'url' => $contipayUrl,
     'payload' => $payload,
-    'auth' => $authBase64
+    'http_code' => $httpCode
 ];
 
 // Return the response
@@ -98,16 +105,63 @@ if ($curlError) {
         'debug' => $debug
     ]);
 } else {
-    // Parse response to check if it's JSON
+    // Parse response
     $responseData = json_decode($response, true);
+    
     if ($responseData) {
-        http_response_code($httpCode);
-        echo $response;
+        // Check if it's a success response
+        if (isset($responseData['status']) && $responseData['status'] === 'Paid') {
+            // Success - payment was processed
+            http_response_code(200);
+            echo json_encode([
+                'status' => 'success',
+                'message' => $responseData['message'] ?? 'Payment successful',
+                'transaction' => $responseData['transaction'] ?? null,
+                'raw' => $responseData
+            ]);
+        } elseif (isset($responseData['statusCode']) && $responseData['statusCode'] === 1) {
+            // Success status code
+            http_response_code(200);
+            echo json_encode([
+                'status' => 'success',
+                'message' => $responseData['message'] ?? 'Payment processed',
+                'transaction' => $responseData['transaction'] ?? null,
+                'raw' => $responseData
+            ]);
+        } elseif ($httpCode === 200 || $httpCode === 201) {
+            // HTTP success but check if there's an error in response
+            if (isset($responseData['status']) && $responseData['status'] === 'error') {
+                http_response_code(400);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => $responseData['message'] ?? 'API returned error',
+                    'raw' => $responseData
+                ]);
+            } else {
+                // Assume success
+                http_response_code($httpCode);
+                echo json_encode([
+                    'status' => 'pending',
+                    'message' => 'Payment initiated',
+                    'data' => $responseData
+                ]);
+            }
+        } else {
+            // Error response
+            http_response_code($httpCode);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $responseData['message'] ?? 'Payment failed',
+                'raw' => $responseData,
+                'debug' => $debug
+            ]);
+        }
     } else {
-        // If not JSON, return as is
+        // Not JSON response
         http_response_code($httpCode);
         echo json_encode([
             'status' => 'unknown',
+            'message' => 'Non-JSON response from API',
             'raw_response' => $response,
             'debug' => $debug
         ]);
