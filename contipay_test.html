@@ -37,6 +37,8 @@
         .status-paid{color:#00ff88;font-weight:bold}
         .status-pending{color:#FFB300;font-weight:bold}
         .status-failed{color:#e94560;font-weight:bold}
+        .redirect-btn{display:inline-block;padding:12px 24px;background:#FFB300;color:#000;text-decoration:none;border-radius:8px;font-weight:bold;margin-top:10px}
+        .redirect-btn:hover{background:#e6a300}
     </style>
 </head>
 <body>
@@ -61,10 +63,17 @@
     <input type="tel" id="phone" value="0771111111" placeholder="Phone number">
     
     <select class="provider-select" id="providerSelect">
-        <option value="ecocash">EcoCash</option>
-        <option value="innbucks">Innbucks</option>
-        <option value="onemoney">OneMoney</option>
-        <option value="zipit">Zipit</option>
+        <option value="EC">EcoCash (EC)</option>
+        <option value="TC">TeleCash (TC)</option>
+        <option value="OM">OneMoney (OM)</option>
+        <option value="IB">InnBucks (IB)</option>
+        <option value="ZS">ZimSwitch (ZS)</option>
+        <option value="AG">AfriGo (AG)</option>
+        <option value="OC">Omari (OC)</option>
+        <option value="VC">Voucher (VC)</option>
+        <option value="VA">Visa (VA)</option>
+        <option value="MA">Mastercard (MA)</option>
+        <option value="VE">Verve (VE)</option>
     </select>
 
     <button class="btn" id="payButton" onclick="initiatePayment()">💳 Initiate Payment</button>
@@ -119,13 +128,29 @@ function initiatePayment() {
         provider: provider
     };
     
+    // Get provider name for display
+    const providerNames = {
+        'EC': 'EcoCash',
+        'TC': 'TeleCash',
+        'OM': 'OneMoney',
+        'IB': 'InnBucks',
+        'ZS': 'ZimSwitch',
+        'AG': 'AfriGo',
+        'OC': 'Omari',
+        'VC': 'Voucher',
+        'VA': 'Visa',
+        'MA': 'Mastercard',
+        'VE': 'Verve'
+    };
+    const providerName = providerNames[provider] || provider;
+    
     debugDiv.innerHTML = `
         <strong>🔍 Debug Info:</strong><br>
         <span class="success-text">✅ Using correct ContiPay format</span><br>
         Merchant ID: ${MERCHANT_ID}<br>
         Amount: $${amount}<br>
         Phone: ${phone}<br>
-        Provider: ${provider}<br>
+        Provider: ${provider} (${providerName})<br>
         Reference: ${reference}<br>
         <span style="color:#FFB300;">⏳ Sending request to proxy...</span>
     `;
@@ -148,23 +173,52 @@ function initiatePayment() {
         console.log('ContiPay Response:', data);
         debugDiv.innerHTML += `<br>📦 Response Data: ${JSON.stringify(data, null, 2)}`;
         
+        // Check for redirect URL (Integration Tip from docs)
+        if (data.redirectUrl || (data.data && data.data.redirectUrl)) {
+            const redirectUrl = data.redirectUrl || data.data.redirectUrl;
+            resultDiv.innerHTML = `
+                <div style="color:#FFB300;font-size:16px;font-weight:bold;">🔄 Redirect to Payment</div>
+                <div style="font-size:12px;margin-top:8px;line-height:1.8;">
+                    <strong>Reference:</strong> ${reference}<br>
+                    <strong>Amount:</strong> $${amount}<br>
+                    <strong>Provider:</strong> ${providerName}<br>
+                    <strong>Status:</strong> <span class="status-pending">Redirect Required</span>
+                </div>
+                <div style="margin-top:12px;">
+                    <a href="${redirectUrl}" target="_blank" class="redirect-btn">🔗 Go to Payment Page</a>
+                </div>
+                <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
+                    📌 Click the button above to complete payment on ContiPay.
+                </div>
+            `;
+            resultDiv.className = 'result';
+            
+            statusBar.innerHTML = `
+                📋 Status: <span class="live">🔄 Redirect - ${reference}</span>
+            `;
+            return;
+        }
+        
         // Check for success based on ContiPay response format
         const isSuccess = data.status === 'success' || 
+                         data.status === 'Success' ||
                          data.status === 'Paid' ||
                          data.statusCode === 1 ||
                          data.transaction ||
+                         (data.data && data.data.status === 'Success') ||
+                         (data.raw && data.raw.status === 'Success') ||
                          (data.raw && data.raw.status === 'Paid') ||
                          (data.raw && data.raw.statusCode === 1);
         
         if (isSuccess) {
             // Get transaction details
-            const transaction = data.transaction || (data.raw && data.raw.transaction) || null;
-            const statusText = data.status || (data.raw && data.raw.status) || 'Paid';
-            const message = data.message || (data.raw && data.raw.message) || 'Payment successful';
+            const transaction = data.transaction || (data.data && data.data.transaction) || (data.raw && data.raw.transaction) || null;
+            const statusText = data.status || (data.data && data.data.status) || (data.raw && data.raw.status) || 'Success';
+            const message = data.message || (data.data && data.data.message) || (data.raw && data.raw.message) || 'Payment initiated successfully';
             
             let statusClass = 'status-paid';
             let statusEmoji = '✅';
-            if (statusText.toLowerCase() === 'pending') {
+            if (statusText.toLowerCase() === 'pending' || statusText.toLowerCase() === 'redirect') {
                 statusClass = 'status-pending';
                 statusEmoji = '⏳';
             } else if (statusText.toLowerCase() === 'failed' || statusText.toLowerCase() === 'error') {
@@ -194,7 +248,7 @@ function initiatePayment() {
                     <strong>Reference:</strong> ${reference}<br>
                     <strong>Amount:</strong> $${amount}<br>
                     <strong>Phone:</strong> ${phone}<br>
-                    <strong>Provider:</strong> ${provider}<br>
+                    <strong>Provider:</strong> ${providerName}<br>
                     <strong>Status:</strong> <span class="${statusClass}">${statusText}</span><br>
                     <strong>Message:</strong> ${message}
                 </div>
@@ -249,8 +303,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔵 Gatekeeper AI - ContiPay Test Page');
     console.log('📋 Using correct ContiPay API format');
     console.log('📋 Merchant ID:', MERCHANT_ID);
-    console.log('💡 Try different providers from dropdown');
+    console.log('💡 Providers: EC=EcoCash, IB=InnBucks, OM=OneMoney, etc.');
 });
 </script>
 </body>
-                    </html>
+        </html>
