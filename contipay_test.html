@@ -34,6 +34,8 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .test-mode{border:1px solid #FFB30033;padding:8px;border-radius:5px;margin-top:12px}
         .btn:disabled{opacity:0.6;cursor:not-allowed}
+        .troubleshoot{background:#1a0a0a;padding:10px;border-radius:5px;margin-top:10px;font-size:11px;color:#888;border:1px solid #e9456033}
+        .troubleshoot strong{color:#e94560}
     </style>
 </head>
 <body>
@@ -57,10 +59,12 @@
     <input type="tel" id="phone" value="0771111111" placeholder="Phone number">
 
     <select class="endpoint-select" id="endpointSelect">
-        <option value="/api/contipay.php">Use Proxy (Recommended)</option>
-        <option value="https://api-uat.contipay.net/v1/payments/initiate">Direct API - v1</option>
-        <option value="https://api-uat.contipay.net/initialize">Direct API - initialize</option>
-        <option value="https://api-uat.contipay.net/payment/initiate">Direct API - payment/initiate</option>
+        <option value="/api/contipay.php?endpoint=initialize">Proxy - Initialize</option>
+        <option value="/api/contipay.php?endpoint=payment/initiate" selected>Proxy - Payment Initiate</option>
+        <option value="/api/contipay.php?endpoint=v1/payments/initiate">Proxy - v1 Payments</option>
+        <option value="/api/contipay.php?endpoint=transaction/initiate">Proxy - Transaction Initiate</option>
+        <option value="https://api-uat.contipay.net/initialize">Direct - Initialize</option>
+        <option value="https://api-uat.contipay.net/payment/initiate">Direct - Payment Initiate</option>
     </select>
 
     <button class="btn" id="payButton" onclick="initiatePayment()">💳 Initiate Payment</button>
@@ -68,6 +72,14 @@
     <div id="result" class="result"></div>
     
     <div id="debugInfo" class="debug-info"></div>
+
+    <div id="troubleshoot" class="troubleshoot" style="display:none;">
+        <strong>🔧 Troubleshooting Tips:</strong><br>
+        1. Try different endpoint options from the dropdown<br>
+        2. Check if your merchant account is active<br>
+        3. Verify API credentials in the backend<br>
+        4. Contact ContiPay support with error details
+    </div>
 
     <div class="test-mode">
         <p style="font-size:11px;color:#666;margin:0;">
@@ -100,11 +112,13 @@ function initiatePayment() {
     const debugDiv = document.getElementById('debugInfo');
     const statusBar = document.getElementById('statusBar');
     const payButton = document.getElementById('payButton');
+    const troubleshootDiv = document.getElementById('troubleshoot');
     
     // Reset UI
     isProcessing = true;
     payButton.disabled = true;
     payButton.innerHTML = '<span class="loading"></span> Processing...';
+    troubleshootDiv.style.display = 'none';
     
     // Show result area
     resultDiv.style.display = 'block';
@@ -124,6 +138,14 @@ function initiatePayment() {
         cancel_url: 'https://gatekeeperai.co.zw/payment_cancel.html',
         webhook_url: 'https://gatekeeperai.co.zw/api/webhook'
     };
+    
+    // If using proxy, add endpoint parameter
+    if (endpoint.includes('/api/')) {
+        const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
+        const apiEndpoint = urlParams.get('endpoint') || 'initialize';
+        payload.endpoint = apiEndpoint;
+        payload.test_mode = true;
+    }
     
     // Show debug info
     debugDiv.innerHTML = `
@@ -183,11 +205,12 @@ function initiatePayment() {
                          data.success === true ||
                          data.data || 
                          data.payment_url ||
-                         (data.message && data.message.includes('success'));
+                         (data.message && data.message.toLowerCase().includes('success')) ||
+                         (data.responseCode && data.responseCode === '00');
         
         if (isSuccess) {
             // Extract payment URL if available
-            const paymentUrl = data.data?.payment_url || data.payment_url || null;
+            const paymentUrl = data.data?.payment_url || data.payment_url || data.redirectUrl || null;
             
             resultDiv.innerHTML = `
                 <div style="color:#00ff88;font-size:16px;font-weight:bold;">✅ Payment Initiated!</div>
@@ -234,6 +257,9 @@ function initiatePayment() {
             statusBar.innerHTML = `
                 📋 Status: <span class="error">❌ Failed - ${reference}</span>
             `;
+            
+            // Show troubleshooting tips
+            troubleshootDiv.style.display = 'block';
         }
     })
     .catch(error => {
@@ -256,6 +282,8 @@ function initiatePayment() {
         statusBar.innerHTML = `
             📋 Status: <span class="error">⚠️ Connection Error</span>
         `;
+        
+        troubleshootDiv.style.display = 'block';
     })
     .finally(() => {
         // Re-enable button
@@ -279,8 +307,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔵 Gatekeeper AI - ContiPay Test Page');
     console.log('📋 Merchant ID:', MERCHANT_ID);
     console.log('🔑 API Key:', API_KEY.substring(0, 10) + '...');
-    console.log('💡 Tip: Use the proxy option to avoid CORS issues');
+    console.log('💡 Tip: Try different endpoints from the dropdown');
 });
 </script>
 </body>
-</html>
+        </html>
