@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body{font-family:sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-        .box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:500px;width:100%;text-align:center}
+        .box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:550px;width:100%;text-align:center}
         .box h1{color:#FFB300;font-size:24px}
         .box p{color:#888;font-size:14px;margin:10px 0;line-height:1.6}
         .box .btn{width:100%;padding:14px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
@@ -17,7 +17,7 @@
         .box .status-bar .pending{color:#FFB300}
         .box .status-bar .live{color:#00ff88}
         .box .status-bar .error{color:#e94560}
-        .box .result{background:#0a0a0a;padding:12px;border-radius:8px;margin-top:12px;font-size:12px;color:#aaa;text-align:left;display:none;max-height:300px;overflow:auto}
+        .box .result{background:#0a0a0a;padding:15px;border-radius:8px;margin-top:12px;font-size:12px;color:#aaa;text-align:left;display:none;max-height:400px;overflow:auto}
         .box .result .success{color:#00ff88}
         .box .result .error{color:#e94560}
         .box input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
@@ -26,12 +26,17 @@
         .debug-info strong{color:#FFB300}
         .debug-info .success-text{color:#00ff88}
         .debug-info .error-text{color:#e94560}
-        .endpoint-select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
+        .provider-select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
+        .provider-select:focus{outline:1px solid #FFB300;border-color:#FFB300}
         .loading{display:inline-block;width:14px;height:14px;border:2px solid #FFB300;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
         @keyframes spin{to{transform:rotate(360deg)}}
         .test-mode{border:1px solid #FFB30033;padding:8px;border-radius:5px;margin-top:12px}
         .btn:disabled{opacity:0.6;cursor:not-allowed}
-        .provider-select{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
+        .transaction-details{background:#0a1a0a;padding:10px;border-radius:5px;margin-top:8px;font-size:11px;border:1px solid #00ff8833}
+        .transaction-details strong{color:#00ff88}
+        .status-paid{color:#00ff88;font-weight:bold}
+        .status-pending{color:#FFB300;font-weight:bold}
+        .status-failed{color:#e94560;font-weight:bold}
     </style>
 </head>
 <body>
@@ -49,7 +54,7 @@
         2. Enter phone number: <span class="highlight">0771111111</span><br>
         3. Select payment provider<br>
         4. Click <strong>"Initiate Payment"</strong><br>
-        5. Check ContiPay dashboard for results
+        5. Check response below
     </div>
 
     <input type="number" id="amount" value="1.00" step="0.01" placeholder="Amount (USD)">
@@ -107,13 +112,11 @@ function initiatePayment() {
     resultDiv.className = 'result';
     debugDiv.style.display = 'block';
     
-    // Build payload according to ContiPay documentation
     const payload = {
         phone: phone,
         amount: amount,
         reference: reference,
-        provider: provider,
-        // The backend will format this properly
+        provider: provider
     };
     
     debugDiv.innerHTML = `
@@ -127,7 +130,6 @@ function initiatePayment() {
         <span style="color:#FFB300;">⏳ Sending request to proxy...</span>
     `;
     
-    // Use the proxy
     const endpoint = '/api/contipay.php';
     
     fetch(endpoint, {
@@ -146,41 +148,68 @@ function initiatePayment() {
         console.log('ContiPay Response:', data);
         debugDiv.innerHTML += `<br>📦 Response Data: ${JSON.stringify(data, null, 2)}`;
         
-        // Check for success
+        // Check for success based on ContiPay response format
         const isSuccess = data.status === 'success' || 
                          data.status === 'Paid' ||
-                         data.statusCode === 200 ||
                          data.statusCode === 1 ||
                          data.transaction ||
-                         data.data;
+                         (data.raw && data.raw.status === 'Paid') ||
+                         (data.raw && data.raw.statusCode === 1);
         
         if (isSuccess) {
+            // Get transaction details
+            const transaction = data.transaction || (data.raw && data.raw.transaction) || null;
+            const statusText = data.status || (data.raw && data.raw.status) || 'Paid';
+            const message = data.message || (data.raw && data.raw.message) || 'Payment successful';
+            
+            let statusClass = 'status-paid';
+            let statusEmoji = '✅';
+            if (statusText.toLowerCase() === 'pending') {
+                statusClass = 'status-pending';
+                statusEmoji = '⏳';
+            } else if (statusText.toLowerCase() === 'failed' || statusText.toLowerCase() === 'error') {
+                statusClass = 'status-failed';
+                statusEmoji = '❌';
+            }
+            
+            let transactionHtml = '';
+            if (transaction) {
+                transactionHtml = `
+                    <div class="transaction-details">
+                        <strong>📊 Transaction Details:</strong><br>
+                        ${transaction.contiPayRef ? 'ContiPay Ref: ' + transaction.contiPayRef + '<br>' : ''}
+                        ${transaction.merchantRef ? 'Merchant Ref: ' + transaction.merchantRef + '<br>' : ''}
+                        ${transaction.amount ? 'Amount: $' + transaction.amount + '<br>' : ''}
+                        ${transaction.providerName ? 'Provider: ' + transaction.providerName + '<br>' : ''}
+                        ${transaction.status ? 'Status: ' + transaction.status + '<br>' : ''}
+                        ${transaction.message ? 'Message: ' + transaction.message + '<br>' : ''}
+                        ${transaction.account ? 'Account: ' + transaction.account + '<br>' : ''}
+                    </div>
+                `;
+            }
+            
             resultDiv.innerHTML = `
-                <div style="color:#00ff88;font-size:16px;font-weight:bold;">✅ Payment Initiated!</div>
+                <div style="color:#00ff88;font-size:16px;font-weight:bold;">${statusEmoji} Payment ${statusText}</div>
                 <div style="font-size:12px;margin-top:8px;line-height:1.8;">
                     <strong>Reference:</strong> ${reference}<br>
                     <strong>Amount:</strong> $${amount}<br>
                     <strong>Phone:</strong> ${phone}<br>
                     <strong>Provider:</strong> ${provider}<br>
-                    <strong>Status:</strong> ${data.status || data.message || 'pending'}
+                    <strong>Status:</strong> <span class="${statusClass}">${statusText}</span><br>
+                    <strong>Message:</strong> ${message}
                 </div>
-                ${data.transaction ? `
-                    <div style="margin-top:8px;padding:8px;background:#1a2a1a;border-radius:5px;font-size:11px;">
-                        <strong>Transaction Details:</strong><br>
-                        ${JSON.stringify(data.transaction, null, 2)}
-                    </div>
-                ` : ''}
+                ${transactionHtml}
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
-                    📌 Check ContiPay dashboard for test transaction status.
+                    📌 Check ContiPay dashboard for transaction details.
                 </div>
             `;
             resultDiv.className = 'result';
             
             statusBar.innerHTML = `
-                📋 Status: <span class="live">✅ Test Initiated - ${reference}</span>
+                📋 Status: <span class="live">✅ ${statusText} - ${reference}</span>
             `;
         } else {
-            const errorMsg = data.message || data.error || JSON.stringify(data);
+            const errorMsg = data.message || data.error || 'Payment failed';
             
             resultDiv.innerHTML = `
                 <div style="color:#e94560;font-size:16px;font-weight:bold;">❌ Payment Failed</div>
@@ -220,7 +249,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔵 Gatekeeper AI - ContiPay Test Page');
     console.log('📋 Using correct ContiPay API format');
     console.log('📋 Merchant ID:', MERCHANT_ID);
+    console.log('💡 Try different providers from dropdown');
 });
 </script>
 </body>
-    </html>
+                    </html>
