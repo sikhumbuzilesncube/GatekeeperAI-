@@ -1,6 +1,6 @@
 // api/contipay.js
 // Gatekeeper AI - ContiPay Integration
-// Merchant ID: 952
+// COMPLETELY REVISED VERSION
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -30,14 +30,14 @@ export default async function handler(req, res) {
         const apiKey = 'VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09';
         const apiSecret = '764cc5e8-3d34-45ea-b9f0-66df7fff19fe';
 
-        // Get parameters from input
+        // Get parameters
         const phone = input.phone || '0771111111';
         const amount = input.amount || '1.00';
         const reference = input.reference || 'TEST-' + Date.now();
         const provider = input.provider || 'EC';
         const currency = input.currency || 'USD';
 
-        // Provider mapping with correct codes
+        // Provider mapping
         const providerMap = {
             'EC': { code: 'EC', name: 'EcoCash' },
             'TC': { code: 'TC', name: 'TeleCash' },
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
 
         const providerInfo = providerMap[provider] || providerMap['EC'];
 
-        // ✅ CORRECT PAYLOAD STRUCTURE from ContiPay documentation
+        // ✅ REVISED PAYLOAD - Clean and simple
         const payload = {
             customer: {
                 surname: 'Test',
@@ -67,10 +67,10 @@ export default async function handler(req, res) {
                 providerCode: providerInfo.code,
                 providerName: providerInfo.name,
                 currencyCode: currency,
-                merchantId: parseInt(merchantId),
+                merchantId: 952,  // ✅ INTEGER, not string!
                 reference: reference,
                 description: 'Gatekeeper AI Subscription',
-                amount: parseFloat(amount),
+                amount: 1.00,  // ✅ FLOAT, not string!
                 webhookUrl: 'https://gatekeeperai.co.zw/api/webhook',
                 successUrl: 'https://gatekeeperai.co.zw/payment_success.html',
                 cancelUrl: 'https://gatekeeperai.co.zw/payment_cancel.html'
@@ -85,18 +85,15 @@ export default async function handler(req, res) {
         const authString = apiKey + ':' + apiSecret;
         const authBase64 = Buffer.from(authString).toString('base64');
 
-        // ✅ CORRECT ENDPOINT from ContiPay documentation
+        // ✅ CORRECT ENDPOINT
         const contipayUrl = 'https://api-uat.contipay.net/acquire/payment';
 
-        console.log('🔵 Gatekeeper AI - ContiPay Request:');
+        console.log('🔵 Sending to ContiPay:');
         console.log('URL:', contipayUrl);
         console.log('Method: PUT');
-        console.log('Merchant ID:', merchantId);
-        console.log('Provider:', providerInfo.name);
-        console.log('Amount:', amount, currency);
-        console.log('Reference:', reference);
+        console.log('Payload:', JSON.stringify(payload, null, 2));
 
-        // Make request to ContiPay
+        // Make request
         const response = await fetch(contipayUrl, {
             method: 'PUT',
             headers: {
@@ -111,22 +108,20 @@ export default async function handler(req, res) {
 
         console.log('📦 ContiPay Response:');
         console.log('Status:', response.status);
-        console.log('Data:', data);
+        console.log('Data:', JSON.stringify(data, null, 2));
 
-        // Return the response
+        // Return response
         return res.status(response.status).json({
-            status: data.status || 'unknown',
+            status: response.status,
             message: data.message || 'Payment processed',
-            data: data,
-            raw: data
+            data: data
         });
 
     } catch (error) {
-        console.error('❌ Error in contipay.js:', error);
+        console.error('❌ Error:', error);
         return res.status(500).json({
             status: 'error',
-            message: error.message || 'Server error',
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            message: error.message || 'Server error'
         });
     }
-                }
+            }
