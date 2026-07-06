@@ -1,0 +1,15 @@
+{
+  "name": "gatekeeperai",
+  "version": "1.0.0",
+  "description": "Gatekeeper AI - Payment Integration",
+  "main": "api/contipay.js",
+  "scripts": {
+    "build": "echo 'Build completed'",
+    "start": "node api/contipay.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
