@@ -5,7 +5,7 @@ import time
 import base64
 
 def handler(request):
-    # CORS headers
+    # Handle CORS
     if request.method == "OPTIONS":
         return {
             "statusCode": 200,
@@ -17,19 +17,37 @@ def handler(request):
             "body": ""
         }
 
+    # Only allow POST or PUT
+    if request.method not in ["POST", "PUT"]:
+        return {
+            "statusCode": 405,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "status": "error",
+                "message": "Method not allowed. Use POST or PUT."
+            })
+        }
+
     try:
+        # Parse request body
         body = json.loads(request.body)
 
+        # ContiPay credentials
         merchant_id = "952"
         api_key = "VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09"
         api_secret = "764cc5e8-3d34-45ea-b9f0-66df7fff19fe"
 
+        # Get parameters
         phone = body.get("phone", "0771111111")
         amount = float(body.get("amount", "1.00"))
         reference = body.get("reference", "TEST-" + str(int(time.time() * 1000)))
         provider = body.get("provider", "EC")
         currency = body.get("currency", "USD")
 
+        # Provider mapping
         provider_map = {
             "EC": {"code": "EC", "name": "EcoCash"},
             "TC": {"code": "TC", "name": "TeleCash"},
@@ -46,6 +64,7 @@ def handler(request):
 
         provider_info = provider_map.get(provider, provider_map["EC"])
 
+        # Build payload
         payload = {
             "customer": {
                 "surname": "Test",
@@ -72,31 +91,56 @@ def handler(request):
             }
         }
 
+        # Create Basic Auth
         auth_string = api_key + ":" + api_secret
         auth_bytes = auth_string.encode("utf-8")
         auth_base64 = base64.b64encode(auth_bytes).decode("utf-8")
 
+        # ContiPay URL
         contipay_url = "https://api-uat.contipay.net/acquire/payment"
 
+        # Make request to ContiPay using PUT (as per documentation)
         headers = {
             "Authorization": "Basic " + auth_base64,
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
 
-        response = requests.put(contipay_url, json=payload, headers=headers, timeout=30)
+        response = requests.put(
+            contipay_url,
+            json=payload,
+            headers=headers,
+            timeout=30
+        )
 
+        # Parse response
         response_data = response.json() if response.text else {}
 
+        # Return response
         return {
             "statusCode": response.status_code,
             "headers": {
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json"
             },
-            "body": json.dumps(response_data)
+            "body": json.dumps({
+                "status": response.status_code,
+                "data": response_data
+            })
         }
 
+    except json.JSONDecodeError:
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "status": "error",
+                "message": "Invalid JSON payload"
+            })
+        }
     except Exception as e:
         return {
             "statusCode": 500,
@@ -104,5 +148,8 @@ def handler(request):
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "application/json"
             },
-            "body": json.dumps({"error": str(e)})
-            }
+            "body": json.dumps({
+                "status": "error",
+                "message": str(e)
+            })
+        }
