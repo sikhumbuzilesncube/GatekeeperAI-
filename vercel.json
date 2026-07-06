@@ -3,5 +3,7 @@
     "api/*.py": {
       "runtime": "python3.9"
     }
-  }
+  },
+  "buildCommand": "echo 'Build completed'",
+  "outputDirectory": "."
 }
