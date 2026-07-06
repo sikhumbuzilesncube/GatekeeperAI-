@@ -1,4 +1,7 @@
 // api/contipay.js
+// Gatekeeper AI - ContiPay Integration
+// Merchant ID: 952
+
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,19 +25,19 @@ export default async function handler(req, res) {
     try {
         const input = req.body;
 
-        // ContiPay credentials
+        // ✅ CONFIRMED CORRECT CREDENTIALS
         const merchantId = '952';
         const apiKey = 'VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09';
         const apiSecret = '764cc5e8-3d34-45ea-b9f0-66df7fff19fe';
 
-        // Get parameters
+        // Get parameters from input
         const phone = input.phone || '0771111111';
         const amount = input.amount || '1.00';
         const reference = input.reference || 'TEST-' + Date.now();
         const provider = input.provider || 'EC';
         const currency = input.currency || 'USD';
 
-        // Provider mapping
+        // Provider mapping with correct codes
         const providerMap = {
             'EC': { code: 'EC', name: 'EcoCash' },
             'TC': { code: 'TC', name: 'TeleCash' },
@@ -51,7 +54,7 @@ export default async function handler(req, res) {
 
         const providerInfo = providerMap[provider] || providerMap['EC'];
 
-        // Build payload
+        // ✅ CORRECT PAYLOAD STRUCTURE from ContiPay documentation
         const payload = {
             customer: {
                 surname: 'Test',
@@ -82,10 +85,18 @@ export default async function handler(req, res) {
         const authString = apiKey + ':' + apiSecret;
         const authBase64 = Buffer.from(authString).toString('base64');
 
-        // ContiPay URL
+        // ✅ CORRECT ENDPOINT from ContiPay documentation
         const contipayUrl = 'https://api-uat.contipay.net/acquire/payment';
 
-        // Make request
+        console.log('🔵 Gatekeeper AI - ContiPay Request:');
+        console.log('URL:', contipayUrl);
+        console.log('Method: PUT');
+        console.log('Merchant ID:', merchantId);
+        console.log('Provider:', providerInfo.name);
+        console.log('Amount:', amount, currency);
+        console.log('Reference:', reference);
+
+        // Make request to ContiPay
         const response = await fetch(contipayUrl, {
             method: 'PUT',
             headers: {
@@ -98,16 +109,24 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
+        console.log('📦 ContiPay Response:');
+        console.log('Status:', response.status);
+        console.log('Data:', data);
+
+        // Return the response
         return res.status(response.status).json({
             status: data.status || 'unknown',
             message: data.message || 'Payment processed',
-            data: data
+            data: data,
+            raw: data
         });
 
     } catch (error) {
+        console.error('❌ Error in contipay.js:', error);
         return res.status(500).json({
             status: 'error',
-            message: error.message || 'Server error'
+            message: error.message || 'Server error',
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
                 }
