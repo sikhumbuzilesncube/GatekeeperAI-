@@ -1,6 +1,7 @@
 {
   "functions": {
-    "api/*.js": {
+    "api/*.py": {
+      "runtime": "python3.9",
       "maxDuration": 10
     }
   },
@@ -15,6 +16,5 @@
     }
   ],
   "buildCommand": "echo 'Build completed'",
-  "outputDirectory": ".",
-  "installCommand": "npm install"
+  "outputDirectory": "."
 }
