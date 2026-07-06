@@ -174,11 +174,11 @@ function initiatePayment() {
         Phone: ${phone}<br>
         Provider: ${provider} (${providerName})<br>
         Reference: ${reference}<br>
-        <span style="color:#FFB300;">⏳ Sending request to proxy...</span>
+        <span style="color:#FFB300;">⏳ Sending request to Python proxy...</span>
     `;
     
-    // ✅ Using the correct Vercel API endpoint
-    const endpoint = '/api/contipay';
+    // ✅ UPDATED: Using Python API endpoint
+    const endpoint = '/api/contipay.py';
     
     fetch(endpoint, {
         method: 'POST',
@@ -230,7 +230,8 @@ function initiatePayment() {
                          data.transaction ||
                          (data.data && data.data.status === 'Success') ||
                          (data.raw && data.raw.status === 'Success') ||
-                         (data.raw && data.raw.status === 'Paid');
+                         (data.raw && data.raw.status === 'Paid') ||
+                         (data.data && data.data.statusCode === 1);
         
         if (isSuccess) {
             const transaction = data.transaction || (data.data && data.data.transaction) || (data.raw && data.raw.transaction) || null;
@@ -302,7 +303,7 @@ function initiatePayment() {
                 troubleshootDiv.style.display = 'block';
             }
             
-            const errorMsg = data.message || data.error || 'Payment failed';
+            const errorMsg = data.message || data.error || JSON.stringify(data);
             
             resultDiv.innerHTML = `
                 <div style="color:#e94560;font-size:16px;font-weight:bold;">❌ Payment Failed</div>
@@ -351,10 +352,10 @@ function initiatePayment() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔵 Gatekeeper AI - ContiPay Test Page');
     console.log('📋 Merchant ID:', MERCHANT_ID);
-    console.log('💳 Using endpoint: /api/contipay');
+    console.log('💳 Using endpoint: /api/contipay.py (Python)');
     console.log('💱 Currencies: USD and ZWG supported');
     console.log('📱 Try different providers from dropdown');
 });
 </script>
 </body>
-    </html>
+            </html>
