@@ -1,7 +1,7 @@
 <?php
 // Enable CORS for your frontend
 header('Access-Control-Allow-Origin: https://gatekeeperai.co.zw');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
@@ -24,9 +24,9 @@ $phone = $input['phone'] ?? '0771111111';
 $amount = $input['amount'] ?? '1.00';
 $reference = $input['reference'] ?? 'TEST-' . time();
 $provider = $input['provider'] ?? 'EC';
-$currency = $input['currency'] ?? 'USD'; // USD or ZWG
+$currency = $input['currency'] ?? 'USD';
 
-// Correct provider codes from ContiPay documentation
+// Provider mapping with correct codes
 $providerMap = [
     'EC' => ['code' => 'EC', 'name' => 'EcoCash'],
     'TC' => ['code' => 'TC', 'name' => 'TeleCash'],
@@ -43,23 +43,22 @@ $providerMap = [
 
 $providerInfo = $providerMap[$provider] ?? $providerMap['EC'];
 
-// ContiPay API URL
-$contipayUrl = 'https://api-uat.contipay.net/acquire/payment/initiate';
+// ✅ CORRECT ENDPOINT and METHOD from documentation
+$contipayUrl = 'https://api-uat.contipay.net/acquire/payment';
 
-// Build the payload
+// ✅ CORRECT PAYLOAD STRUCTURE
 $payload = [
     'customer' => [
-        'nationalId' => '63-123456Z-' . rand(10, 99),
         'surname' => 'Test',
         'firstName' => 'User',
-        'middleName' => '',
         'email' => 'test@gatekeeperai.co.zw',
-        'cell' => $phone
+        'cell' => $phone,
+        'countryCode' => 'ZW'
     ],
     'transaction' => [
         'providerCode' => $providerInfo['code'],
         'providerName' => $providerInfo['name'],
-        'currencyCode' => $currency, // USD or ZWG
+        'currencyCode' => $currency,
         'merchantId' => (int)$merchantId,
         'reference' => $reference,
         'description' => 'Gatekeeper AI Subscription',
@@ -74,106 +73,99 @@ $payload = [
     ]
 ];
 
-// Try different authentication methods
-$authMethods = [
-    // Method 1: Basic Auth with API Key:Secret
-    'basic' => base64_encode($apiKey . ':' . $apiSecret),
-    // Method 2: Just API Key
-    'key_only' => $apiKey,
-    // Method 3: Just Secret
-    'secret_only' => $apiSecret
+// Create Basic Auth
+$authString = $apiKey . ':' . $apiSecret;
+$authBase64 = base64_encode($authString);
+
+// ✅ Use PUT method
+$ch = curl_init($contipayUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Basic ' . $authBase64,
+    'Content-Type: application/json',
+    'Accept: application/json'
+]);
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+// Execute the request
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlError = curl_error($ch);
+curl_close($ch);
+
+// Debug info
+$debug = [
+    'url' => $contipayUrl,
+    'method' => 'PUT',
+    'payload' => $payload,
+    'http_code' => $httpCode
 ];
 
-$lastError = null;
-$authMethodUsed = '';
-
-foreach ($authMethods as $method => $authToken) {
-    $headers = [
-        'Content-Type: application/json',
-        'Accept: application/json'
-    ];
-    
-    if ($method === 'basic') {
-        $headers[] = 'Authorization: Basic ' . $authToken;
-    } elseif ($method === 'key_only') {
-        $headers[] = 'Authorization: Bearer ' . $authToken;
-    } else {
-        $headers[] = 'X-API-Key: ' . $authToken;
-    }
-    
-    // Initialize cURL
-    $ch = curl_init($contipayUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_VERBOSE, true);
-
-    // Execute the request
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
-    curl_close($ch);
-    
-    // If success (not 403), return the response
-    if ($httpCode !== 403 && $httpCode !== 401) {
-        $authMethodUsed = $method;
-        break;
-    }
-    
-    $lastError = [
-        'method' => $method,
-        'http_code' => $httpCode,
-        'response' => $response
-    ];
-}
-
-// If we have a response
-if (isset($response) && $httpCode !== 403 && $httpCode !== 401) {
+// Return the response
+if ($curlError) {
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'cURL Error: ' . $curlError,
+        'debug' => $debug
+    ]);
+} else {
     $responseData = json_decode($response, true);
     
     if ($responseData) {
         // Check for redirect URL
-        if (isset($responseData['redirectUrl'])) {
+        if (isset($responseData['redirectUrl']) || isset($responseData['data']['redirectUrl'])) {
+            $redirectUrl = $responseData['redirectUrl'] ?? $responseData['data']['redirectUrl'] ?? null;
             echo json_encode([
                 'status' => 'redirect',
                 'message' => 'Redirect to payment page',
-                'redirectUrl' => $responseData['redirectUrl'],
-                'raw' => $responseData,
-                'auth_method' => $authMethodUsed
+                'redirectUrl' => $redirectUrl,
+                'raw' => $responseData
+            ]);
+        }
+        // Check for success
+        elseif (isset($responseData['status']) && ($responseData['status'] === 'Success' || $responseData['status'] === 'success')) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => $responseData['message'] ?? 'Payment initiated successfully',
+                'data' => $responseData,
+                'raw' => $responseData
+            ]);
+        }
+        elseif (isset($responseData['statusCode']) && $responseData['statusCode'] === 1) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => $responseData['message'] ?? 'Payment processed',
+                'data' => $responseData,
+                'raw' => $responseData
+            ]);
+        }
+        elseif ($httpCode === 200 || $httpCode === 201 || $httpCode === 202) {
+            echo json_encode([
+                'status' => 'pending',
+                'message' => 'Payment initiated',
+                'data' => $responseData
             ]);
         } else {
             http_response_code($httpCode);
-            echo $response;
+            echo json_encode([
+                'status' => 'error',
+                'message' => $responseData['message'] ?? $responseData['error'] ?? 'Payment failed',
+                'raw' => $responseData,
+                'debug' => $debug
+            ]);
         }
     } else {
+        http_response_code($httpCode);
         echo json_encode([
             'status' => 'unknown',
+            'message' => 'Non-JSON response from API',
             'raw_response' => $response,
-            'auth_method' => $authMethodUsed
+            'debug' => $debug
         ]);
     }
-} else {
-    // All auth methods failed
-    http_response_code(403);
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Authentication failed - all methods tested',
-        'debug' => [
-            'merchant_id' => $merchantId,
-            'api_key' => substr($apiKey, 0, 10) . '...',
-            'api_secret' => substr($apiSecret, 0, 10) . '...',
-            'auth_methods_tested' => array_keys($authMethods),
-            'last_error' => $lastError,
-            'troubleshooting' => [
-                'Check if merchant account is active',
-                'Verify API credentials with ContiPay support',
-                'Make sure merchant ID is correct',
-                'Check if test environment is enabled'
-            ]
-        ]
-    ]);
 }
 ?>
