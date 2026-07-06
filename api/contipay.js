@@ -1,13 +1,11 @@
 // api/contipay.js
-
 export default async function handler(req, res) {
-    // Enable CORS for your frontend
-    res.setHeader('Access-Control-Allow-Origin', 'https://gatekeeperai.co.zw');
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-    // Handle preflight (OPTIONS) requests
+    // Handle preflight
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
@@ -17,7 +15,7 @@ export default async function handler(req, res) {
     if (req.method !== 'PUT' && req.method !== 'POST') {
         return res.status(405).json({ 
             status: 'error', 
-            message: 'Method not allowed. Use PUT or POST.' 
+            message: 'Method not allowed' 
         });
     }
 
@@ -29,14 +27,14 @@ export default async function handler(req, res) {
         const apiKey = 'VjIzb2lIK1o0VjZyRXdPUXZHNHoyZz09';
         const apiSecret = '764cc5e8-3d34-45ea-b9f0-66df7fff19fe';
 
-        // Get parameters from input
+        // Get parameters
         const phone = input.phone || '0771111111';
         const amount = input.amount || '1.00';
         const reference = input.reference || 'TEST-' + Date.now();
         const provider = input.provider || 'EC';
         const currency = input.currency || 'USD';
 
-        // Provider mapping with correct codes
+        // Provider mapping
         const providerMap = {
             'EC': { code: 'EC', name: 'EcoCash' },
             'TC': { code: 'TC', name: 'TeleCash' },
@@ -53,7 +51,7 @@ export default async function handler(req, res) {
 
         const providerInfo = providerMap[provider] || providerMap['EC'];
 
-        // ✅ CORRECT PAYLOAD STRUCTURE from documentation
+        // Build payload
         const payload = {
             customer: {
                 surname: 'Test',
@@ -84,16 +82,10 @@ export default async function handler(req, res) {
         const authString = apiKey + ':' + apiSecret;
         const authBase64 = Buffer.from(authString).toString('base64');
 
-        // ✅ CORRECT ENDPOINT and METHOD from documentation
+        // ContiPay URL
         const contipayUrl = 'https://api-uat.contipay.net/acquire/payment';
 
-        console.log('Sending to ContiPay:', {
-            url: contipayUrl,
-            method: 'PUT',
-            payload: payload
-        });
-
-        // Make request to ContiPay
+        // Make request
         const response = await fetch(contipayUrl, {
             method: 'PUT',
             headers: {
@@ -104,27 +96,18 @@ export default async function handler(req, res) {
             body: JSON.stringify(payload)
         });
 
-        const responseData = await response.json();
+        const data = await response.json();
 
-        console.log('ContiPay Response:', {
-            status: response.status,
-            data: responseData
-        });
-
-        // Return the response
         return res.status(response.status).json({
-            status: responseData.status || 'unknown',
-            message: responseData.message || 'Payment processed',
-            data: responseData,
-            raw: responseData
+            status: data.status || 'unknown',
+            message: data.message || 'Payment processed',
+            data: data
         });
 
     } catch (error) {
-        console.error('Error in contipay.js:', error);
         return res.status(500).json({
             status: 'error',
-            message: 'Server error: ' + error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            message: error.message || 'Server error'
         });
     }
-    }
+                }
