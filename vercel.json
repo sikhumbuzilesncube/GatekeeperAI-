@@ -1,4 +1,15 @@
 {
-  "outputDirectory": ".",
-  "buildCommand": "echo 'Build completed'"
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "buildCommand": "echo 'Build completed'",
+  "outputDirectory": "."
 }
