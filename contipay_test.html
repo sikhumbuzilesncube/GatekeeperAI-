@@ -32,13 +32,21 @@
         .btn:disabled{opacity:0.6;cursor:not-allowed}
         .currency-group{display:flex;gap:10px;margin-bottom:10px}
         .currency-group select{flex:1}
-        .currency-label{color:#FFB300;font-size:13px;display:block;text-align:left;margin-bottom:5px}
+        .transaction-details{background:#0a1a0a;padding:10px;border-radius:5px;margin-top:8px;font-size:11px;border:1px solid #00ff8833}
+        .transaction-details strong{color:#00ff88}
+        .status-paid{color:#00ff88;font-weight:bold}
+        .status-pending{color:#FFB300;font-weight:bold}
+        .status-failed{color:#e94560;font-weight:bold}
+        .redirect-btn{display:inline-block;padding:12px 24px;background:#FFB300;color:#000;text-decoration:none;border-radius:8px;font-weight:bold;margin-top:10px}
+        .redirect-btn:hover{background:#e6a300}
+        .troubleshoot{background:#1a0a0a;padding:10px;border-radius:5px;margin-top:10px;font-size:11px;color:#888;border:1px solid #e9456033;display:none}
+        .troubleshoot strong{color:#e94560}
     </style>
 </head>
 <body>
 <div class="box">
-    <h1>🔒 ContiPay Test</h1>
-    <p>Test your ContiPay integration</p>
+    <h1>🔒 Gatekeeper AI</h1>
+    <p>ContiPay Payment Test</p>
 
     <div class="status-bar" id="statusBar">
         📋 Status: <span class="pending">⏳ PENDING (Awaiting Test)</span>
@@ -84,6 +92,13 @@
     
     <div id="debugInfo" class="debug-info"></div>
 
+    <div id="troubleshoot" class="troubleshoot">
+        <strong>🔧 Troubleshooting Tips:</strong><br>
+        1. Try different provider from the dropdown<br>
+        2. Check if your merchant account is active<br>
+        3. Contact ContiPay support with error details
+    </div>
+
     <div class="test-mode">
         <p style="font-size:11px;color:#666;margin:0;">
             🔒 <strong>Test Mode:</strong> No real money is moved.<br>
@@ -114,10 +129,12 @@ function initiatePayment() {
     const debugDiv = document.getElementById('debugInfo');
     const statusBar = document.getElementById('statusBar');
     const payButton = document.getElementById('payButton');
+    const troubleshootDiv = document.getElementById('troubleshoot');
     
     isProcessing = true;
     payButton.disabled = true;
     payButton.innerHTML = '<span class="loading"></span> Processing...';
+    troubleshootDiv.style.display = 'none';
     
     resultDiv.style.display = 'block';
     resultDiv.innerHTML = '⏳ Initiating payment... Please wait.';
@@ -160,7 +177,8 @@ function initiatePayment() {
         <span style="color:#FFB300;">⏳ Sending request to proxy...</span>
     `;
     
-    const endpoint = '/api/contipay.php';
+    // ✅ Using the correct Vercel API endpoint
+    const endpoint = '/api/contipay';
     
     fetch(endpoint, {
         method: 'POST',
@@ -190,7 +208,7 @@ function initiatePayment() {
                     <strong>Status:</strong> <span class="status-pending">Redirect Required</span>
                 </div>
                 <div style="margin-top:12px;">
-                    <a href="${redirectUrl}" target="_blank" class="redirect-btn" style="display:inline-block;padding:12px 24px;background:#FFB300;color:#000;text-decoration:none;border-radius:8px;font-weight:bold;">🔗 Go to Payment Page</a>
+                    <a href="${redirectUrl}" target="_blank" class="redirect-btn">🔗 Go to Payment Page</a>
                 </div>
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
                     📌 Click the button above to complete payment on ContiPay.
@@ -219,17 +237,42 @@ function initiatePayment() {
             const statusText = data.status || (data.data && data.data.status) || (data.raw && data.raw.status) || 'Success';
             const message = data.message || (data.data && data.data.message) || (data.raw && data.raw.message) || 'Payment initiated successfully';
             
+            let statusClass = 'status-paid';
+            let statusEmoji = '✅';
+            if (statusText.toLowerCase() === 'pending') {
+                statusClass = 'status-pending';
+                statusEmoji = '⏳';
+            } else if (statusText.toLowerCase() === 'failed' || statusText.toLowerCase() === 'error') {
+                statusClass = 'status-failed';
+                statusEmoji = '❌';
+            }
+            
+            let transactionHtml = '';
+            if (transaction) {
+                transactionHtml = `
+                    <div class="transaction-details">
+                        <strong>📊 Transaction Details:</strong><br>
+                        ${transaction.contiPayRef ? 'ContiPay Ref: ' + transaction.contiPayRef + '<br>' : ''}
+                        ${transaction.merchantRef ? 'Merchant Ref: ' + transaction.merchantRef + '<br>' : ''}
+                        ${transaction.amount ? 'Amount: $' + transaction.amount + '<br>' : ''}
+                        ${transaction.providerName ? 'Provider: ' + transaction.providerName + '<br>' : ''}
+                        ${transaction.status ? 'Status: ' + transaction.status + '<br>' : ''}
+                        ${transaction.message ? 'Message: ' + transaction.message + '<br>' : ''}
+                    </div>
+                `;
+            }
+            
             resultDiv.innerHTML = `
-                <div style="color:#00ff88;font-size:16px;font-weight:bold;">✅ Payment ${statusText}</div>
+                <div style="color:#00ff88;font-size:16px;font-weight:bold;">${statusEmoji} Payment ${statusText}</div>
                 <div style="font-size:12px;margin-top:8px;line-height:1.8;">
                     <strong>Reference:</strong> ${reference}<br>
                     <strong>Amount:</strong> ${currency} $${amount}<br>
                     <strong>Phone:</strong> ${phone}<br>
                     <strong>Provider:</strong> ${providerName}<br>
-                    <strong>Status:</strong> ${statusText}<br>
+                    <strong>Status:</strong> <span class="${statusClass}">${statusText}</span><br>
                     <strong>Message:</strong> ${message}
                 </div>
-                ${transaction ? `<div class="transaction-details" style="background:#0a1a0a;padding:10px;border-radius:5px;margin-top:8px;font-size:11px;border:1px solid #00ff8833;"><strong>📊 Transaction Details:</strong><br>${JSON.stringify(transaction, null, 2)}</div>` : ''}
+                ${transactionHtml}
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
                     📌 Check ContiPay dashboard for transaction details.
                 </div>
@@ -243,9 +286,9 @@ function initiatePayment() {
             // Check if it's an auth error
             const isAuthError = data.message && (data.message.includes('Authentication') || data.message.includes('Forbidden') || data.message.includes('403'));
             
-            let troubleshooting = '';
+            let troubleshootingHtml = '';
             if (isAuthError) {
-                troubleshooting = `
+                troubleshootingHtml = `
                     <div style="margin-top:10px;padding:10px;background:#1a0a0a;border:1px solid #e94560;border-radius:5px;">
                         <strong style="color:#e94560;">🔧 Authentication Issue Detected:</strong><br>
                         <span style="font-size:11px;color:#888;">
@@ -256,6 +299,7 @@ function initiatePayment() {
                         </span>
                     </div>
                 `;
+                troubleshootDiv.style.display = 'block';
             }
             
             const errorMsg = data.message || data.error || 'Payment failed';
@@ -265,7 +309,7 @@ function initiatePayment() {
                 <div style="font-size:12px;margin-top:8px;color:#888;line-height:1.6;">
                     ${errorMsg}
                 </div>
-                ${troubleshooting}
+                ${troubleshootingHtml}
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
                     📌 Check debug info for details.<br>
                     📌 Try different provider from dropdown.
@@ -282,11 +326,20 @@ function initiatePayment() {
         resultDiv.innerHTML = `
             <div style="color:#f5a623;font-size:16px;font-weight:bold;">⚠️ Connection Error</div>
             <div style="font-size:12px;margin-top:8px;color:#888;line-height:1.6;">
-                ${error.message || 'Network error'}
+                ${error.message || 'Network error - failed to connect to server'}
+            </div>
+            <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
+                📌 Check if the API endpoint is accessible.<br>
+                📌 Make sure you have internet connection.
             </div>
         `;
         resultDiv.className = 'result';
         debugDiv.innerHTML += `<br><span class="error-text">❌ Error: ${error.message}</span>`;
+        
+        statusBar.innerHTML = `
+            📋 Status: <span class="error">⚠️ Connection Error</span>
+        `;
+        troubleshootDiv.style.display = 'block';
     })
     .finally(() => {
         isProcessing = false;
@@ -298,9 +351,10 @@ function initiatePayment() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔵 Gatekeeper AI - ContiPay Test Page');
     console.log('📋 Merchant ID:', MERCHANT_ID);
-    console.log('💡 Providers: EC=EcoCash, IB=InnBucks, OM=OneMoney');
+    console.log('💳 Using endpoint: /api/contipay');
     console.log('💱 Currencies: USD and ZWG supported');
+    console.log('📱 Try different providers from dropdown');
 });
 </script>
 </body>
-                                              </html>
+    </html>
