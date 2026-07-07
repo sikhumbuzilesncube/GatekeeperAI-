@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pesepay Test</title>
+    <title>Payonify Test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body{font-family:sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
@@ -41,16 +41,18 @@
         .redirect-btn:hover{background:#e6a300}
         .troubleshoot{background:#1a0a0a;padding:10px;border-radius:5px;margin-top:10px;font-size:11px;color:#888;border:1px solid #e9456033;display:none}
         .troubleshoot strong{color:#e94560}
-        .gateway-badge{display:inline-block;background:#FFB30022;padding:4px 12px;border-radius:12px;font-size:11px;color:#FFB300;border:1px solid #FFB30033}
+        .gateway-badge{display:inline-block;background:#00ff8822;padding:4px 12px;border-radius:12px;font-size:11px;color:#00ff88;border:1px solid #00ff8833}
+        .email-input{width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:14px;margin-bottom:10px;box-sizing:border-box}
+        .email-input:focus{outline:1px solid #FFB300;border-color:#FFB300}
     </style>
 </head>
 <body>
 <div class="box">
     <h1>🔒 Gatekeeper AI</h1>
-    <p>Pesepay Payment Test</p>
+    <p>Payonify Payment Test</p>
     
     <div style="margin-bottom:10px;">
-        <span class="gateway-badge">🔄 Pesepay Gateway</span>
+        <span class="gateway-badge">🔄 Payonify Gateway</span>
     </div>
 
     <div class="status-bar" id="statusBar">
@@ -62,8 +64,9 @@
         1. Enter amount<br>
         2. Select currency (USD or ZWG)<br>
         3. Enter phone number: <span class="highlight">0771111111</span><br>
-        4. Select payment provider<br>
-        5. Click <strong>"Initiate Payment"</strong>
+        4. Enter email (optional)<br>
+        5. Select payment provider<br>
+        6. Click <strong>"Initiate Payment"</strong>
     </div>
 
     <input type="number" id="amount" value="1.00" step="0.01" placeholder="Amount">
@@ -76,6 +79,7 @@
     </div>
     
     <input type="tel" id="phone" value="0771111111" placeholder="Phone number">
+    <input type="email" id="email" value="test@gatekeeperai.co.zw" placeholder="Email (optional)" class="email-input">
     
     <select class="provider-select" id="providerSelect">
         <option value="ECOCASH">📱 EcoCash</option>
@@ -96,8 +100,8 @@
     <div id="troubleshoot" class="troubleshoot">
         <strong>🔧 Troubleshooting Tips:</strong><br>
         1. Try different provider from the dropdown<br>
-        2. Check if your Pesepay account is active<br>
-        3. Contact Pesepay support with error details
+        2. Check if your Payonify account is active<br>
+        3. Contact Payonify support with error details
     </div>
 
     <div class="test-mode">
@@ -111,9 +115,8 @@
 </div>
 
 <script>
-// Pesepay Credentials
-const INTEGRATION_KEY = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
-const ENCRYPTION_KEY = 'Oe6a6429cc0445fb8195ffbffOcda11c';
+// Payonify credentials are now stored in Vercel Environment Variables (SECURE)
+// No keys in frontend code - they're only on the server
 
 let isProcessing = false;
 
@@ -123,6 +126,7 @@ function initiatePayment() {
     const amount = document.getElementById('amount').value || '1.00';
     const currency = document.getElementById('currencySelect').value;
     const phone = document.getElementById('phone').value || '0771111111';
+    const email = document.getElementById('email').value || 'test@gatekeeperai.co.zw';
     const provider = document.getElementById('providerSelect').value;
     const reference = 'GK-' + Date.now();
     const resultDiv = document.getElementById('result');
@@ -145,24 +149,38 @@ function initiatePayment() {
         amount: amount,
         currency: currency,
         phone: phone,
+        email: email,
         provider: provider,
         reference: reference
     };
     
+    // Provider name mapping for display
+    const providerNames = {
+        'ECOCASH': 'EcoCash',
+        'ONEMONEY': 'OneMoney',
+        'INNBUCKS': 'InnBucks',
+        'TELECASH': 'Telecash',
+        'VISA': 'Visa',
+        'MASTERCARD': 'Mastercard',
+        'ZIPIT': 'Zipit'
+    };
+    const providerName = providerNames[provider] || provider;
+    
     debugDiv.innerHTML = `
         <strong>🔍 Debug Info:</strong><br>
-        <span class="success-text">✅ Using Pesepay Gateway</span><br>
-        Integration Key: ${INTEGRATION_KEY.substring(0, 10)}...<br>
+        <span class="success-text">✅ Using Payonify Gateway</span><br>
+        <span class="success-text">🔐 Keys stored securely in Vercel Environment Variables</span><br>
         Amount: $${amount}<br>
         Currency: ${currency}<br>
         Phone: ${phone}<br>
-        Provider: ${provider}<br>
+        Email: ${email}<br>
+        Provider: ${provider} (${providerName})<br>
         Reference: ${reference}<br>
-        <span style="color:#FFB300;">⏳ Sending request to Pesepay proxy...</span>
+        <span style="color:#FFB300;">⏳ Sending request to Payonify proxy...</span>
     `;
     
-    // ✅ Using Pesepay API endpoint
-    const endpoint = '/api/pesepay';
+    // ✅ Using Payonify API endpoint
+    const endpoint = '/api/payonify';
     
     fetch(endpoint, {
         method: 'POST',
@@ -177,25 +195,25 @@ function initiatePayment() {
         return response.json();
     })
     .then(data => {
-        console.log('Pesepay Response:', data);
+        console.log('Payonify Response:', data);
         debugDiv.innerHTML += `<br>📦 Response Data: ${JSON.stringify(data, null, 2)}`;
         
         // Check for redirect URL
-        if (data.redirectUrl || data.redirect_url || (data.data && data.data.redirectUrl)) {
-            const redirectUrl = data.redirectUrl || data.redirect_url || data.data?.redirectUrl;
+        if (data.redirectUrl || data.redirect_url || data.paymentUrl || data.data?.redirectUrl) {
+            const redirectUrl = data.redirectUrl || data.redirect_url || data.paymentUrl || data.data?.redirectUrl;
             resultDiv.innerHTML = `
                 <div style="color:#FFB300;font-size:16px;font-weight:bold;">🔄 Redirect to Payment</div>
                 <div style="font-size:12px;margin-top:8px;line-height:1.8;">
                     <strong>Reference:</strong> ${reference}<br>
                     <strong>Amount:</strong> ${currency} $${amount}<br>
-                    <strong>Provider:</strong> ${provider}<br>
+                    <strong>Provider:</strong> ${providerName}<br>
                     <strong>Status:</strong> <span class="status-pending">Redirect Required</span>
                 </div>
                 <div style="margin-top:12px;">
                     <a href="${redirectUrl}" target="_blank" class="redirect-btn">🔗 Go to Payment Page</a>
                 </div>
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
-                    📌 Click the button above to complete payment on Pesepay.
+                    📌 Click the button above to complete payment on Payonify.
                 </div>
             `;
             resultDiv.className = 'result';
@@ -213,13 +231,14 @@ function initiatePayment() {
                          data.success === true ||
                          data.statusCode === 200 ||
                          data.statusCode === 201 ||
+                         data.statusCode === 1 ||
                          (data.data && data.data.status === 'success') ||
                          (data.response && data.response.status === 'success');
         
         if (isSuccess) {
             const transaction = data.transaction || data.data?.transaction || data.response?.transaction || null;
             const statusText = data.status || data.message || 'Success';
-            const message = data.message || 'Payment initiated successfully';
+            const message = data.message || data.statusMessage || 'Payment initiated successfully';
             
             let transactionHtml = '';
             if (transaction) {
@@ -240,13 +259,13 @@ function initiatePayment() {
                     <strong>Reference:</strong> ${reference}<br>
                     <strong>Amount:</strong> ${currency} $${amount}<br>
                     <strong>Phone:</strong> ${phone}<br>
-                    <strong>Provider:</strong> ${provider}<br>
+                    <strong>Provider:</strong> ${providerName}<br>
                     <strong>Status:</strong> <span class="status-paid">${statusText}</span><br>
                     <strong>Message:</strong> ${message}
                 </div>
                 ${transactionHtml}
                 <div style="font-size:11px;color:#666;margin-top:10px;border-top:1px solid #1a1a2e;padding-top:8px;">
-                    📌 Check Pesepay dashboard for transaction details.
+                    📌 Check Payonify dashboard for transaction details.
                 </div>
             `;
             resultDiv.className = 'result';
@@ -302,12 +321,12 @@ function initiatePayment() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔵 Gatekeeper AI - Pesepay Test Page');
-    console.log('📋 Integration Key:', INTEGRATION_KEY.substring(0, 10) + '...');
-    console.log('💳 Using endpoint: /api/pesepay');
+    console.log('🔵 Gatekeeper AI - Payonify Test Page');
+    console.log('🔐 Keys stored securely in Vercel Environment Variables');
+    console.log('💳 Using endpoint: /api/payonify');
     console.log('💱 Currencies: USD and ZWG supported');
     console.log('📱 Providers: EcoCash, OneMoney, InnBucks, Telecash, Visa, Mastercard, Zipit');
 });
 </script>
 </body>
-                                                    </html>
+            </html>
