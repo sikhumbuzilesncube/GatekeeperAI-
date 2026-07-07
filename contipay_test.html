@@ -181,8 +181,8 @@ function initiatePayment() {
         <span style="color:#FFB300;">⏳ Sending request to Pesepay proxy...</span>
     `;
     
-    // ✅ Using Pesepay API endpoint
-    const endpoint = '/api/pesepay';
+    // ✅ Using payment.js API endpoint
+    const endpoint = '/api/payment';
     
     fetch(endpoint, {
         method: 'POST',
@@ -325,10 +325,10 @@ function initiatePayment() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔵 Gatekeeper AI - Pesepay Test Page');
     console.log('🔐 Pesepay Sandbox Mode');
-    console.log('💳 Using endpoint: /api/pesepay');
+    console.log('💳 Using endpoint: /api/payment');
     console.log('💱 Currencies: USD and ZWG supported');
     console.log('📱 Providers: EcoCash, OneMoney, InnBucks, Telecash, Visa, Mastercard, Zipit');
 });
 </script>
 </body>
-    </html>
+        </html>
