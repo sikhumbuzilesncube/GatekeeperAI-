@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -18,17 +18,18 @@ export default async function handler(req, res) {
     try {
         const { amount, phone, provider, currency, reference } = req.body;
 
-        // Your Pesepay credentials (Test/Sandbox)
+        // Your Pesepay credentials
         const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        // ✅ CORRECT PESEPAY ENDPOINT - Sandbox/Test Mode
-        const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/make-payment';
+        // ✅ CORRECT PESEPAY ENDPOINT (from documentation)
+        // Production:
+        const pesepayUrl = 'https://api.pesepay.com/api/payments-engine/v1/payments/initiate';
+        
+        // Sandbox (test) - uncomment to test:
+        // const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
 
-        // When you're ready for production, switch to:
-        // const pesepayUrl = 'https://api.pesepay.com/api/payments-engine/v2/payments/make-payment';
-
-        // Build payload for Pesepay
+        // Build payload based on Pesepay documentation
         const payload = {
             integrationKey: integrationKey,
             encryptionKey: encryptionKey,
@@ -43,15 +44,16 @@ export default async function handler(req, res) {
             cancelUrl: 'https://gatekeeperai.co.zw/payment_cancel.html'
         };
 
-        console.log('Sending to Pesepay (Sandbox):', {
+        console.log('Sending to Pesepay:', {
             url: pesepayUrl,
             payload: payload
         });
 
-        // Make request to Pesepay
+        // ✅ CORRECT AUTHENTICATION: Just the integration key
         const response = await fetch(pesepayUrl, {
             method: 'POST',
             headers: {
+                'authorization': integrationKey,  // ✅ Just the key, no Basic
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
