@@ -1,11 +1,5 @@
-// api/payment.js
-// Gatekeeper AI - Pesepay Integration (FINAL WORKING VERSION)
-
-// ✅ IMPORTANT: Install crypto-js for encryption
-// In Vercel: npm install crypto-js
-// Or use Node.js built-in crypto
-
-import crypto from 'crypto';
+        // api/payment.js
+// Alternative: Using Crypto-JS Library
 
 export default async function handler(req, res) {
     // CORS
@@ -29,7 +23,6 @@ export default async function handler(req, res) {
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
         // ✅ 1. BUILD PLAINTEXT PAYLOAD
-        // Pesepay requires these 4 fields only
         const plaintextPayload = {
             amountDetails: {
                 amount: parseFloat(amount || '1.00'),
@@ -43,25 +36,10 @@ export default async function handler(req, res) {
         console.log('1️⃣ Plaintext Payload:', JSON.stringify(plaintextPayload, null, 2));
 
         // ✅ 2. ENCRYPT THE PAYLOAD
-        // Convert to string, then encrypt using AES-256-CBC with your encryption key
-        const plaintextString = JSON.stringify(plaintextPayload);
-        
-        // Create encryption key from your encryption key (32 bytes for AES-256)
-        const key = crypto.createHash('sha256').update(encryptionKey).digest();
-        const iv = crypto.randomBytes(16); // Generate random IV
-        
-        // Encrypt
-        const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-        let encrypted = cipher.update(plaintextString, 'utf8', 'base64');
-        encrypted += cipher.final('base64');
-        
-        // Combine IV + encrypted data (Pesepay expects this format)
-        const encryptedPayload = {
-            payload: encrypted,
-            iv: iv.toString('base64')
-        };
+        // For now, send unencrypted to test (then add encryption)
+        const payload = plaintextPayload;
 
-        console.log('2️⃣ Encrypted Payload:', encryptedPayload);
+        console.log('2️⃣ Sending payload:', JSON.stringify(payload, null, 2));
 
         // ✅ 3. SEND TO PESEPAY
         const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
@@ -73,7 +51,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(encryptedPayload)
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
@@ -92,4 +70,4 @@ export default async function handler(req, res) {
             message: error.message || 'Server error'
         });
     }
-                }
+}
