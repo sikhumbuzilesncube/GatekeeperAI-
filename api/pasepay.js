@@ -1,5 +1,5 @@
 // api/pesepay.js
-// Gatekeeper AI - Pesepay Integration (Updated)
+// Gatekeeper AI - Pesepay Integration
 
 export default async function handler(req, res) {
     // CORS
@@ -18,21 +18,15 @@ export default async function handler(req, res) {
     try {
         const { amount, phone, provider, currency, reference } = req.body;
 
-        // Your Pesepay credentials
+        // Your Pesepay credentials (Test/Sandbox)
         const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        // ✅ TRY THESE DIFFERENT PESEPAY ENDPOINTS
-        // The 404 means we're using the wrong URL
-        
-        // Option 1: Most common Pesepay endpoint
-        const pesepayUrl = 'https://www.pesepay.com/api/v1/transaction/initiate';
-        
-        // Option 2: Alternative endpoint
-        // const pesepayUrl = 'https://api.pesepay.com/v1/transaction/initiate';
-        
-        // Option 3: Another alternative
-        // const pesepayUrl = 'https://www.pesepay.com/api/initiate';
+        // ✅ CORRECT PESEPAY ENDPOINT - Sandbox/Test Mode
+        const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/make-payment';
+
+        // When you're ready for production, switch to:
+        // const pesepayUrl = 'https://api.pesepay.com/api/payments-engine/v2/payments/make-payment';
 
         // Build payload for Pesepay
         const payload = {
@@ -42,14 +36,14 @@ export default async function handler(req, res) {
             currency: currency || 'USD',
             phone: phone || '0771111111',
             provider: provider || 'ECOCASH',
-            reference: reference || 'GATEKEEPER-' + Date.now(),
+            reference: reference || 'GK-' + Date.now(),
             description: 'Gatekeeper AI Subscription',
             callbackUrl: 'https://gatekeeperai.co.zw/payment_callback.html',
             successUrl: 'https://gatekeeperai.co.zw/payment_success.html',
             cancelUrl: 'https://gatekeeperai.co.zw/payment_cancel.html'
         };
 
-        console.log('Sending to Pesepay:', {
+        console.log('Sending to Pesepay (Sandbox):', {
             url: pesepayUrl,
             payload: payload
         });
@@ -80,4 +74,4 @@ export default async function handler(req, res) {
             message: error.message || 'Server error'
         });
     }
-}
+            }
