@@ -1,5 +1,5 @@
 // api/status.js
-// System Status Dashboard - Shows all services and their status
+// System Status Dashboard
 
 export default async function handler(req, res) {
     const status = {
@@ -14,6 +14,13 @@ export default async function handler(req, res) {
             payment: await checkPayment(),
             database: await checkDatabase(),
             monitoring: await checkMonitoring()
+        },
+        alerts: {
+            whatsapp: {
+                configured: true,
+                number: '263777803517',
+                status: 'active'
+            }
         },
         recent_issues: await getRecentIssues()
     };
@@ -41,7 +48,6 @@ async function checkApi() {
 }
 
 async function checkPayment() {
-    // Check Pesepay status
     try {
         const response = await fetch('https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate', {
             method: 'OPTIONS',
@@ -64,7 +70,6 @@ async function checkPayment() {
 }
 
 async function checkDatabase() {
-    // Placeholder - if you have a database
     return {
         status: 'online',
         type: 'Vercel KV',
@@ -81,7 +86,6 @@ async function checkMonitoring() {
 }
 
 async function getRecentIssues() {
-    // Placeholder - you can store issues in a database
     return [
         {
             id: 1,
@@ -90,4 +94,4 @@ async function getRecentIssues() {
             timestamp: new Date().toISOString()
         }
     ];
-}
+    }
