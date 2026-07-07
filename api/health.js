@@ -10,6 +10,10 @@ export default function handler(req, res) {
             api: 'running',
             payment: 'pending',
             database: 'connected'
+        },
+        alerts: {
+            whatsapp: 'configured',
+            number: '263777803517'
         }
     });
 }
