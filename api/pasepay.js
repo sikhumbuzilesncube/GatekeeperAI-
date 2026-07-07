@@ -1,5 +1,5 @@
 // api/pesepay.js
-// Gatekeeper AI - Pesepay Integration (CORRECTED)
+// Gatekeeper AI - Pesepay Integration
 
 export default async function handler(req, res) {
     // CORS
@@ -18,14 +18,13 @@ export default async function handler(req, res) {
     try {
         const { amount, phone, provider, currency, reference, email } = req.body;
 
-        // ✅ YOUR CORRECT PESEPAY SANDBOX CREDENTIALS
+        // ✅ PESEPAY SANDBOX CREDENTIALS
         const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        // ✅ CORRECT SANDBOX ENDPOINT (from Pesepay support)
+        // ✅ CORRECT SANDBOX ENDPOINT
         const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
 
-        // Build payload
         const payload = {
             integrationKey: integrationKey,
             encryptionKey: encryptionKey,
@@ -45,7 +44,6 @@ export default async function handler(req, res) {
             payload: payload
         });
 
-        // Make request to Pesepay
         const response = await fetch(pesepayUrl, {
             method: 'POST',
             headers: {
@@ -72,4 +70,4 @@ export default async function handler(req, res) {
             message: error.message || 'Server error'
         });
     }
-            }
+                    }
