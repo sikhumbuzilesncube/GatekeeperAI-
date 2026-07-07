@@ -1,6 +1,5 @@
-// api/payonify.js
-// Gatekeeper AI - Payonify Integration
-// Uses Vercel Environment Variables for security
+// api/pesepay.js
+// Gatekeeper AI - Pesepay Integration (CORRECTED)
 
 export default async function handler(req, res) {
     // CORS
@@ -19,49 +18,38 @@ export default async function handler(req, res) {
     try {
         const { amount, phone, provider, currency, reference, email } = req.body;
 
-        // ✅ Read keys from environment variables (SECURE)
-        const publishableKey = process.env.PAYONIFY_PUBLISHABLE_KEY;
-        const secretKey = process.env.PAYONIFY_SECRET_KEY;
-        const projectId = process.env.PAYONIFY_PROJECT_ID;
+        // ✅ YOUR CORRECT PESEPAY SANDBOX CREDENTIALS
+        const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
+        const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        // Check if keys are configured
-        if (!secretKey || !projectId) {
-            console.error('Missing Payonify environment variables');
-            return res.status(500).json({
-                status: 'error',
-                message: 'Payment gateway not configured. Please set environment variables.'
-            });
-        }
-
-        // Payonify API endpoint (confirm with Payonify)
-        const payonifyUrl = 'https://api.payonify.co.zw/v1/payments/initiate';
+        // ✅ CORRECT SANDBOX ENDPOINT (from Pesepay support)
+        const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
 
         // Build payload
         const payload = {
-            projectId: projectId,
+            integrationKey: integrationKey,
+            encryptionKey: encryptionKey,
             amount: parseFloat(amount || '1.00'),
             currency: currency || 'USD',
             phone: phone || '0771111111',
             provider: provider || 'ECOCASH',
             reference: reference || 'GK-' + Date.now(),
             description: 'Gatekeeper AI Subscription',
-            customerEmail: email || 'customer@gatekeeperai.co.zw',
             callbackUrl: 'https://gatekeeperai.co.zw/payment_callback.html',
             successUrl: 'https://gatekeeperai.co.zw/payment_success.html',
             cancelUrl: 'https://gatekeeperai.co.zw/payment_cancel.html'
         };
 
-        console.log('Sending to Payonify:', {
-            url: payonifyUrl,
-            projectId: projectId,
+        console.log('Sending to Pesepay:', {
+            url: pesepayUrl,
             payload: payload
         });
 
-        // Make request to Payonify
-        const response = await fetch(payonifyUrl, {
+        // Make request to Pesepay
+        const response = await fetch(pesepayUrl, {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + secretKey,
+                'authorization': integrationKey,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
@@ -70,7 +58,7 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
-        console.log('Payonify Response:', {
+        console.log('Pesepay Response:', {
             status: response.status,
             data: data
         });
@@ -84,4 +72,4 @@ export default async function handler(req, res) {
             message: error.message || 'Server error'
         });
     }
-                }
+            }
