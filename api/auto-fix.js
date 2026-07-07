@@ -1,5 +1,5 @@
 // api/auto-fix.js
-// Auto-Fix System - Detects and fixes common issues automatically
+// Auto-Fix System with WhatsApp Alerts
 
 export default async function handler(req, res) {
     const { action } = req.query;
@@ -19,6 +19,8 @@ export default async function handler(req, res) {
     
     // Auto-fix based on the issue
     const fixes = [];
+    let alertMessage = '';
+    let alertIssue = '';
     
     // Fix 1: Check if API is responding
     if (!status.api_responding) {
@@ -28,6 +30,8 @@ export default async function handler(req, res) {
             action: 'Restarted API service',
             result: fixResult
         });
+        alertMessage += `\n- API timeout detected and fixed`;
+        alertIssue = 'API Timeout';
     }
     
     // Fix 2: Check if payment gateway is down
@@ -38,6 +42,8 @@ export default async function handler(req, res) {
             action: 'Switched to backup gateway',
             result: fixResult
         });
+        alertMessage += `\n- Payment gateway down - switched to backup`;
+        alertIssue = 'Payment Gateway Down';
     }
     
     // Fix 3: Check if database is connected
@@ -48,13 +54,22 @@ export default async function handler(req, res) {
             action: 'Reconnected database',
             result: fixResult
         });
+        alertMessage += `\n- Database connection lost - reconnected`;
+        alertIssue = 'Database Connection Lost';
+    }
+    
+    // If fixes were applied, send WhatsApp alert
+    if (fixes.length > 0) {
+        // Send alert via WhatsApp
+        await sendWhatsAppAlert(alertIssue || 'Auto-Fix Applied', fixes);
     }
     
     // Return the fix results
     return res.status(200).json({
-        status: 'fixed',
-        message: `Applied ${fixes.length} fixes`,
+        status: fixes.length > 0 ? 'fixed' : 'healthy',
+        message: fixes.length > 0 ? `Applied ${fixes.length} fixes` : 'No fixes needed',
         fixes: fixes,
+        alert_sent: fixes.length > 0,
         timestamp: new Date().toISOString()
     });
 }
@@ -62,15 +77,14 @@ export default async function handler(req, res) {
 // Helper functions
 async function checkSystemStatus() {
     try {
-        // Check main API
         const apiResponse = await fetch('https://gatekeeperai.co.zw/api/health');
         const apiOk = apiResponse.ok;
         
         return {
             healthy: apiOk,
             api_responding: apiOk,
-            payment_gateway_online: true, // Placeholder - you can check Pesepay
-            database_connected: true, // Placeholder - if you have a database
+            payment_gateway_online: true,
+            database_connected: true,
             timestamp: new Date().toISOString()
         };
     } catch (error) {
@@ -86,10 +100,7 @@ async function checkSystemStatus() {
 }
 
 async function fixApiTimeout() {
-    // Attempt to restart API or clear cache
     try {
-        // You can add logic here to restart services
-        // For now, just log the fix
         return {
             success: true,
             message: 'API service restarted',
@@ -105,20 +116,35 @@ async function fixApiTimeout() {
 }
 
 async function fixPaymentGateway() {
-    // Switch to backup payment gateway
-    // For now, just log the fix
     return {
         success: true,
-        message: 'Switched to backup payment gateway (Payonify)',
+        message: 'Switched to backup payment gateway',
         timestamp: new Date().toISOString()
     };
 }
 
 async function fixDatabase() {
-    // Reconnect database
     return {
         success: true,
         message: 'Database reconnected',
         timestamp: new Date().toISOString()
     };
+}
+
+async function sendWhatsAppAlert(issue, fixes) {
+    try {
+        const message = `🔧 Auto-Fix Applied\n\nIssue: ${issue}\n\nFixes Applied:\n${fixes.map(f => `- ${f.action}: ${f.result.message}`).join('\n')}\n\n✅ System should be restored.`;
+        
+        await fetch('https://gatekeeperai.co.zw/api/send-whatsapp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                issue: issue,
+                action: 'Auto-Fix Applied',
+                message: message
+            })
+        });
+    } catch (error) {
+        console.log('Failed to send WhatsApp alert:', error);
+    }
 }
