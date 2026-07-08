@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gatekeeper AI - Test Payment</title>
+    <title>Gatekeeper AI - Make Payment</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0a0a0a;
             color: #fff;
@@ -21,221 +22,174 @@
             border-radius: 16px;
             max-width: 500px;
             width: 100%;
-            text-align: center;
             border: 1px solid #2a2a2a;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
-        .logo {
-            color: #FFB300;
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .logo span {
-            color: #00ff88;
-        }
-        .subtitle {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-        .test-badge {
-            display: inline-block;
-            background: #e94560;
-            color: #fff;
-            padding: 4px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .amount-box {
+        .logo { color: #FFB300; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 5px; }
+        .logo span { color: #00ff88; }
+        .subtitle { color: #888; font-size: 13px; text-align: center; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #aaa; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px 16px;
             background: #0a0a0a;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
             border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
         }
-        .amount-box .label {
-            color: #666;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #FFB300;
         }
-        .amount-box .value {
-            color: #00ff88;
-            font-size: 42px;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        .amount-box .currency {
-            color: #888;
-            font-size: 18px;
-        }
-        .test-info {
-            background: #1a2a1a;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            text-align: left;
-            font-size: 13px;
-            color: #aaa;
-            border: 1px solid #2a3a2a;
-        }
-        .test-info strong {
-            color: #00ff88;
-        }
-        .test-info .highlight {
-            color: #FFB300;
-        }
-        .paynow-btn {
-            display: inline-block;
-            padding: 16px 40px;
+        .form-group select option { background: #1a1a2e; }
+        .amount-input { font-size: 24px; font-weight: bold; }
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
             background: #FFB300;
             color: #000;
-            text-decoration: none;
+            border: none;
             border-radius: 10px;
             font-size: 18px;
             font-weight: bold;
+            cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
-            box-sizing: border-box;
-            text-align: center;
+            margin-top: 10px;
         }
-        .paynow-btn:hover {
-            background: #e6a300;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3);
-        }
-        .paynow-btn img {
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        .payment-methods {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin: 20px 0 10px;
-        }
-        .payment-methods span {
-            background: #0a0a0a;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 11px;
-            color: #888;
-            border: 1px solid #1a1a2e;
-        }
-        .payment-methods span.active {
-            border-color: #FFB300;
-            color: #FFB300;
-        }
-        .footer {
-            margin-top: 25px;
-            font-size: 11px;
-            color: #444;
-            border-top: 1px solid #1a1a2e;
-            padding-top: 20px;
-        }
-        .footer a {
-            color: #666;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            color: #FFB300;
-        }
-        .steps {
-            text-align: left;
-            margin: 15px 0;
-            padding-left: 20px;
-            font-size: 13px;
-            color: #888;
-        }
-        .steps li {
-            margin-bottom: 5px;
-        }
-        .steps li::marker {
-            color: #FFB300;
-        }
-        .phone-display {
-            background: #0a0a0a;
-            padding: 8px 16px;
-            border-radius: 6px;
-            display: inline-block;
-            font-family: monospace;
-            color: #00ff88;
-            font-size: 16px;
-            border: 1px solid #1a3a1a;
-            margin: 5px 0;
-        }
+        .pay-btn:hover { background: #e6a300; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3); }
+        .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .payment-methods { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 5px; }
+        .payment-methods .method { background: #0a0a0a; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; font-size: 12px; color: #888; }
+        .payment-methods .method:hover { border-color: #FFB30033; }
+        .payment-methods .method.active { border-color: #FFB300; color: #FFB300; background: #1a1a1a; }
+        .payment-methods .method .icon { font-size: 20px; display: block; margin-bottom: 3px; }
+        .test-badge { display: inline-block; background: #e94560; color: #fff; padding: 3px 12px; border-radius: 15px; font-size: 10px; font-weight: bold; margin-bottom: 15px; }
+        .info-text { font-size: 11px; color: #555; text-align: center; margin-top: 15px; border-top: 1px solid #1a1a2e; padding-top: 15px; }
+        .info-text a { color: #FFB300; text-decoration: none; }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+        .hidden { display: none; }
+        .alert { background: #1a2a1a; padding: 12px; border-radius: 8px; border: 1px solid #2a3a2a; margin-bottom: 15px; font-size: 13px; color: #aaa; }
+        .alert strong { color: #00ff88; }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Logo -->
+    <!-- Header -->
     <div class="logo">Gatekeeper <span>AI</span></div>
-    <div class="subtitle">Test Payment Integration</div>
+    <div class="subtitle">Secure Payment</div>
 
     <!-- Test Badge -->
-    <div class="test-badge">🧪 TEST MODE</div>
+    <div style="text-align:center;">
+        <span class="test-badge">🧪 TEST MODE</span>
+    </div>
+
+    <!-- Payment Method Selection -->
+    <div class="form-group">
+        <label>Select Payment Method</label>
+        <div class="payment-methods" id="methodSelector">
+            <div class="method active" data-method="ECOCASH" onclick="selectMethod('ECOCASH')">
+                <span class="icon">📱</span> EcoCash
+            </div>
+            <div class="method" data-method="ONEMONEY" onclick="selectMethod('ONEMONEY')">
+                <span class="icon">📱</span> OneMoney
+            </div>
+            <div class="method" data-method="INNBUCKS" onclick="selectMethod('INNBUCKS')">
+                <span class="icon">📱</span> InnBucks
+            </div>
+        </div>
+    </div>
+
+    <!-- Phone Number -->
+    <div class="form-group">
+        <label>📞 Phone Number</label>
+        <input type="tel" id="phoneNumber" value="0771111111" placeholder="e.g. 0771111111">
+    </div>
 
     <!-- Amount -->
-    <div class="amount-box">
-        <div class="label">Amount to Pay</div>
-        <div class="value">
-            <span class="currency">$</span>1.00
-        </div>
-        <div style="color:#666;font-size:12px;margin-top:5px;">USD - US Dollar</div>
+    <div class="form-group">
+        <label>💰 Amount (USD)</label>
+        <input type="number" id="amount" value="1.00" step="0.01" min="0.01" class="amount-input">
     </div>
 
-    <!-- Test Instructions -->
-    <div class="test-info">
-        <strong>📋 Test Instructions:</strong><br>
-        1. Click the <span class="highlight">"Pay Now"</span> button below<br>
-        2. You'll be redirected to Paynow's secure payment page<br>
-        3. Use this test phone number:<br>
-        <div class="phone-display">0771111111</div>
-        4. Select <span class="highlight">EcoCash</span> as payment method<br>
-        5. Complete the payment (no real money will be charged)<br>
-        6. You'll be redirected back to this page
+    <!-- Reference (Hidden) -->
+    <input type="hidden" id="reference" value="GATEKEEPER-">
+
+    <!-- Alert Box -->
+    <div class="alert" id="alertBox">
+        <strong>ℹ️</strong> You'll be redirected to Paynow to complete your payment securely.
     </div>
 
-    <!-- Supported Payment Methods -->
-    <div style="margin:15px 0 5px;font-size:12px;color:#666;">Supported Payment Methods:</div>
-    <div class="payment-methods">
-        <span class="active">📱 EcoCash</span>
-        <span>📱 OneMoney</span>
-        <span>📱 InnBucks</span>
-        <span>💳 Visa</span>
-        <span>💳 Mastercard</span>
-    </div>
+    <!-- Pay Button -->
+    <button class="pay-btn" id="payBtn" onclick="processPayment()">
+        💳 Pay Now
+    </button>
 
-    <!-- ✅ PAYNOW PAYMENT BUTTON -->
-    <a href='https://www.paynow.co.zw/Payment/Link/?q=c2VhcmNoPWdhdGVrZWVwZXJ6dyU0MGdtYWlsLmNvbSZhbW91bnQ9MS4wMCZyZWZlcmVuY2U9R0FURUtFRVBFUi1URVNULTAwMSZsPTE%3d' 
-       target='_blank' 
-       class="paynow-btn">
-        💳 Pay Now - $1.00
-    </a>
-
-    <!-- Alternative: Image Button -->
-    <!--
-    <a href='https://www.paynow.co.zw/Payment/Link/?q=c2VhcmNoPWdhdGVrZWVwZXJ6dyU0MGdtYWlsLmNvbSZhbW91bnQ9MS4wMCZyZWZlcmVuY2U9R0FURUtFRVBFUi1URVNULTAwMSZsPTE%3d' target='_blank'>
-        <img src='https://www.paynow.co.zw/Content/Buttons/Medium_buttons/button_pay-now_medium.png' style='border:0;width:100%;max-width:200px;' />
-    </a>
-    -->
-
-    <!-- Footer -->
-    <div class="footer">
-        <p>🔒 Your payment is secure and processed by <a href="https://www.paynow.co.zw" target="_blank">Paynow</a></p>
-        <p style="margin-top:5px;">
-            <a href="https://gatekeeperai.co.zw">Back to Home</a> &bull;
-            <a href="https://gatekeeperai.co.zw/terms">Terms</a> &bull;
-            <a href="https://gatekeeperai.co.zw/privacy">Privacy</a>
-        </p>
-        <p style="margin-top:10px;color:#333;font-size:10px;">
-            Reference: GATEKEEPER-TEST-001
-        </p>
+    <!-- Info -->
+    <div class="info-text">
+        🔒 Secure payment processed by <a href="https://www.paynow.co.zw" target="_blank">Paynow</a><br>
+        Supported: EcoCash, OneMoney, InnBucks, Visa, Mastercard
     </div>
 </div>
+
+<script>
+    let selectedMethod = 'ECOCASH';
+
+    function selectMethod(method) {
+        selectedMethod = method;
+        document.querySelectorAll('.payment-methods .method').forEach(el => {
+            el.classList.remove('active');
+        });
+        document.querySelector(`.payment-methods .method[data-method="${method}"]`).classList.add('active');
+    }
+
+    function processPayment() {
+        const phone = document.getElementById('phoneNumber').value.trim();
+        const amount = document.getElementById('amount').value || '1.00';
+        const reference = 'GATEKEEPER-' + Date.now();
+
+        // Validate phone number
+        if (!phone || phone.length < 10) {
+            alert('Please enter a valid phone number (e.g. 0771111111)');
+            return;
+        }
+
+        // Show processing state
+        const btn = document.getElementById('payBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Processing...';
+
+        // ✅ Build Paynow URL with the details
+        // Note: Paynow requires the merchant email in the URL
+        const merchantEmail = 'gatekeeperzw@gmail.com';
+        const paynowUrl = `https://www.paynow.co.zw/Payment/Link/?q=${btoa(`search=${merchantEmail}&amount=${amount}&reference=${reference}&l=1`)}`;
+
+        // Show the URL for debugging (optional)
+        console.log('Redirecting to:', paynowUrl);
+        console.log('Phone:', phone);
+        console.log('Method:', selectedMethod);
+        console.log('Reference:', reference);
+
+        // ✅ Redirect to Paynow
+        window.location.href = paynowUrl;
+    }
+
+    // Set initial reference
+    document.getElementById('reference').value = 'GATEKEEPER-' + Date.now();
+
+    // Allow Enter key to submit
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const active = document.activeElement;
+            if (active.tagName === 'INPUT') {
+                processPayment();
+            }
+        }
+    });
+</script>
 </body>
-  </html>
+    </html>
