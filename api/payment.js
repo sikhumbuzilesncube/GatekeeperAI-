@@ -1,6 +1,6 @@
 // api/payment.js
 // Gatekeeper AI - Pesepay Integration
-// Using Pesepay's Official JavaScript Encryption Example
+// Using 'initiate' endpoint with correct format
 
 import CryptoJS from 'crypto-js';
 
@@ -25,42 +25,22 @@ export default async function handler(req, res) {
         const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        console.log('🔑 Encryption Key:', encryptionKey);
-        console.log('📏 Key Length:', encryptionKey.length);
-
-        // ✅ PREPARE THE PAYMENT BODY - EXACTLY as Pesepay's example
+        // ✅ PAYLOAD FOR 'INITIATE' ENDPOINT (Simpler format)
+        // From Pesepay's initiate documentation:
+        // amountDetails, reasonForPayment, resultUrl, returnUrl
         const paymentBody = {
             amountDetails: {
                 amount: parseFloat(amount || '1.00'),
                 currencyCode: currency || 'USD'
             },
-            merchantReference: reference || 'GK-' + Date.now(),
             reasonForPayment: 'Gatekeeper AI Subscription',
             resultUrl: 'https://gatekeeperai.co.zw/payment_callback.html',
-            returnUrl: 'https://gatekeeperai.co.zw/payment_success.html',
-            paymentMethodCode: provider === 'INNBUCKS' ? 'PZW212' : 'PZW211',
-            customer: {
-                email: email || 'customer@gatekeeperai.co.zw',
-                phoneNumber: phone || '0771111111',
-                name: name || 'Gatekeeper Customer'
-            },
-            paymentMethodRequiredFields: {
-                customerPhoneNumber: phone || '0771111111'
-            }
+            returnUrl: 'https://gatekeeperai.co.zw/payment_success.html'
         };
 
         console.log('1️⃣ Payment Body (Plain):', JSON.stringify(paymentBody, null, 2));
 
-        // ✅ ENCRYPT USING PESEPAY'S OFFICIAL METHOD
-        // From their JavaScript example:
-        // const encryptedJson = CryptoJS.AES.encrypt(
-        //   JSON.stringify(paymentBody),
-        //   CryptoJS.enc.Utf8.parse(encryptionKey),
-        //   {
-        //     iv: CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16))
-        //   }
-        // ).toString();
-
+        // ✅ USE THE SAME ENCRYPTION THAT PASSED THE TEST
         const encryptedJson = CryptoJS.AES.encrypt(
             JSON.stringify(paymentBody),
             CryptoJS.enc.Utf8.parse(encryptionKey),
@@ -69,15 +49,16 @@ export default async function handler(req, res) {
             }
         ).toString();
 
-        console.log('2️⃣ Encrypted Payload:', encryptedJson);
+        console.log('2️⃣ Encrypted:', encryptedJson);
 
-        // ✅ CREATE FINAL PAYLOAD - EXACTLY as Pesepay's example
         const payload = { payload: encryptedJson };
 
         console.log('3️⃣ Final Payload:', JSON.stringify(payload, null, 2));
 
-        // ✅ SEND TO PESEPAY
+        // ✅ USE THE 'INITIATE' ENDPOINT (We know this exists)
         const apiUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
+
+        console.log('4️⃣ Sending to:', apiUrl);
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -90,16 +71,24 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
-        console.log('4️⃣ Pesepay Response:', {
+        console.log('5️⃣ Pesepay Response:', {
             status: response.status,
             data: data
         });
 
-        // ✅ DECRYPT THE RESPONSE - Using Pesepay's decryptData function
+        // ✅ DECRYPT THE RESPONSE
         if (data.payload) {
             try {
-                const result = decryptData(data.payload, encryptionKey);
-                console.log('5️⃣ Decrypted Response:', result);
+                const decrypted = CryptoJS.AES.decrypt(
+                    data.payload,
+                    CryptoJS.enc.Utf8.parse(encryptionKey),
+                    {
+                        iv: CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16))
+                    }
+                ).toString(CryptoJS.enc.Utf8);
+
+                const result = JSON.parse(decrypted);
+                console.log('6️⃣ Decrypted Response:', result);
 
                 return res.status(response.status).json({
                     status: 'success',
@@ -129,30 +118,3 @@ export default async function handler(req, res) {
         });
     }
 }
-
-/**
- * Decrypt the encrypted response from Pesepay API
- * From Pesepay's official JavaScript example
- */
-function decryptData(encryptedJson, encryptionKey) {
-    try {
-        const decryptedBytes = CryptoJS.AES.decrypt(
-            encryptedJson,
-            CryptoJS.enc.Utf8.parse(encryptionKey),
-            {
-                iv: CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16))
-            }
-        );
-
-        const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-        if (!decryptedData) {
-            throw new Error('Decryption failed - empty result');
-        }
-
-        return JSON.parse(decryptedData);
-    } catch (error) {
-        console.error('Error decrypting data:', error);
-        throw error;
-    }
-            }
