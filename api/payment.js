@@ -1,6 +1,6 @@
 // api/payment.js
 // Gatekeeper AI - Pesepay Integration
-// Trying multiple endpoints
+// SIMPLIFIED ENCRYPTION - Matching Pesepay's example
 
 import CryptoJS from 'crypto-js';
 
@@ -25,16 +25,10 @@ export default async function handler(req, res) {
         const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        // ✅ 1. MAP PROVIDER TO PAYMENT METHOD CODE
-        const providerMap = {
-            'ECOCASH': { code: 'PZW211', display: 'EcoCash' },
-            'INNBUCKS': { code: 'PZW212', display: 'InnBucks' },
-        };
+        console.log('🔑 Encryption Key:', encryptionKey);
+        console.log('📏 Key Length:', encryptionKey.length);
 
-        const providerInfo = providerMap[provider] || providerMap['ECOCASH'];
-        const paymentMethodCode = providerInfo.code;
-
-        // ✅ 2. BUILD THE PAYMENT BODY
+        // ✅ BUILD THE PAYMENT BODY (Matching Pesepay's example)
         const paymentBody = {
             amountDetails: {
                 amount: parseFloat(amount || '1.00'),
@@ -44,7 +38,7 @@ export default async function handler(req, res) {
             reasonForPayment: 'Gatekeeper AI Subscription',
             resultUrl: 'https://gatekeeperai.co.zw/payment_callback.html',
             returnUrl: 'https://gatekeeperai.co.zw/payment_success.html',
-            paymentMethodCode: paymentMethodCode,
+            paymentMethodCode: 'PZW211', // EcoCash USD
             customer: {
                 email: email || 'customer@gatekeeperai.co.zw',
                 phoneNumber: phone || '0771111111',
@@ -57,105 +51,75 @@ export default async function handler(req, res) {
 
         console.log('1️⃣ Payment Body:', JSON.stringify(paymentBody, null, 2));
 
-        // ✅ 3. ENCRYPT
-        const encryptedJson = CryptoJS.AES.encrypt(
-            JSON.stringify(paymentBody),
-            CryptoJS.enc.Utf8.parse(encryptionKey),
-            {
-                iv: CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16))
-            }
-        ).toString();
+        // ✅ ENCRYPT - SIMPLER METHOD
+        // Convert the body to a JSON string
+        const jsonString = JSON.stringify(paymentBody);
+        console.log('2️⃣ JSON String:', jsonString);
 
-        const payload = { payload: encryptedJson };
+        // Use CryptoJS to encrypt
+        // Method: AES-256-CBC with key and IV
+        const key = CryptoJS.enc.Utf8.parse(encryptionKey);
+        const iv = CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16));
 
-        console.log('2️⃣ Encrypted Payload:', JSON.stringify(payload, null, 2));
-
-        // ✅ 4. TRY BOTH ENDPOINTS - Sandbox
-        const endpoints = [
-            // Try the initiate endpoint first (we know this one exists)
-            {
-                url: 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate',
-                name: 'initiate'
-            },
-            // Then try make-payment (which gave 404)
-            {
-                url: 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/make-payment',
-                name: 'make-payment'
-            }
-        ];
-
-        let lastError = null;
-        let successResponse = null;
-
-        for (const endpoint of endpoints) {
-            try {
-                console.log(`🔍 Trying endpoint: ${endpoint.name}`);
-                
-                const response = await fetch(endpoint.url, {
-                    method: 'POST',
-                    headers: {
-                        'authorization': integrationKey,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-
-                // If we get a response (not 404), return it
-                if (response.status !== 404) {
-                    console.log(`✅ Success with endpoint: ${endpoint.name}`);
-                    successResponse = { endpoint: endpoint.name, status: response.status, data };
-                    break;
-                }
-                
-                lastError = { endpoint: endpoint.name, status: response.status, data };
-                console.log(`❌ Endpoint ${endpoint.name} failed:`, response.status);
-                
-            } catch (error) {
-                lastError = { endpoint: endpoint.name, error: error.message };
-            }
-        }
-
-        // If we have a success response, process it
-        if (successResponse) {
-            // Decrypt the response
-            if (successResponse.data.payload) {
-                try {
-                    const decrypted = decryptData(successResponse.data.payload, encryptionKey);
-                    console.log('4️⃣ Decrypted Response:', decrypted);
-
-                    return res.status(successResponse.status).json({
-                        status: 'success',
-                        message: 'Payment initiated',
-                        endpoint_used: successResponse.endpoint,
-                        redirectUrl: decrypted.redirectUrl,
-                        referenceNumber: decrypted.referenceNumber,
-                        transaction: decrypted,
-                        raw: successResponse.data
-                    });
-                } catch (decryptError) {
-                    console.error('Decryption error:', decryptError);
-                    return res.status(successResponse.status).json({
-                        status: 'partial',
-                        message: 'Payment initiated but response decryption failed',
-                        endpoint_used: successResponse.endpoint,
-                        raw: successResponse.data
-                    });
-                }
-            }
-            
-            return res.status(successResponse.status).json(successResponse.data);
-        }
-
-        // All endpoints failed
-        return res.status(404).json({
-            status: 'error',
-            message: 'All endpoints failed',
-            endpoints_tried: endpoints.map(e => e.name),
-            last_error: lastError
+        const encrypted = CryptoJS.AES.encrypt(jsonString, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
         });
+
+        const encryptedString = encrypted.toString();
+        console.log('3️⃣ Encrypted String:', encryptedString);
+
+        // ✅ CREATE FINAL PAYLOAD
+        const payload = { payload: encryptedString };
+
+        console.log('4️⃣ Final Payload:', JSON.stringify(payload, null, 2));
+
+        // ✅ SEND TO PESEPAY
+        const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
+
+        const response = await fetch(pesepayUrl, {
+            method: 'POST',
+            headers: {
+                'authorization': integrationKey,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        console.log('5️⃣ Pesepay Response:', {
+            status: response.status,
+            data: data
+        });
+
+        // ✅ TRY TO DECRYPT RESPONSE
+        if (data.payload) {
+            try {
+                const decrypted = decryptResponse(data.payload, encryptionKey);
+                console.log('6️⃣ Decrypted Response:', decrypted);
+                
+                return res.status(response.status).json({
+                    status: 'success',
+                    message: 'Payment initiated',
+                    redirectUrl: decrypted.redirectUrl,
+                    referenceNumber: decrypted.referenceNumber,
+                    transaction: decrypted,
+                    raw: data
+                });
+            } catch (decryptError) {
+                console.error('Decryption error:', decryptError);
+                return res.status(response.status).json({
+                    status: 'partial',
+                    message: 'Payment initiated but response decryption failed',
+                    raw: data
+                });
+            }
+        }
+
+        return res.status(response.status).json(data);
 
     } catch (error) {
         console.error('❌ Error:', error);
@@ -166,25 +130,27 @@ export default async function handler(req, res) {
     }
 }
 
-function decryptData(encryptedJson, encryptionKey) {
+function decryptResponse(encryptedJson, encryptionKey) {
     try {
-        const decryptedBytes = CryptoJS.AES.decrypt(
-            encryptedJson,
-            CryptoJS.enc.Utf8.parse(encryptionKey),
-            {
-                iv: CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16))
-            }
-        );
+        const key = CryptoJS.enc.Utf8.parse(encryptionKey);
+        const iv = CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16));
 
-        const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        const decrypted = CryptoJS.AES.decrypt(encryptedJson, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        });
 
-        if (!decryptedData) {
-            throw new Error('Decryption failed - empty result');
+        const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+        console.log('📥 Decrypted String:', decryptedString);
+
+        if (!decryptedString) {
+            throw new Error('Decryption returned empty result');
         }
 
-        return JSON.parse(decryptedData);
+        return JSON.parse(decryptedString);
     } catch (error) {
-        console.error('Error decrypting data:', error);
+        console.error('Decryption error:', error);
         throw error;
     }
-}
+                }
