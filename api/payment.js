@@ -1,15 +1,13 @@
 // api/payment.js
-// Gatekeeper AI - Pesepay Integration
-// Using Pesepay's official JavaScript encryption method
+// Gatekeeper AI - Pesepay Integration (MAKE PAYMENT - Updated)
+// Based on: https://developers.pesepay.com/api-reference/make-payment
 
-// ✅ IMPORTANT: Install crypto-js in Vercel
-// Run in terminal: npm install crypto-js
-// Or add to package.json: "crypto-js": "^4.2.0"
-
+// ✅ IMPORTANT: Ensure crypto-js is installed
+// In package.json: "crypto-js": "^4.2.0"
 import CryptoJS from 'crypto-js';
 
 export default async function handler(req, res) {
-    // CORS
+    // CORS Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -23,27 +21,52 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { amount, phone, provider, currency, reference } = req.body;
+        const { amount, phone, provider, currency, reference, email, name } = req.body;
 
         // ✅ YOUR PESEPAY CREDENTIALS
         const integrationKey = '74362486-c8e7-4bb1-8a9f-c042ff8e4497';
         const encryptionKey = 'Oe6a6429cc0445fb8195ffbffOcda11c';
 
-        // ✅ 1. PREPARE THE PAYMENT BODY (Plain Text)
+        // ✅ 1. MAP PROVIDER TO PAYMENT METHOD CODE (Pesepay Specific)
+        // Based on documentation: PZW211 = Ecocash USD, PZW212 = Innbucks
+        // For other providers, you'll need to get the correct codes from Pesepay
+        const providerMap = {
+            'ECOCASH': { code: 'PZW211', display: 'EcoCash' },
+            'INNBUCKS': { code: 'PZW212', display: 'InnBucks' },
+            // Add other providers here as you get their codes
+            // 'ONEMONEY': { code: 'PZW???', display: 'OneMoney' },
+            // 'TELECASH': { code: 'PZW???', display: 'Telecash' },
+        };
+
+        const providerInfo = providerMap[provider] || providerMap['ECOCASH'];
+        const paymentMethodCode = providerInfo.code;
+
+        // ✅ 2. BUILD THE PAYMENT BODY (Plain Text)
         const paymentBody = {
             amountDetails: {
                 amount: parseFloat(amount || '1.00'),
                 currencyCode: currency || 'USD'
             },
+            merchantReference: reference || 'GK-' + Date.now(),
             reasonForPayment: 'Gatekeeper AI Subscription',
             resultUrl: 'https://gatekeeperai.co.zw/payment_callback.html',
-            returnUrl: 'https://gatekeeperai.co.zw/payment_success.html'
+            returnUrl: 'https://gatekeeperai.co.zw/payment_success.html',
+            paymentMethodCode: paymentMethodCode,
+            customer: {
+                email: email || 'customer@gatekeeperai.co.zw',
+                phoneNumber: phone || '0771111111',
+                name: name || 'Gatekeeper Customer'
+            },
+            paymentMethodRequiredFields: {
+                // For Ecocash, provide the customer's phone number
+                customerPhoneNumber: phone || '0771111111'
+                // For Innbucks, send an empty object: {}
+            }
         };
 
         console.log('1️⃣ Payment Body (Plain):', JSON.stringify(paymentBody, null, 2));
 
-        // ✅ 2. ENCRYPT THE PAYLOAD using Pesepay's method
-        // IV = first 16 characters of encryption key
+        // ✅ 3. ENCRYPT THE PAYLOAD
         const encryptedJson = CryptoJS.AES.encrypt(
             JSON.stringify(paymentBody),
             CryptoJS.enc.Utf8.parse(encryptionKey),
@@ -52,16 +75,18 @@ export default async function handler(req, res) {
             }
         ).toString();
 
-        console.log('2️⃣ Encrypted Payload:', encryptedJson);
-
-        // ✅ 3. CREATE FINAL PAYLOAD
+        // ✅ 4. CREATE FINAL PAYLOAD
         const payload = { payload: encryptedJson };
 
-        console.log('3️⃣ Final Payload:', JSON.stringify(payload, null, 2));
+        console.log('2️⃣ Final Payload Sent:', JSON.stringify(payload, null, 2));
 
-        // ✅ 4. SEND TO PESEPAY SANDBOX
-        const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/initiate';
+        // ✅ 5. USE THE CORRECT 'make-payment' ENDPOINT (Sandbox)
+        const pesepayUrl = 'https://api.test.sandbox.pesepay.com/payments-engine/v1/payments/make-payment';
 
+        // For production, switch to:
+        // const pesepayUrl = 'https://api.pesepay.com/api/payments-engine/v2/payments/make-payment';
+
+        // ✅ 6. SEND REQUEST TO PESEPAY
         const response = await fetch(pesepayUrl, {
             method: 'POST',
             headers: {
@@ -74,18 +99,18 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
-        console.log('4️⃣ Pesepay Response:', {
+        console.log('3️⃣ Pesepay Response (Raw):', {
             status: response.status,
             data: data
         });
 
-        // ✅ 5. DECRYPT THE RESPONSE
+        // ✅ 7. DECRYPT THE RESPONSE
         if (data.payload) {
             try {
                 const decrypted = decryptData(data.payload, encryptionKey);
-                console.log('5️⃣ Decrypted Response:', decrypted);
-                
-                // Return the decrypted data with redirect URL
+                console.log('4️⃣ Decrypted Response:', decrypted);
+
+                // Return decrypted data with redirect URL
                 return res.status(response.status).json({
                     status: 'success',
                     message: 'Payment initiated',
@@ -96,7 +121,6 @@ export default async function handler(req, res) {
                 });
             } catch (decryptError) {
                 console.error('Decryption error:', decryptError);
-                // If decryption fails, return raw data
                 return res.status(response.status).json({
                     status: 'partial',
                     message: 'Payment initiated but response decryption failed',
@@ -105,6 +129,7 @@ export default async function handler(req, res) {
             }
         }
 
+        // If no payload to decrypt, return raw response
         return res.status(response.status).json(data);
 
     } catch (error) {
@@ -131,13 +156,13 @@ function decryptData(encryptedJson, encryptionKey) {
                 iv: CryptoJS.enc.Utf8.parse(encryptionKey.substring(0, 16))
             }
         );
-        
+
         const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8);
-        
+
         if (!decryptedData) {
             throw new Error('Decryption failed - empty result');
         }
-        
+
         return JSON.parse(decryptedData);
     } catch (error) {
         console.error('Error decrypting data:', error);
