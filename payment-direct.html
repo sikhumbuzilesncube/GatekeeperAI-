@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gatekeeper AI - Direct Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: #1a1a2e; padding: 35px; border-radius: 16px; max-width: 480px; width: 100%; border: 1px solid #2a2a2a; }
+        .logo { color: #FFB300; font-size: 24px; text-align: center; font-weight: bold; }
+        .logo span { color: #00ff88; }
+        .subtitle { color: #888; font-size: 13px; text-align: center; margin-bottom: 25px; }
+        .test-badge { display: inline-block; background: #e94560; color: #fff; padding: 3px 14px; border-radius: 15px; font-size: 10px; font-weight: bold; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; color: #aaa; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 12px 16px; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; font-size: 16px; box-sizing: border-box; }
+        .form-group input:focus { outline: none; border-color: #FFB300; }
+        .payment-methods { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 5px; }
+        .payment-methods .method { background: #0a0a0a; padding: 12px 8px; border-radius: 8px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; font-size: 12px; color: #888; }
+        .payment-methods .method:hover { border-color: #FFB30033; }
+        .payment-methods .method.active { border-color: #FFB300; color: #FFB300; background: #1a1a1a; }
+        .payment-methods .method .icon { font-size: 22px; display: block; margin-bottom: 3px; }
+        .pay-btn { width: 100%; padding: 16px; background: #FFB300; color: #000; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
+        .pay-btn:hover { background: #e6a300; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3); }
+        .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .status-box { background: #0a0a0a; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; font-size: 13px; text-align: center; border: 1px solid transparent; }
+        .status-box.success { border-color: #00ff88; color: #00ff88; display: block; }
+        .status-box.error { border-color: #e94560; color: #e94560; display: block; }
+        .status-box.pending { border-color: #FFB300; color: #FFB300; display: block; }
+        .instruction { font-size: 11px; color: #555; text-align: center; margin-top: 15px; border-top: 1px solid #1a1a2e; padding-top: 15px; }
+        .instruction .highlight { color: #FFB300; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .reference-box { background: #0a0a0a; padding: 6px 12px; border-radius: 5px; font-size: 10px; color: #444; font-family: monospace; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="top-bar">
+        <div class="logo">Gatekeeper <span>AI</span></div>
+        <span class="test-badge">🧪 TEST</span>
+    </div>
+    <div class="subtitle">Pay from your phone, stay on this page</div>
+
+    <div class="form-group">
+        <label>Select Payment Method</label>
+        <div class="payment-methods">
+            <div class="method active" onclick="selectMethod(this, 'ECOCASH')">
+                <span class="icon">📱</span> EcoCash
+            </div>
+            <div class="method" onclick="selectMethod(this, 'ONEMONEY')">
+                <span class="icon">📱</span> OneMoney
+            </div>
+            <div class="method" onclick="selectMethod(this, 'INNBUCKS')">
+                <span class="icon">📱</span> InnBucks
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>📞 Phone Number</label>
+        <input type="tel" id="phoneNumber" value="0771111111" placeholder="e.g. 0771111111">
+        <div style="font-size: 11px; color: #444; margin-top: 4px;">Use <span style="color:#00ff88;">0771111111</span> for testing</div>
+    </div>
+
+    <div class="form-group">
+        <label>💰 Amount (USD)</label>
+        <input type="number" id="amount" value="1.00" step="0.01" min="0.01">
+    </div>
+
+    <button class="pay-btn" id="payBtn" onclick="initiatePayment()">
+        💳 Pay Now
+    </button>
+
+    <div class="status-box" id="statusBox">
+        <div id="statusMessage"></div>
+    </div>
+
+    <div class="instruction">
+        🔒 You'll receive a USSD prompt on your phone to confirm payment.<br>
+        No redirect, stay on this page.
+    </div>
+</div>
+
+<script>
+    let selectedMethod = 'ECOCASH';
+
+    function selectMethod(el, method) {
+        selectedMethod = method;
+        document.querySelectorAll('.payment-methods .method').forEach(m => m.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    async function initiatePayment() {
+        const phone = document.getElementById('phoneNumber').value.trim();
+        const amount = document.getElementById('amount').value || '1.00';
+        const reference = 'GK-' + Date.now();
+        const statusBox = document.getElementById('statusBox');
+        const statusMsg = document.getElementById('statusMessage');
+        const btn = document.getElementById('payBtn');
+
+        if (!phone || phone.length < 10) {
+            statusBox.className = 'status-box error';
+            statusMsg.textContent = '❌ Please enter a valid phone number';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = '⏳ Processing...';
+        statusBox.className = 'status-box pending';
+        statusMsg.textContent = '⏳ Sending payment request...';
+
+        try {
+            const response = await fetch('/api/paynow-direct', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone: phone,
+                    amount: amount,
+                    method: selectedMethod,
+                    reference: reference
+                })
+            });
+
+            const data = await response.json();
+            console.log('Payment Response:', data);
+
+            if (data.status === 'success' || data.success || data.status === 'ok') {
+                statusBox.className = 'status-box success';
+                statusMsg.innerHTML = `
+                    ✅ Payment initiated!<br>
+                    📱 You will receive a USSD prompt on <strong>${phone}</strong><br>
+                    🔑 Enter your PIN to confirm<br>
+                    📌 Reference: ${reference}
+                `;
+            } else {
+                statusBox.className = 'status-box error';
+                statusMsg.textContent = '❌ ' + (data.message || data.error || 'Payment failed');
+            }
+        } catch (error) {
+            statusBox.className = 'status-box error';
+            statusMsg.textContent = '❌ Error: ' + error.message;
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '💳 Pay Now';
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && document.activeElement.tagName === 'INPUT') {
+            initiatePayment();
+        }
+    });
+</script>
+</body>
+                                      </html>
