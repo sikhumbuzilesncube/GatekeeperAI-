@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logging Out – Gatekeeper AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: #1a1a2e;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #2a2a2a;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo { color: #FFB300; font-size: 28px; font-weight: bold; }
+        .logo span { color: #00ff88; }
+        p { color: #888; margin: 20px 0; }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #2a2a2a;
+            border-top-color: #FFB300;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 10px 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #FFB300;
+            color: #000;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #e6a300; transform: translateY(-2px); }
+        .footer { margin-top: 20px; font-size: 12px; color: #444; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">Gatekeeper <span>AI</span></div>
+    <div class="spinner"></div>
+    <p>⏳ Logging you out...</p>
+    <a href="login.html" class="btn">🔐 Login Again</a>
+    <div class="footer">© 2025 Gatekeeper AI. All rights reserved.</div>
+</div>
+
+<script>
+    // Clear session
+    sessionStorage.removeItem('gatekeeper_user');
+    
+    // Redirect to login after 2 seconds
+    setTimeout(() => {
+        window.location.href = 'login.html';
+    }, 2000);
+</script>
+</body>
+</html>
