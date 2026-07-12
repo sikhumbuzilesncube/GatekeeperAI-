@@ -45,6 +45,40 @@
             border: 1px solid #00ff8833;
         }
 
+        /* ─── TABS ─── */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin: 25px 0 20px;
+            border-bottom: 1px solid #1a1a2e;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .tabs .tab {
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            color: #888;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .tabs .tab:hover { color: #fff; border-color: #2a2a2a; }
+        .tabs .tab.active {
+            background: #FFB300;
+            color: #000;
+            border-color: #FFB300;
+        }
+        .tabs .tab .count {
+            background: #2a2a2a;
+            padding: 0 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 6px;
+        }
+        .tabs .tab.active .count { background: #00000033; }
+
         /* ─── STATS CARDS ─── */
         .stats {
             display: grid;
@@ -67,6 +101,7 @@
             color: #fff;
             margin: 5px 0;
         }
+        .stat-card .number.gold { color: #FFB300; }
         .stat-card .label {
             font-size: 13px;
             color: #888;
@@ -80,113 +115,6 @@
         }
         .stat-card .change.down { color: #e94560; }
         .stat-card .icon { font-size: 28px; display: block; margin-bottom: 5px; }
-
-        /* ─── ROW ─── */
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin: 25px 0;
-        }
-
-        /* ─── CARDS ─── */
-        .card {
-            background: #1a1a2e;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #2a2a2a;
-        }
-        .card h3 {
-            color: #FFB300;
-            font-size: 16px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .card h3 .badge-count {
-            background: #2a2a2a;
-            color: #aaa;
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 12px;
-            margin-left: auto;
-        }
-
-        /* ─── PROGRESS BARS ─── */
-        .bar-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .bar-item .label {
-            width: 100px;
-            font-size: 13px;
-            color: #aaa;
-            flex-shrink: 0;
-        }
-        .bar-item .bar-track {
-            flex: 1;
-            height: 20px;
-            background: #0a0a0a;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        .bar-item .bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 1s ease;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .bar-item .bar-fill.orange { background: #FF6B35; }
-        .bar-item .bar-fill.blue { background: #4A90D9; }
-        .bar-item .bar-fill.green { background: #00ff88; }
-        .bar-item .bar-fill.purple { background: #9B59B6; }
-        .bar-item .bar-fill.red { background: #e94560; }
-        .bar-item .bar-fill.yellow { background: #FFB300; }
-        .bar-item .value {
-            width: 60px;
-            font-size: 13px;
-            color: #fff;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        /* ─── URGENCY BADGES ─── */
-        .urgency-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
-        .urgency-item {
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #2a2a2a;
-        }
-        .urgency-item .number {
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .urgency-item .label {
-            font-size: 12px;
-            color: #888;
-            margin-top: 3px;
-        }
-        .urgency-item.red { border-color: #e94560; }
-        .urgency-item.red .number { color: #e94560; }
-        .urgency-item.amber { border-color: #FFB300; }
-        .urgency-item.amber .number { color: #FFB300; }
-        .urgency-item.green { border-color: #00ff88; }
-        .urgency-item.green .number { color: #00ff88; }
 
         /* ─── TABLE ─── */
         .table-wrap { overflow-x: auto; }
@@ -222,6 +150,9 @@
         .status.suspended { background: #FFB30033; color: #FFB300; }
         .status.inactive { background: #e9456033; color: #e94560; }
         .status.pending { background: #4A90D933; color: #4A90D9; }
+        .status.good { background: #00ff8833; color: #00ff88; }
+        .status.warning { background: #FFB30033; color: #FFB300; }
+        .status.danger { background: #e9456033; color: #e94560; }
 
         .urgency-badge {
             display: inline-block;
@@ -234,17 +165,17 @@
         .urgency-badge.amber { background: #FFB30033; color: #FFB300; }
         .urgency-badge.green { background: #00ff8833; color: #00ff88; }
 
-        /* ─── ACCOUNT CONTROLS ─── */
+        /* ─── CONTROLS ─── */
         .controls {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .controls .btn {
-            padding: 6px 14px;
+            padding: 5px 12px;
             border: none;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -256,54 +187,14 @@
         .btn-suspend:hover { background: #e6a300; }
         .btn-disable { background: #e94560; color: #fff; }
         .btn-disable:hover { background: #c0392b; }
-        .btn-edit { background: #4A90D9; color: #fff; }
-        .btn-edit:hover { background: #357ABD; }
         .btn-view { background: #2a2a2a; color: #fff; }
         .btn-view:hover { background: #3a3a3a; }
+        .btn-alert { background: #e94560; color: #fff; }
+        .btn-alert:hover { background: #c0392b; }
+        .btn-edit { background: #4A90D9; color: #fff; }
+        .btn-edit:hover { background: #357ABD; }
 
-        /* ─── MODAL ─── */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-overlay.show { display: flex; }
-        .modal {
-            background: #1a1a2e;
-            padding: 30px;
-            border-radius: 16px;
-            max-width: 450px;
-            width: 90%;
-            border: 1px solid #2a2a2a;
-        }
-        .modal h3 { color: #FFB300; margin-bottom: 15px; }
-        .modal p { color: #aaa; font-size: 14px; margin-bottom: 10px; }
-        .modal .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: flex-end;
-        }
-        .modal .btn-group .btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .modal .btn-group .btn-cancel { background: #2a2a2a; color: #fff; }
-        .modal .btn-group .btn-cancel:hover { background: #3a3a3a; }
-        .modal .btn-group .btn-confirm { background: #e94560; color: #fff; }
-        .modal .btn-group .btn-confirm:hover { background: #c0392b; }
-        .modal .btn-group .btn-confirm.green { background: #00ff88; color: #000; }
-        .modal .btn-group .btn-confirm.green:hover { background: #00cc6a; }
-
-        /* ─── QUICK ACTIONS ─── */
+        /* ─── ACTIONS ─── */
         .actions {
             display: flex;
             flex-wrap: wrap;
@@ -327,33 +218,66 @@
         .actions .btn-secondary:hover { background: #3a3a3a; }
         .actions .btn-success { background: #00ff88; color: #000; }
         .actions .btn-success:hover { background: #00cc6a; transform: translateY(-2px); }
-         <a href="#" class="btn btn-primary" onclick="showAddMP()">➕ Add MP</a>
-        
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 768px) {
-            .stats { grid-template-columns: 1fr 1fr; }
-            .row { grid-template-columns: 1fr; }
-            .urgency-grid { grid-template-columns: 1fr; }
-            .header { flex-direction: column; text-align: center; }
-            .controls { flex-wrap: wrap; }
-            .controls .btn { font-size: 11px; padding: 4px 10px; }
-        }
-        @media (max-width: 480px) {
-            .stats { grid-template-columns: 1fr; }
-            .actions .btn { width: 100%; text-align: center; }
-        }
 
-        /* ─── FOOTER ─── */
-        .footer {
-            margin-top: 30px;
-            padding: 20px 0;
-            border-top: 1px solid #1a1a2e;
-            text-align: center;
-            font-size: 12px;
-            color: #444;
+        /* ─── MODAL ─── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        .footer a { color: #555; text-decoration: none; }
-        .footer a:hover { color: #FFB300; }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #2a2a2a;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h3 { color: #FFB300; margin-bottom: 15px; }
+        .modal label { display: block; color: #aaa; font-size: 13px; margin: 10px 0 5px; }
+        .modal input, .modal select {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .modal input:focus, .modal select:focus { outline: none; border-color: #FFB300; }
+        .modal .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+        .modal .btn-group .btn-cancel {
+            padding: 10px 24px;
+            background: #2a2a2a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .modal .btn-group .btn-cancel:hover { background: #3a3a3a; }
+        .modal .btn-group .btn-save {
+            padding: 10px 24px;
+            background: #FFB300;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal .btn-group .btn-save:hover { background: #e6a300; }
 
         /* ─── TOAST ─── */
         .toast {
@@ -373,9 +297,7 @@
         }
         .toast.show { display: block; animation: slideUp 0.3s ease; }
         .toast.success { border-color: #00ff88; }
-        .toast.success .icon { color: #00ff88; }
         .toast.error { border-color: #e94560; }
-        .toast.error .icon { color: #e94560; }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -389,6 +311,28 @@
             cursor: pointer;
             margin-left: 15px;
         }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: 1fr 1fr; }
+            .header { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: 1fr; }
+            .controls .btn { font-size: 10px; padding: 4px 8px; }
+        }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #1a1a2e;
+            text-align: center;
+            font-size: 12px;
+            color: #444;
+        }
+        .footer a { color: #555; text-decoration: none; }
+        .footer a:hover { color: #FFB300; }
     </style>
 </head>
 <body>
@@ -413,107 +357,182 @@
             <span class="icon">🏛️</span>
             <div class="number" id="totalCouncils">—</div>
             <div class="label">Total Councils</div>
-            <div class="change" id="activeCouncils">— active</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">👥</span>
+            <div class="number gold" id="totalMPs">—</div>
+            <div class="label">Total MPs</div>
         </div>
         <div class="stat-card">
             <span class="icon">📋</span>
             <div class="number" id="totalComplaints">—</div>
             <div class="label">Total Complaints</div>
-            <div class="change">▲ 12% this month</div>
-        </div>
-        <div class="stat-card">
-            <span class="icon">✅</span>
-            <div class="number" id="resolved">—</div>
-            <div class="label">Resolved</div>
-            <div class="change" id="resolvedPercent">—</div>
         </div>
         <div class="stat-card">
             <span class="icon">⏳</span>
             <div class="number" id="pending">—</div>
-            <div class="label">Pending</div>
-            <div class="change down" id="pendingPercent">—</div>
+            <div class="label">Pending Complaints</div>
         </div>
     </div>
 
-    <!-- ─── ROW 1: CATEGORY + URGENCY ─── -->
-    <div class="row">
-        <div class="card">
-            <h3>📂 Complaints by Category</h3>
-            <div id="categoryBars">
-                <div class="loading" style="text-align:center;padding:20px;color:#888;">Loading...</div>
+    <!-- ─── TABS ─── -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('councils')">
+            🏛️ Councils <span class="count" id="councilCount">0</span>
+        </div>
+        <div class="tab" onclick="switchTab('mps')">
+            👥 MPs <span class="count" id="mpCount">0</span>
+        </div>
+    </div>
+
+    <!-- ─── COUNCILS TAB ─── -->
+    <div id="councilsTab">
+        <div class="stats" style="margin-top:0;">
+            <div class="stat-card">
+                <span class="icon">✅</span>
+                <div class="number green" id="activeCouncils">—</div>
+                <div class="label">Active Councils</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">⏸️</span>
+                <div class="number amber" id="suspendedCouncils">—</div>
+                <div class="label">Suspended Councils</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">⏳</span>
+                <div class="number blue" id="pendingCouncils">—</div>
+                <div class="label">Pending Councils</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">📊</span>
+                <div class="number" id="councilComplaints">—</div>
+                <div class="label">Council Complaints</div>
             </div>
         </div>
-        <div class="card">
-            <h3>🚨 Urgency Breakdown</h3>
-            <div class="urgency-grid" id="urgencyGrid">
-                <div class="urgency-item red">
-                    <div class="number" id="urgentRed">—</div>
-                    <div class="label">🔴 Code Red</div>
-                </div>
-                <div class="urgency-item amber">
-                    <div class="number" id="urgentAmber">—</div>
-                    <div class="label">🟠 Code Amber</div>
-                </div>
-                <div class="urgency-item green">
-                    <div class="number" id="urgentGreen">—</div>
-                    <div class="label">🟢 Code Green</div>
-                </div>
+
+        <div class="card" style="background:#1a1a2e;padding:25px;border-radius:12px;border:1px solid #2a2a2a;margin-top:20px;">
+            <h3 style="color:#FFB300;margin-bottom:15px;">
+                ⚙️ Council Account Management
+                <span style="background:#2a2a2a;color:#aaa;font-size:11px;padding:2px 10px;border-radius:12px;margin-left:auto;float:right;" id="councilTableCount">0 councils</span>
+            </h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Council</th>
+                            <th>Complaints</th>
+                            <th>Resolved</th>
+                            <th>Response</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="councilTable">
+                        <tr><td colspan="6" style="text-align:center;color:#888;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top:15px;">
+                <button class="btn btn-primary" onclick="showAddCouncil()" style="padding:10px 24px;background:#FFB300;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">➕ Add Council</button>
             </div>
         </div>
     </div>
 
-    <!-- ─── ROW 2: COUNCIL BREAKDOWN + QUICK ACTIONS ─── -->
-    <div class="row">
-        <div class="card">
-            <h3>🏛️ Complaints by Council</h3>
-            <div id="councilBars">
-                <div class="loading" style="text-align:center;padding:20px;color:#888;">Loading...</div>
+    <!-- ─── MPs TAB ─── -->
+    <div id="mpsTab" style="display:none;">
+        <div class="stats" style="margin-top:0;">
+            <div class="stat-card">
+                <span class="icon">✅</span>
+                <div class="number green" id="activeMPs">—</div>
+                <div class="label">Active MPs</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">⚠️</span>
+                <div class="number amber" id="warningMPs">—</div>
+                <div class="label">Warning MPs</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">❌</span>
+                <div class="number red" id="dangerMPs">—</div>
+                <div class="label">Slow MPs</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">📊</span>
+                <div class="number" id="mpComplaints">—</div>
+                <div class="label">MP Complaints</div>
             </div>
         </div>
-        <div class="card">
-            <h3>⚡ Quick Actions</h3>
-            <div class="actions">
-                <a href="#" class="btn btn-primary" onclick="showAddCouncil()">➕ Add Council</a>
-                <a href="#" class="btn btn-success" onclick="showToast('success', '📄 Report generated successfully')">📄 Generate Report</a>
-                <a href="#" class="btn btn-secondary" onclick="showToast('success', '📥 Data exported successfully')">📥 Export Data</a>
-                <a href="#" class="btn btn-secondary" onclick="showToast('info', '🔔 Alerts cleared')">🔔 Alerts</a>
+
+        <div class="card" style="background:#1a1a2e;padding:25px;border-radius:12px;border:1px solid #2a2a2a;margin-top:20px;">
+            <h3 style="color:#FFB300;margin-bottom:15px;">
+                👥 MP Account Management
+                <span style="background:#2a2a2a;color:#aaa;font-size:11px;padding:2px 10px;border-radius:12px;margin-left:auto;float:right;" id="mpTableCount">0 MPs</span>
+            </h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MP</th>
+                            <th>Constituency</th>
+                            <th>Phone</th>
+                            <th>Complaints</th>
+                            <th>Resolved</th>
+                            <th>Response</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mpTable">
+                        <tr><td colspan="8" style="text-align:center;color:#888;">Loading...</td></tr>
+                    </tbody>
+                </table>
             </div>
-            <div style="margin-top: 15px; padding: 15px; background: #0a0a0a; border-radius: 8px;">
-                <p style="font-size: 13px; color: #888;">
-                    📊 <strong style="color: #aaa;">Total Active Councils:</strong>
-                    <span style="color: #fff; font-weight: bold;" id="totalActive">—</span>
-                </p>
-                <p style="font-size: 13px; color: #888; margin-top: 5px;">
-                    ⏳ <strong style="color: #aaa;">Pending Approval:</strong>
-                    <span style="color: #FFB300; font-weight: bold;" id="totalPendingCouncils">—</span>
-                </p>
+            <div style="margin-top:15px;">
+                <button class="btn btn-primary" onclick="showAddMP()" style="padding:10px 24px;background:#FFB300;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">➕ Add MP</button>
             </div>
         </div>
     </div>
 
-    <!-- ─── COUNCIL MANAGEMENT TABLE ─── -->
-    <div class="card" style="margin-top: 25px;">
-        <h3>
-            ⚙️ Council Account Management
-            <span class="badge-count" id="councilCount">0 councils</span>
-        </h3>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Council</th>
-                        <th>Complaints</th>
-                        <th>Resolved</th>
-                        <th>Response</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="councilTable">
-                    <tr><td colspan="6" style="text-align:center; color:#888;">Loading...</td></tr>
-                </tbody>
-            </table>
+    <!-- ─── ADD MP MODAL ─── -->
+    <div class="modal-overlay" id="addMPModal">
+        <div class="modal">
+            <h3>➕ Add New MP</h3>
+            <label>Full Name</label>
+            <input type="text" id="mpName" placeholder="e.g. Hon. T. Moyo">
+            <label>Constituency</label>
+            <input type="text" id="mpConstituency" placeholder="e.g. Harare East">
+            <label>Phone Number</label>
+            <input type="text" id="mpPhone" placeholder="e.g. 0771 234 567">
+            <label>WhatsApp Number</label>
+            <input type="text" id="mpWhatsApp" placeholder="e.g. 0771 234 567">
+            <label>Party</label>
+            <input type="text" id="mpParty" placeholder="e.g. ZANU PF">
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeModal('addMPModal')">Cancel</button>
+                <button class="btn-save" onclick="saveMP()">Save MP</button>
+            </div>
         </div>
+    </div>
+
+    <!-- ─── ADD COUNCIL MODAL ─── -->
+    <div class="modal-overlay" id="addCouncilModal">
+        <div class="modal">
+            <h3>➕ Add New Council</h3>
+            <label>Council Name</label>
+            <input type="text" id="councilName" placeholder="e.g. Harare City Council">
+            <label>Location</label>
+            <input type="text" id="councilLocation" placeholder="e.g. Harare">
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeModal('addCouncilModal')">Cancel</button>
+                <button class="btn-save" onclick="saveCouncil()">Save Council</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast">
+        <button class="close" onclick="hideToast()">×</button>
+        <span id="toastMessage">✅ Action completed</span>
     </div>
 
     <!-- ─── FOOTER ─── -->
@@ -522,30 +541,11 @@
         <p style="margin-top: 5px;">
             <a href="index.html">Home</a> &bull;
             <a href="dashboard-minister.html">Minister</a> &bull;
-            <a href="dashboard-bulawayo.html">Council</a> &bull;
-            <a href="dashboard-department.html">Department</a> &bull;
-            <a href="dashboard-operator.html">Operator</a> &bull;
+            <a href="dashboard.html">National</a> &bull;
+            <a href="dashboard-chiefwhip.html">Chief Whip</a> &bull;
             <a href="privacy.html">Privacy</a>
         </p>
     </div>
-</div>
-
-<!-- ─── CONFIRM MODAL ─── -->
-<div class="modal-overlay" id="confirmModal">
-    <div class="modal">
-        <h3 id="modalTitle">Confirm Action</h3>
-        <p id="modalMessage">Are you sure you want to perform this action?</p>
-        <div class="btn-group">
-            <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-confirm" id="modalConfirmBtn" onclick="executeAction()">Confirm</button>
-        </div>
-    </div>
-</div>
-
-<!-- ─── TOAST ─── -->
-<div class="toast" id="toast">
-    <button class="close" onclick="hideToast()">×</button>
-    <span id="toastMessage">✅ Action completed</span>
 </div>
 
 <script>
@@ -559,81 +559,68 @@
         { id: 6, name: 'Kwekwe City Council', complaints: 0, resolved: 0, response: 'N/A', status: 'inactive' }
     ];
 
-    let actionQueue = { type: '', id: null };
+    let mps = [
+        { id: 1, name: 'Hon. T. Moyo', constituency: 'Harare East', phone: '0771 234 567', complaints: 45, resolved: 40, response: '1.2 hrs', status: 'good' },
+        { id: 2, name: 'Hon. S. Ncube', constituency: 'Bulawayo South', phone: '0772 345 678', complaints: 38, resolved: 32, response: '2.1 hrs', status: 'good' },
+        { id: 3, name: 'Hon. M. Chikwanda', constituency: 'Mutare West', phone: '0773 456 789', complaints: 34, resolved: 28, response: '3.5 hrs', status: 'good' },
+        { id: 4, name: 'Hon. R. Moyo', constituency: 'Gweru Central', phone: '0774 567 890', complaints: 28, resolved: 18, response: '6.2 hrs', status: 'warning' },
+        { id: 5, name: 'Hon. P. Dube', constituency: 'Masvingo East', phone: '0775 678 901', complaints: 22, resolved: 12, response: '8.5 hrs', status: 'warning' },
+        { id: 6, name: 'Hon. L. Banda', constituency: 'Kwekwe North', phone: '0776 789 012', complaints: 15, resolved: 8, response: '12.0 hrs', status: 'danger' },
+        { id: 7, name: 'Hon. N. Makoni', constituency: 'Chitungwiza', phone: '0777 890 123', complaints: 10, resolved: 6, response: '15.0 hrs', status: 'danger' }
+    ];
+
+    let currentTab = 'councils';
+
+    // ─── TAB SWITCH ───
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+        if (tab === 'councils') {
+            document.querySelectorAll('.tabs .tab')[0].classList.add('active');
+            document.getElementById('councilsTab').style.display = 'block';
+            document.getElementById('mpsTab').style.display = 'none';
+        } else {
+            document.querySelectorAll('.tabs .tab')[1].classList.add('active');
+            document.getElementById('councilsTab').style.display = 'none';
+            document.getElementById('mpsTab').style.display = 'block';
+        }
+        loadDashboard();
+    }
 
     // ─── LOAD DASHBOARD ───
     function loadDashboard() {
-        updateStats();
-        renderCouncilTable();
-        renderBars('categoryBars', { 'Roads': 432, 'Water': 280, 'Health': 234, 'Education': 176, 'Electricity': 112 }, 'orange');
-        renderBars('councilBars', getCouncilData(), 'blue');
-        updateUrgency();
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-    }
+        const totalComplaints = councils.reduce((s, c) => s + c.complaints, 0);
+        const pendingComplaints = councils.reduce((s, c) => s + (c.complaints - c.resolved), 0);
 
-    function updateStats() {
-        const total = councils.length;
-        const active = councils.filter(c => c.status === 'active').length;
-        const pending = councils.filter(c => c.status === 'pending').length;
-        const totalComplaints = councils.reduce((sum, c) => sum + c.complaints, 0);
-        const resolved = councils.reduce((sum, c) => sum + c.resolved, 0);
-        const pendingComplaints = totalComplaints - resolved;
-
-        document.getElementById('totalCouncils').textContent = total;
-        document.getElementById('activeCouncils').textContent = `${active} active`;
+        document.getElementById('totalCouncils').textContent = councils.length;
+        document.getElementById('totalMPs').textContent = mps.length;
         document.getElementById('totalComplaints').textContent = totalComplaints;
-        document.getElementById('resolved').textContent = resolved;
         document.getElementById('pending').textContent = pendingComplaints;
 
-        const pct = totalComplaints > 0 ? Math.round((resolved / totalComplaints) * 100) : 0;
-        document.getElementById('resolvedPercent').textContent = `✅ ${pct}% resolved`;
-        document.getElementById('pendingPercent').textContent = `⏳ ${100 - pct}% pending`;
+        const activeCouncils = councils.filter(c => c.status === 'active').length;
+        const suspendedCouncils = councils.filter(c => c.status === 'suspended').length;
+        const pendingCouncils = councils.filter(c => c.status === 'pending').length;
+        document.getElementById('activeCouncils').textContent = activeCouncils;
+        document.getElementById('suspendedCouncils').textContent = suspendedCouncils;
+        document.getElementById('pendingCouncils').textContent = pendingCouncils;
+        document.getElementById('councilComplaints').textContent = totalComplaints;
 
-        document.getElementById('totalActive').textContent = active;
-        document.getElementById('totalPendingCouncils').textContent = pending;
-        document.getElementById('councilCount').textContent = `${total} councils`;
-    }
+        const activeMPs = mps.filter(m => m.status === 'good').length;
+        const warningMPs = mps.filter(m => m.status === 'warning').length;
+        const dangerMPs = mps.filter(m => m.status === 'danger').length;
+        document.getElementById('activeMPs').textContent = activeMPs;
+        document.getElementById('warningMPs').textContent = warningMPs;
+        document.getElementById('dangerMPs').textContent = dangerMPs;
+        document.getElementById('mpComplaints').textContent = mps.reduce((s, m) => s + m.complaints, 0);
 
-    function getCouncilData() {
-        const data = {};
-        councils.forEach(c => {
-            data[c.name] = c.complaints;
-        });
-        return data;
-    }
+        document.getElementById('councilCount').textContent = councils.length;
+        document.getElementById('mpCount').textContent = mps.length;
+        document.getElementById('councilTableCount').textContent = `${councils.length} councils`;
+        document.getElementById('mpTableCount').textContent = `${mps.length} MPs`;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
 
-    function updateUrgency() {
-        // Sample urgency data
-        document.getElementById('urgentRed').textContent = 45;
-        document.getElementById('urgentAmber').textContent = 234;
-        document.getElementById('urgentGreen').textContent = 955;
-    }
-
-    // ─── RENDER BARS ───
-    function renderBars(containerId, data, color) {
-        const container = document.getElementById(containerId);
-        const entries = Object.entries(data);
-        const total = entries.reduce((sum, [_, val]) => sum + val, 0);
-        if (entries.length === 0) {
-            container.innerHTML = '<p style="color:#555;text-align:center;">No data available</p>';
-            return;
-        }
-        const colors = ['orange', 'blue', 'green', 'purple', 'red'];
-        let html = '';
-        entries.forEach(([label, value], index) => {
-            const pct = total > 0 ? Math.round((value / total) * 100) : 0;
-            const barColor = colors[index % colors.length];
-            html += `
-                <div class="bar-item">
-                    <span class="label">${label}</span>
-                    <div class="bar-track">
-                        <div class="bar-fill ${barColor}" style="width: ${pct}%;">${pct}%</div>
-                    </div>
-                    <span class="value">${value}</span>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
+        renderCouncilTable();
+        renderMPTable();
     }
 
     // ─── RENDER COUNCIL TABLE ───
@@ -661,10 +648,10 @@
                     <td>${statusMap[c.status]}</td>
                     <td>
                         <div class="controls">
-                            ${c.status !== 'active' ? `<button class="btn btn-enable" onclick="confirmAction('enable', ${c.id})">✅ Enable</button>` : ''}
-                            ${c.status === 'active' ? `<button class="btn btn-suspend" onclick="confirmAction('suspend', ${c.id})">⏸️ Suspend</button>` : ''}
-                            ${c.status !== 'inactive' ? `<button class="btn btn-disable" onclick="confirmAction('disable', ${c.id})">🗑️ Disable</button>` : ''}
-                            <button class="btn btn-view" onclick="showToast('info', '📋 Viewing ${c.name}')">👁️ View</button>
+                            ${c.status !== 'active' ? `<button class="btn btn-enable" onclick="updateCouncilStatus(${c.id}, 'active')">✅</button>` : ''}
+                            ${c.status === 'active' ? `<button class="btn btn-suspend" onclick="updateCouncilStatus(${c.id}, 'suspended')">⏸️</button>` : ''}
+                            ${c.status !== 'inactive' ? `<button class="btn btn-disable" onclick="updateCouncilStatus(${c.id}, 'inactive')">🗑️</button>` : ''}
+                            <button class="btn btn-view" onclick="showToast('info', '👁️ Viewing ${c.name}')">👁️</button>
                         </div>
                     </td>
                 </tr>
@@ -673,61 +660,124 @@
         tbody.innerHTML = html;
     }
 
-    // ─── CONFIRM ACTION ───
-    function confirmAction(type, id) {
-        const council = councils.find(c => c.id === id);
-        if (!council) return;
-        const actions = {
-            'enable': { title: 'Enable Council', msg: `Are you sure you want to enable <strong>${council.name}</strong>? They will regain full access.`, btn: 'Enable', color: 'green' },
-            'suspend': { title: 'Suspend Council', msg: `Are you sure you want to suspend <strong>${council.name}</strong>? They will lose access until re-enabled.`, btn: 'Suspend', color: '' },
-            'disable': { title: 'Disable Council', msg: `Are you sure you want to permanently disable <strong>${council.name}</strong>? This action can be reversed.`, btn: 'Disable', color: '' }
+    // ─── RENDER MP TABLE ───
+    function renderMPTable() {
+        const tbody = document.getElementById('mpTable');
+        if (mps.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#555;">No MPs registered</td></tr>';
+            return;
+        }
+        const statusMap = {
+            'good': '<span class="status good">✅ Good</span>',
+            'warning': '<span class="status warning">⚠️ Warning</span>',
+            'danger': '<span class="status danger">❌ Slow</span>'
         };
-        const a = actions[type];
-        if (!a) return;
-        document.getElementById('modalTitle').textContent = a.title;
-        document.getElementById('modalMessage').innerHTML = a.msg;
-        const btn = document.getElementById('modalConfirmBtn');
-        btn.textContent = a.btn;
-        btn.className = `btn btn-confirm ${a.color}`;
-        actionQueue = { type, id };
-        document.getElementById('confirmModal').classList.add('show');
+        let html = '';
+        mps.forEach(m => {
+            const pct = m.complaints > 0 ? Math.round((m.resolved / m.complaints) * 100) : 0;
+            html += `
+                <tr>
+                    <td><strong style="color:#fff;">${m.name}</strong></td>
+                    <td>${m.constituency}</td>
+                    <td style="color:#888;font-size:13px;">${m.phone}</td>
+                    <td>${m.complaints}</td>
+                    <td>${m.resolved} (${pct}%)</td>
+                    <td style="${parseFloat(m.response) > 5 ? 'color:#e94560;' : 'color:#00ff88;'}">${m.response}</td>
+                    <td>${statusMap[m.status]}</td>
+                    <td>
+                        <div class="controls">
+                            ${m.status !== 'good' ? `<button class="btn btn-enable" onclick="updateMPStatus(${m.id}, 'good')">✅</button>` : ''}
+                            ${m.status === 'good' ? `<button class="btn btn-suspend" onclick="updateMPStatus(${m.id}, 'warning')">⚠️</button>` : ''}
+                            ${m.status !== 'danger' ? `<button class="btn btn-disable" onclick="updateMPStatus(${m.id}, 'danger')">❌</button>` : ''}
+                            <button class="btn btn-alert" onclick="showToast('success', '🔔 Alert sent to ${m.name}')">🔔</button>
+                            <button class="btn btn-edit" onclick="showToast('info', '✏️ Editing ${m.name}')">✏️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
     }
 
-    function executeAction() {
-        const { type, id } = actionQueue;
+    // ─── UPDATE COUNCIL STATUS ───
+    function updateCouncilStatus(id, status) {
         const council = councils.find(c => c.id === id);
-        if (!council) return;
-        const statusMap = { 'enable': 'active', 'suspend': 'suspended', 'disable': 'inactive' };
-        council.status = statusMap[type] || council.status;
-        closeModal();
-        loadDashboard();
-        const msgMap = {
-            'enable': `✅ ${council.name} has been enabled. They now have full access.`,
-            'suspend': `⏸️ ${council.name} has been suspended. Access revoked.`,
-            'disable': `🗑️ ${council.name} has been disabled.`
-        };
-        showToast('success', msgMap[type] || 'Action completed');
+        if (council) {
+            council.status = status;
+            loadDashboard();
+            showToast('success', `✅ ${council.name} updated to ${status}`);
+        }
     }
 
-    function closeModal() {
-        document.getElementById('confirmModal').classList.remove('show');
+    // ─── UPDATE MP STATUS ───
+    function updateMPStatus(id, status) {
+        const mp = mps.find(m => m.id === id);
+        if (mp) {
+            mp.status = status;
+            loadDashboard();
+            showToast('success', `✅ ${mp.name} updated to ${status}`);
+        }
     }
 
     // ─── ADD COUNCIL ───
     function showAddCouncil() {
-        const name = prompt('Enter the name of the new council:');
-        if (name && name.trim()) {
-            councils.push({
-                id: Date.now(),
-                name: name.trim(),
-                complaints: 0,
-                resolved: 0,
-                response: 'N/A',
-                status: 'pending'
-            });
-            loadDashboard();
-            showToast('success', `✅ ${name.trim()} has been added and is pending approval.`);
-        }
+        document.getElementById('addCouncilModal').classList.add('show');
+    }
+
+    function saveCouncil() {
+        const name = document.getElementById('councilName').value.trim();
+        const location = document.getElementById('councilLocation').value.trim();
+        if (!name) { alert('Please enter council name.'); return; }
+        councils.push({
+            id: Date.now(),
+            name: name,
+            complaints: 0,
+            resolved: 0,
+            response: 'N/A',
+            status: 'pending'
+        });
+        document.getElementById('councilName').value = '';
+        document.getElementById('councilLocation').value = '';
+        closeModal('addCouncilModal');
+        loadDashboard();
+        showToast('success', `✅ ${name} added successfully`);
+    }
+
+    // ─── ADD MP ───
+    function showAddMP() {
+        document.getElementById('addMPModal').classList.add('show');
+    }
+
+    function saveMP() {
+        const name = document.getElementById('mpName').value.trim();
+        const constituency = document.getElementById('mpConstituency').value.trim();
+        const phone = document.getElementById('mpPhone').value.trim();
+        const whatsapp = document.getElementById('mpWhatsApp').value.trim();
+        const party = document.getElementById('mpParty').value.trim();
+        if (!name || !constituency) { alert('Please enter name and constituency.'); return; }
+        mps.push({
+            id: Date.now(),
+            name: name,
+            constituency: constituency,
+            phone: phone || 'N/A',
+            complaints: 0,
+            resolved: 0,
+            response: 'N/A',
+            status: 'pending'
+        });
+        document.getElementById('mpName').value = '';
+        document.getElementById('mpConstituency').value = '';
+        document.getElementById('mpPhone').value = '';
+        document.getElementById('mpWhatsApp').value = '';
+        document.getElementById('mpParty').value = '';
+        closeModal('addMPModal');
+        loadDashboard();
+        showToast('success', `✅ ${name} added successfully`);
+    }
+
+    // ─── MODAL HELPERS ───
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('show');
     }
 
     // ─── TOAST ───
@@ -744,9 +794,11 @@
         document.getElementById('toast').classList.remove('show');
     }
 
-    // ─── CLOSE MODAL ON OVERLAY CLICK ───
-    document.getElementById('confirmModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
+    // ─── CLOSE MODALS ON OVERLAY CLICK ───
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('show');
+        });
     });
 
     // ─── LOAD ───
@@ -754,4 +806,4 @@
 </script>
 
 </body>
-                </html>
+    </html>
