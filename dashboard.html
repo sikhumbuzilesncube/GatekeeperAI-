@@ -336,6 +336,14 @@
     </style>
 </head>
 <body>
+    
+    <script>
+    // ─── CHECK LOGIN ───
+    const user = JSON.parse(sessionStorage.getItem('gatekeeper_user') || 'null');
+    if (!user || user.role !== 'admin') {
+        window.location.href = 'login.html';
+    }
+    </script>
 
 <div class="container">
 
