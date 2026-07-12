@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chief Whip Dashboard – Gatekeeper AI</title>
+    <style>
+        /* ─── RESET & BASE ─── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* ─── HEADER ─── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0 25px;
+            border-bottom: 1px solid #1a1a2e;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFB300;
+        }
+        .header .logo span { color: #00ff88; }
+        .header .title {
+            font-size: 18px;
+            color: #fff;
+            background: #1a1a2e;
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: 1px solid #2a2a2a;
+        }
+        .header .title small {
+            color: #888;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        .header .badge {
+            background: #1a2a1a;
+            color: #00ff88;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #00ff8833;
+        }
+
+        /* ─── STATS CARDS ─── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin: 25px 0;
+        }
+        .stat-card {
+            background: #1a1a2e;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .stat-card:hover { border-color: #FFB300; }
+        .stat-card .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
+            margin: 5px 0;
+        }
+        .stat-card .number.red { color: #e94560; }
+        .stat-card .number.gold { color: #FFB300; }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.amber { color: #FFB300; }
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        /* ─── ROW ─── */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+        }
+        .card h3 {
+            color: #FFB300;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 .badge-count {
+            background: #2a2a2a;
+            color: #aaa;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: auto;
+        }
+
+        /* ─── RANKING ─── */
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-item .position {
+            width: 35px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #888;
+        }
+        .rank-item .position.gold { color: #FFB300; }
+        .rank-item .position.silver { color: #C0C0C0; }
+        .rank-item .position.bronze { color: #CD7F32; }
+        .rank-item .info { flex: 1; }
+        .rank-item .info .name { color: #fff; font-size: 14px; font-weight: 600; }
+        .rank-item .info .constituency { color: #888; font-size: 12px; }
+        .rank-item .stats-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .rank-item .stats-right .response-time { font-size: 14px; font-weight: bold; color: #00ff88; }
+        .rank-item .stats-right .response-time.slow { color: #e94560; }
+        .rank-item .stats-right .complaints { font-size: 12px; color: #888; }
+        .rank-item .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-badge.good { background: #00ff8833; color: #00ff88; }
+        .status-badge.warning { background: #FFB30033; color: #FFB300; }
+        .status-badge.danger { background: #e9456033; color: #e94560; }
+
+        /* ─── TABLE ─── */
+        .table-wrap { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            padding: 10px 8px;
+            color: #888;
+            font-weight: 600;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #1a1a2e;
+            color: #ccc;
+            vertical-align: middle;
+        }
+        .urgency-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .urgency-badge.red { background: #e9456033; color: #e94560; }
+        .urgency-badge.amber { background: #FFB30033; color: #FFB300; }
+        .urgency-badge.green { background: #00ff8833; color: #00ff88; }
+
+        /* ─── ALERT BANNER ─── */
+        .alert-banner {
+            background: #1a0a0a;
+            border: 1px solid #e94560;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .alert-banner .alert-text {
+            color: #e94560;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .alert-banner .alert-text span { color: #FFB300; }
+        .alert-banner .alert-count {
+            background: #e94560;
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* ─── ACTIONS ─── */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .actions .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .actions .btn-primary { background: #FFB300; color: #000; }
+        .actions .btn-primary:hover { background: #e6a300; transform: translateY(-2px); }
+        .actions .btn-secondary { background: #2a2a2a; color: #fff; }
+        .actions .btn-secondary:hover { background: #3a3a3a; }
+        .actions .btn-success { background: #00ff88; color: #000; }
+        .actions .btn-success:hover { background: #00cc6a; transform: translateY(-2px); }
+        .actions .btn-danger { background: #e94560; color: #fff; }
+        .actions .btn-danger:hover { background: #c0392b; }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: 1fr 1fr; }
+            .row { grid-template-columns: 1fr; }
+            .header { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: 1fr; }
+            .rank-item { flex-wrap: wrap; }
+        }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #1a1a2e;
+            text-align: center;
+            font-size: 12px;
+            color: #444;
+        }
+        .footer a { color: #555; text-decoration: none; }
+        .footer a:hover { color: #FFB300; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ─── HEADER ─── -->
+    <header class="header">
+        <div>
+            <div class="logo">Gatekeeper <span>AI</span></div>
+            <div class="title">
+                🏛️ <strong>Chief Whip</strong>
+                <small>| Parliamentary Oversight Dashboard</small>
+            </div>
+        </div>
+        <div>
+            <span class="badge">🟢 Live</span>
+            <span style="margin-left: 10px; color: #555; font-size: 13px;" id="timestamp">Loading...</span>
+        </div>
+    </header>
+
+    <!-- ─── ALERT BANNER ─── -->
+    <div class="alert-banner">
+        <div class="alert-text">
+            🚨 <span id="parliamentRedCount">Loading...</span> unresolved <strong>Code Red</strong> complaints across Parliament
+        </div>
+        <div class="alert-count" id="parliamentRedBadge">—</div>
+    </div>
+
+    <!-- ─── STATS ─── -->
+    <div class="stats">
+        <div class="stat-card">
+            <span class="icon">👥</span>
+            <div class="number gold" id="totalMPs">—</div>
+            <div class="label">Total MPs</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">📋</span>
+            <div class="number" id="totalComplaints">—</div>
+            <div class="label">Constituency Complaints</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">✅</span>
+            <div class="number green" id="resolved">—</div>
+            <div class="label">Resolved</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">⏳</span>
+            <div class="number amber" id="pending">—</div>
+            <div class="label">Pending</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">⏱️</span>
+            <div class="number" id="avgResponse">—</div>
+            <div class="label">Avg MP Response</div>
+        </div>
+    </div>
+
+    <!-- ─── ROW 1: MP RANKING ─── -->
+    <div class="row">
+        <div class="card">
+            <h3>🏆 MP Performance Ranking</h3>
+            <div id="mpRanking">
+                <div style="text-align:center;padding:20px;color:#888;">Loading...</div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🔴 Code Red Alerts by MP</h3>
+            <div id="codeRedAlerts">
+                <div style="text-align:center;padding:20px;color:#888;">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ROW 2: QUICK ACTIONS ─── -->
+    <div class="row">
+        <div class="card">
+            <h3>⚡ Quick Actions</h3>
+            <div class="actions">
+                <a href="#" class="btn btn-primary">📊 View All MPs</a>
+                <a href="#" class="btn btn-success">📄 Generate Report</a>
+                <a href="#" class="btn btn-secondary">📥 Export Data</a>
+                <a href="#" class="btn btn-danger">🔔 Alert MPs</a>
+            </div>
+            <div style="margin-top: 15px; padding: 15px; background: #0a0a0a; border-radius: 8px;">
+                <p style="font-size: 13px; color: #888;">
+                    📊 <strong style="color: #aaa;">Top Performing MP:</strong>
+                    <span style="color: #00ff88; font-weight: bold;" id="topMP">—</span>
+                </p>
+                <p style="font-size: 13px; color: #888; margin-top: 5px;">
+                    ⚠️ <strong style="color: #aaa;">Underperforming MP:</strong>
+                    <span style="color: #e94560; font-weight: bold;" id="bottomMP">—</span>
+                </p>
+            </div>
+        </div>
+        <div class="card">
+            <h3>📊 Constituency Activity</h3>
+            <div id="constituencyActivity">
+                <div style="text-align:center;padding:20px;color:#888;">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ROW 3: ALL MPs TABLE ─── -->
+    <div class="card" style="margin-top:25px;">
+        <h3>📋 All MPs – Constituency Performance</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>MP</th>
+                        <th>Constituency</th>
+                        <th>Complaints</th>
+                        <th>Resolved</th>
+                        <th>Code Red</th>
+                        <th>Response Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="mpTable">
+                    <tr><td colspan="7" style="text-align:center;color:#888;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ─── FOOTER ─── -->
+    <div class="footer">
+        <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
+        <p style="margin-top: 5px;">
+            <a href="index.html">Home</a> &bull;
+            <a href="dashboard-minister.html">Minister</a> &bull;
+            <a href="dashboard.html">National</a> &bull;
+            <a href="dashboard-bulawayo.html">Council</a> &bull;
+            <a href="dashboard-chiefwhip.html">Chief Whip</a> &bull;
+            <a href="privacy.html">Privacy</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    // ─── MP DATA ───
+    const mpData = {
+        totalMPs: 27,
+        totalComplaints: 456,
+        resolved: 312,
+        pending: 144,
+        avgResponse: '3.2 hrs',
+        parliamentRed: 12,
+        mps: [
+            { id: 1, name: 'Hon. T. Moyo', constituency: 'Harare East', complaints: 45, resolved: 40, red: 2, response: '1.2 hrs', status: 'good' },
+            { id: 2, name: 'Hon. S. Ncube', constituency: 'Bulawayo South', complaints: 38, resolved: 32, red: 3, response: '2.1 hrs', status: 'good' },
+            { id: 3, name: 'Hon. M. Chikwanda', constituency: 'Mutare West', complaints: 34, resolved: 28, red: 4, response: '3.5 hrs', status: 'good' },
+            { id: 4, name: 'Hon. R. Moyo', constituency: 'Gweru Central', complaints: 28, resolved: 18, red: 6, response: '6.2 hrs', status: 'warning' },
+            { id: 5, name: 'Hon. P. Dube', constituency: 'Masvingo East', complaints: 22, resolved: 12, red: 5, response: '8.5 hrs', status: 'warning' },
+            { id: 6, name: 'Hon. L. Banda', constituency: 'Kwekwe North', complaints: 15, resolved: 8, red: 4, response: '12.0 hrs', status: 'danger' },
+            { id: 7, name: 'Hon. N. Makoni', constituency: 'Chitungwiza', complaints: 10, resolved: 6, red: 2, response: '15.0 hrs', status: 'danger' }
+        ],
+        constituencyActivity: {
+            'Harare East': 45,
+            'Bulawayo South': 38,
+            'Mutare West': 34,
+            'Gweru Central': 28,
+            'Masvingo East': 22,
+            'Kwekwe North': 15,
+            'Chitungwiza': 10
+        }
+    };
+
+    // ─── LOAD DASHBOARD ───
+    function loadDashboard() {
+        const data = mpData;
+
+        // Stats
+        document.getElementById('totalMPs').textContent = data.totalMPs;
+        document.getElementById('totalComplaints').textContent = data.totalComplaints;
+        document.getElementById('resolved').textContent = data.resolved;
+        document.getElementById('pending').textContent = data.pending;
+        document.getElementById('avgResponse').textContent = data.avgResponse;
+        document.getElementById('parliamentRedCount').textContent = data.parliamentRed;
+        document.getElementById('parliamentRedBadge').textContent = data.parliamentRed;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+        // MP Ranking
+        renderMPRanking('mpRanking', data.mps);
+
+        // Code Red Alerts
+        renderCodeRedAlerts('codeRedAlerts', data.mps);
+
+        // Constituency Activity
+        renderConstituencyActivity('constituencyActivity', data.constituencyActivity);
+
+        // MP Table
+        renderMPTable('mpTable', data.mps);
+
+        // Top & Bottom MP
+        const sorted = [...data.mps].sort((a, b) => parseFloat(a.response) - parseFloat(b.response));
+        document.getElementById('topMP').textContent = sorted[0]?.name || '—';
+        document.getElementById('bottomMP').textContent = sorted[sorted.length - 1]?.name || '—';
+    }
+
+    // ─── RENDER MP RANKING ───
+    function renderMPRanking(containerId, mps) {
+        const container = document.getElementById(containerId);
+        const sorted = [...mps].sort((a, b) => parseFloat(a.response) - parseFloat(b.response));
+
+        let html = '';
+        sorted.forEach((mp, index) => {
+            const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+            const medalClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+            const statusMap = { 'good': '✅ Good', 'warning': '⚠️ Warning', 'danger': '❌ Slow' };
+            const statusClass = mp.status === 'good' ? 'good' : mp.status === 'warning' ? 'warning' : 'danger';
+            const responseClass = parseFloat(mp.response) > 5 ? 'slow' : '';
+            html += `
+                <div class="rank-item">
+                    <span class="position ${medalClass}">${medal}</span>
+                    <div class="info">
+                        <div class="name">${mp.name}</div>
+                        <div class="constituency">${mp.constituency}</div>
+                    </div>
+                    <span class="status-badge ${statusClass}">${statusMap[mp.status]}</span>
+                    <div class="stats-right">
+                        <div class="response-time ${responseClass}">⏱️ ${mp.response}</div>
+                        <div class="complaints">${mp.complaints} complaints</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ─── RENDER CODE RED ALERTS ───
+    function renderCodeRedAlerts(containerId, mps) {
+        const container = document.getElementById(containerId);
+        const withRed = mps.filter(m => m.red > 0).sort((a, b) => b.red - a.red);
+
+        if (withRed.length === 0) {
+            container.innerHTML = '<p style="color:#555;text-align:center;">✅ No Code Red complaints</p>';
+            return;
+        }
+
+        let html = '';
+        withRed.forEach(mp => {
+            html += `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1a1a2e;">
+                    <div>
+                        <span style="color:#fff;font-weight:bold;">${mp.name}</span>
+                        <span style="color:#888;font-size:12px;margin-left:10px;">${mp.constituency}</span>
+                    </div>
+                    <div>
+                        <span class="urgency-badge red">🔴 ${mp.red}</span>
+                        <span style="color:#888;font-size:12px;margin-left:8px;">${mp.response}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ─── RENDER CONSTITUENCY ACTIVITY ───
+    function renderConstituencyActivity(containerId, data) {
+        const container = document.getElementById(containerId);
+        const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+        const total = entries.reduce((sum, [_, val]) => sum + val, 0);
+
+        let html = '';
+        entries.forEach(([name, count]) => {
+            const pct = Math.round((count / total) * 100);
+            html += `
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #1a1a2e;">
+                    <span style="width:120px;font-size:13px;color:#aaa;">${name}</span>
+                    <div style="flex:1;height:16px;background:#0a0a0a;border-radius:8px;overflow:hidden;">
+                        <div style="height:100%;width:${pct}%;background:#FFB300;border-radius:8px;transition:width 1s ease;"></div>
+                    </div>
+                    <span style="width:40px;font-size:13px;color:#fff;text-align:right;">${count}</span>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ─── RENDER MP TABLE ───
+    function renderMPTable(containerId, mps) {
+        const container = document.getElementById(containerId);
+        const statusMap = {
+            'good': '<span style="color:#00ff88;">✅ Good</span>',
+            'warning': '<span style="color:#FFB300;">⚠️ Warning</span>',
+            'danger': '<span style="color:#e94560;">❌ Slow</span>'
+        };
+
+        let html = '';
+        mps.forEach(mp => {
+            const pct = Math.round((mp.resolved / mp.complaints) * 100);
+            html += `
+                <tr>
+                    <td><strong style="color:#fff;">${mp.name}</strong></td>
+                    <td>${mp.constituency}</td>
+                    <td>${mp.complaints}</td>
+                    <td>${mp.resolved} (${pct}%)</td>
+                    <td><span class="urgency-badge red">${mp.red}</span></td>
+                    <td>${mp.response}</td>
+                    <td>${statusMap[mp.status]}</td>
+                </tr>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ─── LOAD ───
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+
+</body>
+      </html>
