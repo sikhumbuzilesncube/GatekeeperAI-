@@ -1,104 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Login - Gatekeeper AI</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-.login-box{background:#1a1a2e;padding:35px;border-radius:16px;border:1px solid #2a2a2a;max-width:400px;width:100%}
-.login-box .logo{text-align:center;margin-bottom:20px}
-.login-box .logo h1{color:#FFB300;font-size:28px}
-.login-box .logo h1 span{color:#fff}
-.login-box .logo p{color:#888;font-size:13px;margin-top:4px}
-.login-box .input-group{margin-bottom:14px}
-.login-box .input-group label{display:block;color:#aaa;font-size:13px;font-weight:600;margin-bottom:4px}
-.login-box .input-group input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #333;background:#0a0a0a;color:#fff;font-size:15px;outline:none}
-.login-box .input-group input:focus{border-color:#FFB300}
-.login-box .btn{width:100%;padding:14px;border:none;border-radius:8px;background:#FFB300;color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:8px}
-.login-box .btn:hover{background:#e6a300}
-.login-box .error{color:#e94560;font-size:13px;margin-top:8px;display:none}
-.login-box .hint{color:#666;font-size:12px;margin-top:12px;text-align:center;line-height:1.6}
-.login-box .hint a{color:#FFB300;text-decoration:none;font-weight:bold}
-.login-box .divider{display:flex;align-items:center;margin:15px 0;color:#666;font-size:12px}
-.login-box .divider::before,.login-box .divider::after{content:'';flex:1;height:1px;background:#2a2a2a}
-.login-box .divider span{padding:0 10px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatekeeper AI – Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: #1a1a2e;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #2a2a2a;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #FFB300;
+            margin-bottom: 5px;
+        }
+        .logo span { color: #00ff88; }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            color: #aaa;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #FFB300;
+        }
+        .form-group input::placeholder { color: #555; }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #FFB300;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            background: #e6a300;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3);
+        }
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .error {
+            background: #1a0a0a;
+            color: #e94560;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e94560;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: none;
+        }
+        .error.show { display: block; }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #444;
+            margin-top: 20px;
+            border-top: 1px solid #1a1a2e;
+            padding-top: 20px;
+        }
+        .footer a { color: #555; text-decoration: none; }
+        .footer a:hover { color: #FFB300; }
+        .version {
+            text-align: center;
+            font-size: 11px;
+            color: #333;
+            margin-top: 10px;
+        }
+        .default-hint {
+            background: #1a2a1a;
+            border: 1px solid #2a3a2a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+        .default-hint strong { color: #00ff88; }
+        .default-hint .code {
+            display: inline-block;
+            background: #0a0a0a;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #FFB300;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
-<div class="login-box">
-    <div class="logo">
-        <h1>🔒 Gatekeeper <span>AI</span></h1>
-        <p>Welcome back</p>
+
+<div class="container">
+    <!-- Logo -->
+    <div class="logo">Gatekeeper <span>AI</span></div>
+    <div class="subtitle">🔒 Secure Login</div>
+
+    <!-- Default Credentials Hint -->
+    <div class="default-hint">
+        🔑 <strong>Default Credentials</strong><br>
+        Username: <span class="code">admin</span><br>
+        Password: <span class="code">Gatekeeper2025!</span>
     </div>
 
-    <div id="loginForm">
-        <div class="input-group">
-            <label>📱 Phone Number</label>
-            <input type="tel" id="phoneInput" placeholder="e.g. 0777123456" onkeydown="if(event.key==='Enter') login()">
+    <!-- Error Message -->
+    <div class="error" id="errorMsg">❌ Invalid username or password. Please try again.</div>
+
+    <!-- Login Form -->
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label>👤 Username</label>
+            <input type="text" id="username" placeholder="Enter your username" autofocus>
         </div>
-        <div id="loginError" class="error">❌ Phone number not found. Please sign up first.</div>
-        <button class="btn" id="loginBtn" onclick="login()">Log In</button>
-    </div>
+        <div class="form-group">
+            <label>🔑 Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        <button type="submit" class="btn-login" id="loginBtn">🚀 Sign In</button>
+    </form>
 
-    <div class="divider"><span>or</span></div>
-
-    <div class="hint">
-        Don't have an account? <a href="signup.html">Sign Up</a>
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
+        <p style="margin-top: 5px;">
+            <a href="index.html">Home</a> &bull;
+            <a href="privacy.html">Privacy</a> &bull;
+            <a href="terms.html">Terms</a>
+        </p>
     </div>
-
-    <div class="hint" style="margin-top:8px;font-size:11px;color:#444;">
-        No verification code needed. Just enter your phone number.
-    </div>
+    <div class="version">v1.0.0</div>
 </div>
 
 <script>
-function login() {
-    const phone = document.getElementById('phoneInput').value.trim();
-    const error = document.getElementById('loginError');
-    
-    if (!phone) {
-        error.textContent = '❌ Please enter your phone number.';
-        error.style.display = 'block';
-        return;
-    }
-    
-    const userData = localStorage.getItem('gatekeeper_user');
-    const verified = localStorage.getItem('gatekeeper_verified');
-    
-    if (verified === 'true' && userData) {
-        const user = JSON.parse(userData);
-        if (user.phone === phone) {
-            error.style.display = 'none';
-            document.getElementById('loginBtn').textContent = '✅ Logging in...';
-            document.getElementById('loginBtn').disabled = true;
-            localStorage.setItem('gatekeeper_role', user.role);
-            setTimeout(() => {
-                window.location.href = 'gatekeeper_mp_edition.html';
-            }, 1000);
-        } else {
-            error.textContent = '❌ Phone number not found. Please sign up first.';
-            error.style.display = 'block';
-            document.getElementById('loginBtn').disabled = false;
-            document.getElementById('loginBtn').textContent = 'Log In';
+    // ─── DEFAULT CREDENTIALS ───
+    const USERS = {
+        'admin': {
+            password: 'Gatekeeper2025!',
+            role: 'admin',
+            dashboard: 'dashboard.html',
+            displayName: 'Super Admin'
+        },
+        'minister': {
+            password: 'Gatekeeper2025!',
+            role: 'minister',
+            dashboard: 'dashboard-minister.html',
+            displayName: 'Minister of Local Government'
+        },
+        'chiefwhip': {
+            password: 'Gatekeeper2025!',
+            role: 'chiefwhip',
+            dashboard: 'dashboard-chiefwhip.html',
+            displayName: 'Chief Whip'
+        },
+        'bulawayo': {
+            password: 'Gatekeeper2025!',
+            role: 'council',
+            dashboard: 'dashboard-bulawayo.html',
+            displayName: 'Bulawayo City Council'
+        },
+        'harare': {
+            password: 'Gatekeeper2025!',
+            role: 'council',
+            dashboard: 'dashboard-bulawayo.html',
+            displayName: 'Harare City Council'
+        },
+        'works': {
+            password: 'Gatekeeper2025!',
+            role: 'department',
+            dashboard: 'dashboard-department.html',
+            displayName: 'Works Department'
+        },
+        'operator': {
+            password: 'Gatekeeper2025!',
+            role: 'operator',
+            dashboard: 'dashboard-operator.html',
+            displayName: 'Operator'
         }
-    } else {
-        error.textContent = '❌ No account found. Please sign up first.';
-        error.style.display = 'block';
-        document.getElementById('loginBtn').disabled = false;
-        document.getElementById('loginBtn').textContent = 'Log In';
-    }
-}
+    };
 
-function checkLoggedIn() {
-    const verified = localStorage.getItem('gatekeeper_verified');
-    if (verified === 'true') {
-        window.location.href = 'gatekeeper_mp_edition.html';
+    // ─── CHECK IF ALREADY LOGGED IN ───
+    if (sessionStorage.getItem('gatekeeper_user')) {
+        const user = JSON.parse(sessionStorage.getItem('gatekeeper_user'));
+        if (user && user.dashboard) {
+            window.location.href = user.dashboard;
+        }
     }
-}
 
-checkLoggedIn();
+    // ─── HANDLE LOGIN ───
+    function handleLogin(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorMsg = document.getElementById('errorMsg');
+        const loginBtn = document.getElementById('loginBtn');
+
+        // Clear previous errors
+        errorMsg.classList.remove('show');
+
+        // Validate input
+        if (!username || !password) {
+            errorMsg.textContent = '❌ Please enter both username and password.';
+            errorMsg.classList.add('show');
+            return;
+        }
+
+        // Check credentials
+        const user = USERS[username];
+        if (!user || user.password !== password) {
+            errorMsg.textContent = '❌ Invalid username or password. Please try again.';
+            errorMsg.classList.add('show');
+            return;
+        }
+
+        // ─── SUCCESS ───
+        // Store user session
+        sessionStorage.setItem('gatekeeper_user', JSON.stringify({
+            username: username,
+            role: user.role,
+            dashboard: user.dashboard,
+            displayName: user.displayName
+        }));
+
+        // Show loading state
+        loginBtn.disabled = true;
+        loginBtn.textContent = '⏳ Redirecting...';
+
+        // Redirect to dashboard
+        setTimeout(() => {
+            window.location.href = user.dashboard;
+        }, 500);
+    }
+
+    // ─── ENTER KEY SUPPORT ───
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const active = document.activeElement;
+            if (active.tagName === 'INPUT') {
+                handleLogin(e);
+            }
+        }
+    });
 </script>
+
 </body>
-  </html>
+    </html>
