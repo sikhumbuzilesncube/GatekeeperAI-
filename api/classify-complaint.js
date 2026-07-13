@@ -1,6 +1,6 @@
 // api/classify-complaint.js
 // Gatekeeper AI - Multi-Language Classification Engine
-// Supports: English, Shona, Ndebele, Kalanga, Tonga, Venda
+// With Clarification System for Unclear Messages
 
 export default async function handler(req, res) {
     // CORS
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { message } = req.body;
+        const { message, sender, context } = req.body;
 
         if (!message || message.trim() === '') {
             return res.status(400).json({ error: 'Message is required' });
@@ -33,28 +33,40 @@ export default async function handler(req, res) {
         const urgency = detectUrgency(message, language);
 
         // Step 4: Detect Location
-        const location = detectLocation(message, language);
+        const locationResult = detectLocationWithConflicts(message, language);
 
-        // Step 5: Find Authority
-        const authority = findAuthority(category, location);
+        // Step 5: Check if message is complete
+        const isComplete = isMessageComplete(category, locationResult);
 
-        const reference = 'GK-' + Date.now();
-
-        const result = {
-            reference: reference,
+        // Step 6: Generate response
+        let result = {
+            status: 'processed',
             language: language,
             category: category,
             urgency: urgency,
-            location: location,
-            authority: authority,
-            message: message,
-            timestamp: new Date().toISOString()
+            location: locationResult,
+            isComplete: isComplete,
+            needsClarification: !isComplete,
+            reference: null,
+            authority: null,
+            clarificationMessage: null
         };
 
-        return res.status(200).json({
-            status: 'classified',
-            data: result
-        });
+        // Step 7: If complete, route the complaint
+        if (isComplete) {
+            const reference = 'GK-' + Date.now();
+            const authority = findAuthority(category, locationResult.location);
+            
+            result.reference = reference;
+            result.authority = authority;
+            result.status = 'routed';
+        } else {
+            // Step 8: Generate clarification message
+            result.clarificationMessage = generateClarification(message, category, locationResult, language);
+            result.status = 'clarification_needed';
+        }
+
+        return res.status(200).json(result);
 
     } catch (error) {
         console.error('Classification error:', error);
@@ -68,62 +80,42 @@ export default async function handler(req, res) {
 // ─── LANGUAGE DETECTION ───
 function detectLanguage(message) {
     const lower = message.toLowerCase();
-    
-    // Count matches for each language
-    const scores = {
-        shona: 0,
-        ndebele: 0,
-        kalanga: 0,
-        tonga: 0,
-        venda: 0,
-        english: 0
-    };
+    const scores = { shona: 0, ndebele: 0, kalanga: 0, tonga: 0, venda: 0, english: 0 };
 
     const languageKeywords = {
-        shona: ['gomba', 'mugwagwa', 'nzira', 'mvura', 'pombi', 'chipatara', 'chiremba', 'chikoro', 'magetsi', 'marara', 'tsvina', 'njodzi', 'nhamo', 'kukurumidza'],
-        ndebele: ['umgwaqo', 'indlela', 'amanzi', 'ugqozi', 'isibhedlela', 'udokotela', 'isikolo', 'umfundisi', 'ugesi', 'imfucuza', 'udoti', 'ingozi', 'phuthuma'],
-        kalanga: ['njila', 'zibakala', 'manzi', 'bombi', 'chipatara', 'muradi', 'chikolo', 'mutifundisi', 'njodzi', 'ngano'],
-        tonga: ['nzila', 'mubvu', 'mezi', 'mwami', 'chipatara', 'mwana', 'chikoro', 'mutifundisi', 'njodzi', 'ngano'],
-        venda: ['mugwa', 'mbvumo', 'maḓi', 'thambo', 'chipatara', 'muraḓi', 'chikolo', 'mutifundisi', 'tshinyu', 'vhuphi']
+        shona: ['gomba', 'mugwagwa', 'nzira', 'mvura', 'pombi', 'chipatara', 'chiremba', 'chikoro', 'magetsi', 'marara', 'tsvina', 'njodzi', 'nhamo'],
+        ndebele: ['umgwaqo', 'indlela', 'amanzi', 'ugqozi', 'isibhedlela', 'udokotela', 'isikolo', 'umfundisi', 'ugesi', 'imfucuza', 'udoti', 'ingozi'],
+        kalanga: ['njila', 'zibakala', 'manzi', 'bombi', 'chipatara', 'muradi', 'chikolo', 'mutifundisi', 'njodzi'],
+        tonga: ['nzila', 'mubvu', 'mezi', 'mwami', 'chipatara', 'mwana', 'chikoro', 'mutifundisi', 'njodzi'],
+        venda: ['mugwa', 'mbvumo', 'maḓi', 'thambo', 'chipatara', 'muraḓi', 'chikolo', 'mutifundisi', 'tshinyu']
     };
 
     for (const [lang, words] of Object.entries(languageKeywords)) {
         for (const word of words) {
-            if (lower.includes(word)) {
-                scores[lang] += 1;
-            }
+            if (lower.includes(word)) scores[lang] += 1;
         }
     }
 
-    // English detection (if no other language detected)
     const englishWords = ['the', 'this', 'that', 'there', 'here', 'please', 'help', 'urgent', 'road', 'water', 'school'];
     for (const word of englishWords) {
-        if (lower.includes(word)) {
-            scores.english += 1;
-        }
+        if (lower.includes(word)) scores.english += 1;
     }
 
-    // Find the language with the highest score
     let maxScore = 0;
     let detected = 'english';
     for (const [lang, score] of Object.entries(scores)) {
-        if (score > maxScore) {
-            maxScore = score;
-            detected = lang;
-        }
+        if (score > maxScore) { maxScore = score; detected = lang; }
     }
-
     return detected;
 }
 
 // ─── CATEGORY DETECTION ───
 function detectCategory(message, language) {
     const lower = message.toLowerCase();
-
     const categories = {
         roads: {
             english: ['pothole', 'road', 'street', 'pavement', 'traffic', 'asphalt', 'tarmac', 'highway'],
-            shona: ['gomba', 'mugwagwa', 'nzira', 'migwagwa', 'marara emugwagwa', 'musuwo', 'mubvumo'],
+            shona: ['gomba', 'mugwagwa', 'nzira', 'migwagwa', 'musuwo', 'mubvumo'],
             ndebele: ['umgwaqo', 'indlela', 'imigwaqo', 'izibakala'],
             kalanga: ['njila', 'zibakala', 'mbugwa'],
             tonga: ['nzila', 'mubvu', 'mikwakwa'],
@@ -131,14 +123,14 @@ function detectCategory(message, language) {
         },
         water: {
             english: ['water', 'tap', 'leak', 'burst', 'pipe', 'flood', 'sewage', 'drain', 'no water'],
-            shona: ['mvura', 'pombi', 'mupombi', 'magetsi emvura', 'mvura yemapombi', 'mupata', 'mupombi'],
+            shona: ['mvura', 'pombi', 'mupombi', 'magetsi emvura', 'mupata'],
             ndebele: ['amanzi', 'ugqozi', 'imibhobho', 'umlambo'],
             kalanga: ['manzi', 'bombi', 'bumba'],
             tonga: ['mezi', 'mwami', 'mubvu wamezi'],
             venda: ['maḓi', 'thambo', 'musini']
         },
         health: {
-            english: ['clinic', 'hospital', 'health', 'doctor', 'ambulance', 'sick', 'nurse', 'medicine', 'medical'],
+            english: ['clinic', 'hospital', 'health', 'doctor', 'ambulance', 'sick', 'nurse', 'medicine'],
             shona: ['chipatara', 'chiremba', 'utano', 'mukoti', 'zvipatara', 'mutano', 'zvirwere'],
             ndebele: ['isibhedlela', 'udokotela', 'umunesi', 'impilo'],
             kalanga: ['chipatara', 'muradi', 'mupila'],
@@ -155,54 +147,34 @@ function detectCategory(message, language) {
         },
         electricity: {
             english: ['power', 'electricity', 'light', 'blackout', 'zesa', 'transformer', 'fridge'],
-            shona: ['magetsi', 'chiedza', 'nhamo', 'zesa', 'magetsi emagetsi'],
-            ndebele: ['ugesi', 'ukhanyo', 'amandla', 'ugesi kagesi'],
+            shona: ['magetsi', 'chiedza', 'nhamo', 'zesa'],
+            ndebele: ['ugesi', 'ukhanyo', 'amandla'],
             kalanga: ['mbuyagezi'],
             tonga: ['magetsi'],
             venda: ['magetsi']
         },
         refuse: {
             english: ['bin', 'trash', 'garbage', 'rubbish', 'dump', 'refuse', 'waste', 'litter'],
-            shona: ['marara', 'tsvina', 'marara emugwagwa', 'zvisaririra'],
+            shona: ['marara', 'tsvina', 'zvisaririra'],
             ndebele: ['imfucuza', 'udoti', 'imfucumfucu'],
             kalanga: ['marara'],
             tonga: ['marara'],
             venda: ['marara']
-        },
-        fire: {
-            english: ['fire', 'burning', 'smoke', 'flame', 'arson', 'wildfire'],
-            shona: ['moto', 'utsva', 'nyungwe', 'pfuti'],
-            ndebele: ['umlilo', 'ukutsha'],
-            kalanga: ['moto', 'nyungwe'],
-            tonga: ['moto', 'nyungwe'],
-            venda: ['moto', 'nyungwe']
-        },
-        security: {
-            english: ['crime', 'theft', 'robbery', 'police', 'security', 'vandalism', 'violence'],
-            shona: ['kuba', 'mhosva', 'mapurisa', 'kutyora', 'chibharo'],
-            ndebele: ['ubugebengu', 'amaphoyisa', 'ukweba'],
-            kalanga: ['kuba', 'mapurisa'],
-            tonga: ['kuba', 'mapurisa'],
-            venda: ['kuba', 'mapurisa']
         }
     };
 
     for (const [category, langMap] of Object.entries(categories)) {
         const keywords = langMap[language] || langMap.english || [];
         for (const word of keywords) {
-            if (lower.includes(word)) {
-                return category;
-            }
+            if (lower.includes(word)) return category;
         }
     }
-
     return 'general';
 }
 
 // ─── URGENCY DETECTION ───
 function detectUrgency(message, language) {
     const lower = message.toLowerCase();
-
     const urgencyKeywords = {
         red: {
             english: ['emergency', 'urgent', 'danger', 'life', 'death', 'fire', 'burst', 'flood', 'collapse', 'injured', 'bleeding', 'accident', 'critical'],
@@ -213,128 +185,201 @@ function detectUrgency(message, language) {
             venda: ['tshinyu', 'vhuphi', 'vhulamu']
         },
         amber: {
-            english: ['important', 'days', 'waiting', 'still', 'problem', 'issue', 'complaint', 'help', 'urgently'],
+            english: ['important', 'days', 'waiting', 'still', 'problem', 'issue', 'complaint', 'help'],
             shona: ['zvakakosha', 'mazuva', 'kumirira', 'dambudziko', 'rubatsiro'],
             ndebele: ['kubalulekile', 'insuku', 'ukulinda', 'inkinga'],
             kalanga: ['kubalulekile', 'mazuva'],
             tonga: ['kubalulekile', 'mazuva'],
             venda: ['kubalulekile', 'mazuva']
-        },
-        green: {
-            english: ['question', 'query', 'help', 'information', 'assist', 'enquire'],
-            shona: ['mubvunzo', 'rubatsiro', 'tsigiro'],
-            ndebele: ['umbuzo', 'usizo', 'ukusiza'],
-            kalanga: ['umbuzo', 'rubatsiro'],
-            tonga: ['umbuzo', 'rubatsiro'],
-            venda: ['umbuzo', 'rubatsiro']
         }
     };
 
     for (const [urgency, langMap] of Object.entries(urgencyKeywords)) {
         const keywords = langMap[language] || langMap.english || [];
         for (const word of keywords) {
-            if (lower.includes(word)) {
-                return urgency.toUpperCase();
-            }
+            if (lower.includes(word)) return urgency.toUpperCase();
         }
     }
-
     return 'GREEN';
 }
 
-// ─── LOCATION DETECTION ───
-function detectLocation(message, language) {
+// ─── LOCATION DETECTION WITH CONFLICT HANDLING ───
+function detectLocationWithConflicts(message, language) {
     const lower = message.toLowerCase();
-
     const locations = {
         harare: {
-            english: ['harare', 'chiremba', 'mbare', 'highfields', 'hatcliffe', 'avondale', 'belgravia', 'hatfield', 'borrowdale', 'waterfalls', 'kambuzuma', 'kwekwe'],
-            shona: ['harare', 'chiremba', 'mbare', 'highfields', 'hatcliffe', 'avondale', 'belgravia', 'hatfield', 'borrowdale'],
-            ndebele: ['harare', 'chiremba', 'mbare', 'highfields'],
-            kalanga: ['harare', 'chiremba'],
-            tonga: ['harare', 'chiremba'],
-            venda: ['harare', 'chiremba']
+            keywords: ['harare', 'chiremba', 'mbare', 'highfields', 'hatcliffe', 'avondale', 'belgravia', 'hatfield', 'borrowdale', 'waterfalls', 'kambuzuma'],
+            suburbs: ['mbare', 'highfields', 'hatcliffe', 'avondale', 'belgravia', 'hatfield', 'borrowdale', 'waterfalls', 'kambuzuma']
         },
         bulawayo: {
-            english: ['bulawayo', 'luveve', 'nkulumane', 'hillside', 'entumbane', 'mzilikazi', 'barbourfields', 'pumula', 'gwabalanda', 'njube', 'byo'],
-            shona: ['bulawayo', 'luveve', 'nkulumane', 'hillside', 'entumbane', 'mzilikazi'],
-            ndebele: ['bulawayo', 'luveve', 'nkulumane', 'hillside', 'entumbane', 'mzilikazi', 'byo'],
-            kalanga: ['bulawayo', 'luveve'],
-            tonga: ['bulawayo', 'luveve'],
-            venda: ['bulawayo', 'luveve']
+            keywords: ['bulawayo', 'luveve', 'nkulumane', 'hillside', 'entumbane', 'mzilikazi', 'barbourfields', 'pumula', 'gwabalanda', 'njube'],
+            suburbs: ['luveve', 'nkulumane', 'hillside', 'entumbane', 'mzilikazi', 'barbourfields', 'pumula', 'gwabalanda', 'njube']
         },
         mutare: {
-            english: ['mutare', 'dangamvura', 'sakubva', 'utsindiso'],
-            shona: ['mutare', 'dangamvura', 'sakubva', 'utsindiso'],
-            ndebele: ['mutare', 'dangamvura'],
-            kalanga: ['mutare'],
-            tonga: ['mutare'],
-            venda: ['mutare']
+            keywords: ['mutare', 'dangamvura', 'sakubva', 'utsindiso'],
+            suburbs: ['dangamvura', 'sakubva', 'utsindiso']
         },
         gweru: {
-            english: ['gweru', 'mkoba', 'norton', 'senga'],
-            shona: ['gweru', 'mkoba', 'norton', 'senga'],
-            ndebele: ['gweru', 'mkoba'],
-            kalanga: ['gweru'],
-            tonga: ['gweru'],
-            venda: ['gweru']
+            keywords: ['gweru', 'mkoba', 'norton', 'senga'],
+            suburbs: ['mkoba', 'norton', 'senga']
         },
         masvingo: {
-            english: ['masvingo', 'mashava', 'chiredzi'],
-            shona: ['masvingo', 'mashava', 'chiredzi'],
-            ndebele: ['masvingo', 'mashava'],
-            kalanga: ['masvingo'],
-            tonga: ['masvingo'],
-            venda: ['masvingo']
-        },
-        kwekwe: {
-            english: ['kwekwe', 'redcliff', 'amaveni'],
-            shona: ['kwekwe', 'redcliff', 'amaveni'],
-            ndebele: ['kwekwe', 'redcliff'],
-            kalanga: ['kwekwe'],
-            tonga: ['kwekwe'],
-            venda: ['kwekwe']
-        },
-        chitungwiza: {
-            english: ['chitungwiza', 'st marys', 'sekuru kaguvi'],
-            shona: ['chitungwiza', 'st marys', 'sekuru kaguvi'],
-            ndebele: ['chitungwiza', 'st marys'],
-            kalanga: ['chitungwiza'],
-            tonga: ['chitungwiza'],
-            venda: ['chitungwiza']
+            keywords: ['masvingo', 'mashava', 'chiredzi'],
+            suburbs: ['mashava', 'chiredzi']
         }
     };
 
-    // Additional suburbs for each city
-    const suburbs = {
-        'harare': ['mbare', 'highfields', 'hatcliffe', 'avondale', 'belgravia', 'hatfield', 'borrowdale', 'waterfalls', 'kambuzuma'],
-        'bulawayo': ['luveve', 'nkulumane', 'hillside', 'entumbane', 'mzilikazi', 'barbourfields', 'pumula', 'gwabalanda', 'njube'],
-        'mutare': ['dangamvura', 'sakubva', 'utsindiso'],
-        'gweru': ['mkoba', 'norton', 'senga'],
-        'masvingo': ['mashava', 'chiredzi'],
-        'kwekwe': ['redcliff', 'amaveni'],
-        'chitungwiza': ['st marys', 'sekuru kaguvi']
-    };
+    let matchedLocations = [];
+    let matchedSuburbs = [];
 
-    for (const [city, keywords] of Object.entries(locations)) {
-        const cityKeywords = keywords[language] || keywords.english || [];
-        for (const word of cityKeywords) {
+    // Check all locations
+    for (const [city, data] of Object.entries(locations)) {
+        const keywords = data.keywords;
+        for (const word of keywords) {
             if (lower.includes(word)) {
-                return city;
+                if (!matchedLocations.includes(city)) {
+                    matchedLocations.push(city);
+                }
+                // Check if it's a suburb match
+                if (data.suburbs.includes(word)) {
+                    matchedSuburbs.push({ city, suburb: word });
+                }
             }
         }
     }
 
-    // Check suburbs (if city detected from suburb)
-    for (const [city, suburbList] of Object.entries(suburbs)) {
-        for (const suburb of suburbList) {
-            if (lower.includes(suburb)) {
-                return city;
-            }
-        }
+    // No location found
+    if (matchedLocations.length === 0) {
+        return { location: 'unknown', conflict: false, matched: [] };
     }
 
-    return 'unknown';
+    // Single location found
+    if (matchedLocations.length === 1) {
+        return { 
+            location: matchedLocations[0], 
+            conflict: false, 
+            matched: matchedLocations,
+            suburb: matchedSuburbs.length > 0 ? matchedSuburbs[0].suburb : null
+        };
+    }
+
+    // Multiple locations found (conflict)
+    return {
+        location: 'conflict',
+        conflict: true,
+        matched: matchedLocations,
+        suburbs: matchedSuburbs
+    };
+}
+
+// ─── CHECK IF MESSAGE IS COMPLETE ───
+function isMessageComplete(category, locationResult) {
+    if (category === 'general') return false;
+    if (locationResult.location === 'unknown' || locationResult.location === 'conflict') return false;
+    return true;
+}
+
+// ─── GENERATE CLARIFICATION MESSAGE ───
+function generateClarification(message, category, locationResult, language) {
+    let reply = '';
+    
+    // No category, no location
+    if (category === 'general' && locationResult.location === 'unknown') {
+        reply = `📱 Gatekeeper AI – Clarification Needed
+
+We couldn't understand your message clearly.
+
+📝 Your message: "${message}"
+
+📍 Please reply with:
+- The location (city/suburb)
+- The type of problem (Roads, Water, Health, etc.)
+
+Example: "Pothole on Chiremba Road, Harare"
+
+Reply with more details.`;
+        return reply;
+    }
+
+    // Category found, no location
+    if (category !== 'general' && locationResult.location === 'unknown') {
+        const categoryNames = {
+            'roads': 'Roads (potholes, damaged roads)',
+            'water': 'Water (burst pipes, no water)',
+            'health': 'Health (clinic issues)',
+            'education': 'Education (school issues)',
+            'electricity': 'Electricity (power outages)',
+            'refuse': 'Refuse (garbage collection)'
+        };
+        reply = `📱 Gatekeeper AI – Location Needed
+
+We received your message about "${categoryNames[category] || category}".
+
+📝 Your message: "${message}"
+
+📍 Please reply with:
+- The name of your city (e.g., Harare, Bulawayo, Mutare)
+- Or share your location pin (📍 button)
+
+Example: "Harare" or "Luveve, Bulawayo"
+
+Reply with your location.`;
+        return reply;
+    }
+
+    // Location found, no category
+    if (category === 'general' && locationResult.location !== 'unknown') {
+        const cityName = locationResult.location.charAt(0).toUpperCase() + locationResult.location.slice(1);
+        reply = `📱 Gatekeeper AI – Category Needed
+
+We received your message from "${cityName}".
+
+📝 Your message: "${message}"
+
+📋 Please reply with the type of problem:
+- Roads (potholes, damaged roads)
+- Water (burst pipes, no water)
+- Health (clinic issues)
+- Education (school issues)
+- Electricity (power outages)
+- Refuse (garbage collection)
+
+Reply with one of the above.`;
+        return reply;
+    }
+
+    // Location conflict (multiple matches)
+    if (locationResult.location === 'conflict') {
+        let options = locationResult.matched.map((city, index) => {
+            return `${index + 1}️⃣ ${city.charAt(0).toUpperCase() + city.slice(1)}`;
+        }).join('\n');
+        
+        reply = `📱 Gatekeeper AI – Clarification Needed
+
+We found multiple locations matching your message.
+
+📝 Your message: "${message}"
+
+📍 Please select one:
+${options}
+
+Reply with the number.`;
+        return reply;
+    }
+
+    // Default
+    reply = `📱 Gatekeeper AI – Clarification Needed
+
+We couldn't fully understand your message.
+
+📝 Your message: "${message}"
+
+📍 Please reply with your location and the type of problem.
+
+Example: "Pothole on Chiremba Road, Harare"
+
+Reply with more details.`;
+    return reply;
 }
 
 // ─── AUTHORITY ROUTING ───
@@ -346,8 +391,6 @@ function findAuthority(category, location) {
         'education': 'Education Department',
         'electricity': 'Electricity Department (ZESA)',
         'refuse': 'Refuse Department',
-        'fire': 'Fire Department',
-        'security': 'Police / Security',
         'general': 'General Services'
     };
 
@@ -363,54 +406,10 @@ function findAuthority(category, location) {
     }
 
     const councilName = location.charAt(0).toUpperCase() + location.slice(1);
-
     return {
         council: councilName,
         department: department,
         contact: `${councilName} City Council - ${department}`,
         requiresLocation: false
     };
-}// ─── CHECK IF MESSAGE IS COMPLETE ───
-function isMessageComplete(result) {
-    return result.category !== 'general' && result.location !== 'unknown';
-}
-
-// ─── GENERATE CLARIFICATION MESSAGE ───
-function generateClarification(message, result) {
-    let reply = `📱 Gatekeeper AI – Clarification Needed\n\n`;
-    
-    if (result.location === 'unknown' && result.category === 'general') {
-        reply += `We couldn't understand your message clearly.\n\n`;
-        reply += `📝 Your message: "${message}"\n\n`;
-        reply += `📍 Please reply with:\n`;
-        reply += `- The location (city/suburb)\n`;
-        reply += `- The type of problem (Roads, Water, Health, etc.)\n\n`;
-        reply += `Example: "Pothole on Chiremba Road, Harare"\n\n`;
-        reply += `Reply with more details.`;
-    } else if (result.location === 'unknown') {
-        reply += `We received your message about "${result.category}".\n\n`;
-        reply += `📍 Please reply with:\n`;
-        reply += `- The name of your city (e.g., Harare, Bulawayo, Mutare)\n`;
-        reply += `- Or share your location pin (📍 button)\n\n`;
-        reply += `Reply with your location.`;
-    } else if (result.location !== 'unknown' && result.category === 'general') {
-        reply += `We received your message from "${result.location}".\n\n`;
-        reply += `📋 Please reply with the type of problem:\n`;
-        reply += `- Roads (potholes, damaged roads)\n`;
-        reply += `- Water (burst pipes, no water)\n`;
-        reply += `- Health (clinic issues)\n`;
-        reply += `- Education (school issues)\n`;
-        reply += `- Electricity (power outages)\n`;
-        reply += `- Refuse (garbage collection)\n\n`;
-        reply += `Reply with one of the above.`;
-    } else if (result.location === 'conflict') {
-        reply += `We found multiple locations matching your message.\n\n`;
-        reply += `📍 Please select one:\n`;
-        reply += `1️⃣ Hillside, Harare\n`;
-        reply += `2️⃣ Hillside, Bulawayo\n\n`;
-        reply += `Reply with 1 or 2.`;
-    }
-    
-    return reply;
-}
-
+                }
