@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Dashboard – Gatekeeper AI</title>
     <style>
-        /* ─── RESET & BASE ─── */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,7 +15,6 @@
         }
         .container { max-width: 1000px; margin: 0 auto; }
 
-        /* ─── HEADER ─── */
         .header {
             display: flex;
             justify-content: space-between;
@@ -26,11 +24,7 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .header .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: #FFB300;
-        }
+        .header .logo { font-size: 22px; font-weight: bold; color: #FFB300; }
         .header .logo span { color: #00ff88; }
         .header .dept-name {
             font-size: 16px;
@@ -40,11 +34,7 @@
             border-radius: 10px;
             border: 1px solid #2a2a2a;
         }
-        .header .dept-name small {
-            color: #888;
-            font-size: 12px;
-            font-weight: normal;
-        }
+        .header .dept-name small { color: #888; font-size: 12px; font-weight: normal; }
         .header .badge {
             background: #1a2a1a;
             color: #00ff88;
@@ -62,12 +52,8 @@
             border-radius: 6px;
             transition: all 0.3s;
         }
-        .header .logout-btn:hover {
-            border-color: #e94560;
-            color: #e94560;
-        }
+        .header .logout-btn:hover { border-color: #e94560; color: #e94560; }
 
-        /* ─── STATS CARDS ─── */
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -83,24 +69,13 @@
             transition: border-color 0.3s;
         }
         .stat-card:hover { border-color: #FFB300; }
-        .stat-card .number {
-            font-size: 30px;
-            font-weight: bold;
-            color: #fff;
-            margin: 5px 0;
-        }
+        .stat-card .number { font-size: 30px; font-weight: bold; color: #fff; margin: 5px 0; }
         .stat-card .number.green { color: #00ff88; }
         .stat-card .number.amber { color: #FFB300; }
         .stat-card .number.red { color: #e94560; }
-        .stat-card .label {
-            font-size: 12px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .stat-card .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-card .icon { font-size: 24px; display: block; margin-bottom: 4px; }
 
-        /* ─── CARDS ─── */
         .card {
             background: #1a1a2e;
             padding: 25px;
@@ -126,7 +101,6 @@
             margin-left: auto;
         }
 
-        /* ─── TEAM MEMBERS ─── */
         .team-item {
             display: flex;
             justify-content: space-between;
@@ -155,7 +129,6 @@
         }
         .team-item .btn-remove:hover { background: #c0392b; }
 
-        /* ─── COMPLAINT LIST ─── */
         .complaint-item {
             display: flex;
             justify-content: space-between;
@@ -233,7 +206,6 @@
         .status-badge.in-progress { background: #FFB30033; color: #FFB300; }
         .status-badge.resolved { background: #00ff8833; color: #00ff88; }
 
-        /* ─── BUTTONS ─── */
         .btn-primary {
             padding: 10px 24px;
             background: #FFB300;
@@ -248,7 +220,6 @@
         .btn-primary.blue { background: #4A90D9; color: #fff; }
         .btn-primary.blue:hover { background: #357ABD; }
 
-        /* ─── MODAL ─── */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -271,14 +242,8 @@
             overflow-y: auto;
         }
         .modal h3 { color: #FFB300; margin-bottom: 15px; }
-        .modal label {
-            display: block;
-            color: #aaa;
-            font-size: 13px;
-            margin: 10px 0 5px;
-            font-weight: 600;
-        }
-        .modal input, .modal select {
+        .modal label { display: block; color: #aaa; font-size: 13px; margin: 10px 0 5px; font-weight: 600; }
+        .modal input {
             width: 100%;
             padding: 10px;
             background: #0a0a0a;
@@ -287,7 +252,7 @@
             border-radius: 8px;
             font-size: 14px;
         }
-        .modal input:focus, .modal select:focus { outline: none; border-color: #FFB300; }
+        .modal input:focus { outline: none; border-color: #FFB300; }
         .modal .btn-group {
             display: flex;
             gap: 10px;
@@ -314,7 +279,6 @@
         }
         .modal .btn-group .btn-save:hover { background: #e6a300; }
 
-        /* ─── TOAST ─── */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -347,18 +311,13 @@
             margin-left: 15px;
         }
 
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 768px) {
-            .stats { grid-template-columns: 1fr 1fr; }
-            .header { flex-direction: column; text-align: center; }
-            .complaint-item { flex-direction: column; align-items: stretch; }
-            .team-item { flex-direction: column; align-items: stretch; }
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #555;
         }
-        @media (max-width: 480px) {
-            .stats { grid-template-columns: 1fr; }
-        }
+        .empty .icon { font-size: 40px; margin-bottom: 10px; }
 
-        /* ─── FOOTER ─── */
         .footer {
             margin-top: 30px;
             padding: 20px 0;
@@ -370,28 +329,21 @@
         .footer a { color: #555; text-decoration: none; }
         .footer a:hover { color: #FFB300; }
 
-        /* ─── EMPTY STATE ─── */
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #555;
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: 1fr 1fr; }
+            .header { flex-direction: column; text-align: center; }
+            .complaint-item { flex-direction: column; align-items: stretch; }
+            .team-item { flex-direction: column; align-items: stretch; }
         }
-        .empty .icon { font-size: 40px; margin-bottom: 10px; }
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<!-- ─── LOGIN CHECK ─── -->
-<script>
-    const user = JSON.parse(sessionStorage.getItem('gatekeeper_user') || 'null');
-    if (!user || user.role !== 'department') {
-        window.location.href = 'login.html';
-    }
-</script>
-
 <div class="container">
 
-    <!-- ─── HEADER ─── -->
     <header class="header">
         <div>
             <div class="logo">Gatekeeper <span>AI</span></div>
@@ -403,11 +355,10 @@
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <span class="badge">🟢 Online</span>
             <span style="color: #555; font-size: 13px;" id="timestamp">Loading...</span>
-            <a href="logout.html" class="logout-btn">🚪 Logout</a>
+            <a href="dashboard.html" class="logout-btn">🏠 Admin</a>
         </div>
     </header>
 
-    <!-- ─── STATS ─── -->
     <div class="stats">
         <div class="stat-card">
             <span class="icon">📋</span>
@@ -431,7 +382,6 @@
         </div>
     </div>
 
-    <!-- ─── TEAM MANAGEMENT ─── -->
     <div class="card">
         <h3>
             👥 Team Members
@@ -441,7 +391,6 @@
             <div class="empty">
                 <div class="icon">👥</div>
                 <p>No team members added yet.</p>
-                <p style="font-size:12px;color:#444;">Add team members to forward complaints to.</p>
             </div>
         </div>
         <div style="margin-top:15px;">
@@ -449,7 +398,6 @@
         </div>
     </div>
 
-    <!-- ─── COMPLAINTS ─── -->
     <div class="card">
         <h3>
             📋 Recent Complaints
@@ -463,7 +411,6 @@
         </div>
     </div>
 
-    <!-- ─── ADD TEAM MEMBER MODAL ─── -->
     <div class="modal-overlay" id="addTeamModal">
         <div class="modal">
             <h3>➕ Add Team Member</h3>
@@ -480,13 +427,11 @@
         </div>
     </div>
 
-    <!-- ─── TOAST ─── -->
     <div class="toast" id="toast">
         <button class="close" onclick="hideToast()">×</button>
         <span id="toastMessage">✅ Action completed</span>
     </div>
 
-    <!-- ─── FOOTER ─── -->
     <div class="footer">
         <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
         <p><a href="dashboard.html">Back to Admin</a></p>
@@ -495,33 +440,37 @@
 
 <script>
     // ─── DETECT DEPARTMENT FROM URL ───
-const path = window.location.pathname;
-const slug = path.replace('/', '');
+    const path = window.location.pathname;
+    const slug = path.replace('/', '');
 
-// ─── DEPARTMENT DATA ───
-const departments = [
-    { id: 1, slug: 'harare-water', name: 'Harare Water Department' },
-    { id: 2, slug: 'harare-roads', name: 'Harare Roads Department' },
-    { id: 3, slug: 'bulawayo-water', name: 'Bulawayo Water Department' },
-    { id: 4, slug: 'bulawayo-roads', name: 'Bulawayo Roads Department' }
-];
+    const departments = [
+        { id: 1, slug: 'harare-water', name: 'Harare Water Department' },
+        { id: 2, slug: 'harare-roads', name: 'Harare Roads Department' },
+        { id: 3, slug: 'bulawayo-water', name: 'Bulawayo Water Department' },
+        { id: 4, slug: 'bulawayo-roads', name: 'Bulawayo Roads Department' }
+    ];
 
-const currentDept = departments.find(d => d.slug === slug);
+    const currentDept = departments.find(d => d.slug === slug);
 
-if (currentDept) {
-    document.getElementById('deptName').textContent = currentDept.name;
-} else {
-    document.getElementById('deptName').textContent = 'Department';
-    }
-    
-    // ─── LOAD DASHBOARD ───
+    let teamMembers = [
+        { id: 1, name: 'T. Ncube', phone: '0771 234 567', role: 'Foreman' },
+        { id: 2, name: 'S. Moyo', phone: '0772 345 678', role: 'Technician' },
+        { id: 3, name: 'L. Dube', phone: '0773 456 789', role: 'Driver' }
+    ];
+
+    let complaints = [
+        { id: 1, message: 'Burst pipe on Luveve Road. Water flooding the street.', urgency: 'RED', status: 'pending', timestamp: '2025-07-13T10:00:00Z' },
+        { id: 2, message: 'No water in Nkulumane for 2 days.', urgency: 'AMBER', status: 'in-progress', timestamp: '2025-07-13T09:00:00Z' },
+        { id: 3, message: 'Water pressure is low in Hillside area.', urgency: 'GREEN', status: 'resolved', timestamp: '2025-07-13T08:00:00Z' }
+    ];
+
     function loadDashboard() {
-        // Set department name
-        if (department) {
-            document.getElementById('deptName').textContent = department.name + ' (' + department.slug + ')';
+        if (currentDept) {
+            document.getElementById('deptName').textContent = currentDept.name;
+        } else {
+            document.getElementById('deptName').textContent = 'Department (' + slug + ')';
         }
 
-        // Stats
         const total = complaints.length;
         const resolved = complaints.filter(c => c.status === 'resolved').length;
         const pending = complaints.filter(c => c.status !== 'resolved').length;
@@ -537,20 +486,12 @@ if (currentDept) {
         renderComplaints();
     }
 
-    // ─── RENDER TEAM ───
     function renderTeam() {
         const container = document.getElementById('teamList');
         if (teamMembers.length === 0) {
-            container.innerHTML = `
-                <div class="empty">
-                    <div class="icon">👥</div>
-                    <p>No team members added yet.</p>
-                    <p style="font-size:12px;color:#444;">Add team members to forward complaints to.</p>
-                </div>
-            `;
+            container.innerHTML = `<div class="empty"><div class="icon">👥</div><p>No team members added yet.</p></div>`;
             return;
         }
-
         let html = '';
         teamMembers.forEach(m => {
             html += `
@@ -567,22 +508,14 @@ if (currentDept) {
         container.innerHTML = html;
     }
 
-    // ─── RENDER COMPLAINTS ───
     function renderComplaints() {
         const container = document.getElementById('complaintList');
         if (complaints.length === 0) {
-            container.innerHTML = `
-                <div class="empty">
-                    <div class="icon">📭</div>
-                    <p>No complaints yet.</p>
-                </div>
-            `;
+            container.innerHTML = `<div class="empty"><div class="icon">📭</div><p>No complaints yet.</p></div>`;
             return;
         }
-
         const urgencyMap = { 'RED': 'red', 'AMBER': 'amber', 'GREEN': 'green' };
         const statusMap = { 'pending': 'pending', 'in-progress': 'in-progress', 'resolved': 'resolved' };
-
         let html = '';
         complaints.forEach(c => {
             const urgency = urgencyMap[c.urgency] || 'green';
@@ -616,7 +549,6 @@ if (currentDept) {
         container.innerHTML = html;
     }
 
-    // ─── ADD TEAM MEMBER ───
     function showAddTeam() {
         document.getElementById('teamName').value = '';
         document.getElementById('teamPhone').value = '';
@@ -628,19 +560,8 @@ if (currentDept) {
         const name = document.getElementById('teamName').value.trim();
         const phone = document.getElementById('teamPhone').value.trim();
         const role = document.getElementById('teamRole').value.trim();
-
-        if (!name || !phone) {
-            alert('Please enter name and phone number.');
-            return;
-        }
-
-        teamMembers.push({
-            id: Date.now(),
-            name: name,
-            phone: phone,
-            role: role || 'Team Member'
-        });
-
+        if (!name || !phone) { alert('Please enter name and phone number.'); return; }
+        teamMembers.push({ id: Date.now(), name, phone, role: role || 'Team Member' });
         document.getElementById('teamName').value = '';
         document.getElementById('teamPhone').value = '';
         document.getElementById('teamRole').value = '';
@@ -649,7 +570,6 @@ if (currentDept) {
         showToast('success', `✅ ${name} added to team`);
     }
 
-    // ─── REMOVE TEAM MEMBER ───
     function removeTeam(id) {
         const member = teamMembers.find(m => m.id === id);
         if (!member) return;
@@ -660,25 +580,18 @@ if (currentDept) {
         }
     }
 
-    // ─── FORWARD COMPLAINT ───
     function forwardComplaint(id) {
         const select = document.getElementById(`forward-${id}`);
         const selected = select.value;
-        if (!selected) {
-            alert('Please select a team member to forward to.');
-            return;
-        }
+        if (!selected) { alert('Please select a team member.'); return; }
+        showToast('success', `📤 Complaint forwarded to ${selected}`);
         const complaint = complaints.find(c => c.id === id);
-        if (complaint) {
-            showToast('success', `📤 Complaint forwarded to ${selected}`);
-            if (complaint.status === 'pending') {
-                complaint.status = 'in-progress';
-                loadDashboard();
-            }
+        if (complaint && complaint.status === 'pending') {
+            complaint.status = 'in-progress';
+            loadDashboard();
         }
     }
 
-    // ─── UPDATE STATUS ───
     function updateStatus(id, status) {
         const complaint = complaints.find(c => c.id === id);
         if (complaint) {
@@ -688,10 +601,8 @@ if (currentDept) {
         }
     }
 
-    // ─── MODAL HELPERS ───
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    // ─── TOAST ───
     function showToast(type, message) {
         const toast = document.getElementById('toast');
         toast.className = `toast show ${type}`;
@@ -701,12 +612,10 @@ if (currentDept) {
     }
     function hideToast() { document.getElementById('toast').classList.remove('show'); }
 
-    // ─── CLOSE MODALS ON OVERLAY CLICK ───
     document.querySelectorAll('.modal-overlay').forEach(el => {
         el.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
     });
 
-    // ─── LOAD ───
     document.addEventListener('DOMContentLoaded', loadDashboard);
 </script>
 
