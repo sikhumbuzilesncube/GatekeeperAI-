@@ -44,7 +44,7 @@
             font-size: 12px;
             border: 1px solid #00ff8833;
         }
-        
+
         /* ─── TABS ─── */
         .tabs {
             display: flex;
@@ -102,19 +102,42 @@
             margin: 5px 0;
         }
         .stat-card .number.gold { color: #FFB300; }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.amber { color: #FFB300; }
+        .stat-card .number.red { color: #e94560; }
         .stat-card .label {
             font-size: 13px;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        .stat-card .change {
-            font-size: 12px;
-            color: #00ff88;
-            margin-top: 5px;
-        }
-        .stat-card .change.down { color: #e94560; }
         .stat-card .icon { font-size: 28px; display: block; margin-bottom: 5px; }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            margin-top: 20px;
+        }
+        .card h3 {
+            color: #FFB300;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .card h3 .badge-count {
+            background: #2a2a2a;
+            color: #aaa;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: auto;
+        }
 
         /* ─── TABLE ─── */
         .table-wrap { overflow-x: auto; }
@@ -154,18 +177,6 @@
         .status.warning { background: #FFB30033; color: #FFB300; }
         .status.danger { background: #e9456033; color: #e94560; }
 
-        .urgency-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .urgency-badge.red { background: #e9456033; color: #e94560; }
-        .urgency-badge.amber { background: #FFB30033; color: #FFB300; }
-        .urgency-badge.green { background: #00ff8833; color: #00ff88; }
-
-        /* ─── CONTROLS ─── */
         .controls {
             display: flex;
             gap: 6px;
@@ -194,30 +205,20 @@
         .btn-edit { background: #4A90D9; color: #fff; }
         .btn-edit:hover { background: #357ABD; }
 
-        /* ─── ACTIONS ─── */
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .actions .btn {
+        /* ─── BUTTONS ─── */
+        .btn-primary {
             padding: 10px 24px;
+            background: #FFB300;
+            color: #000;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
         }
-        .actions .btn-primary { background: #FFB300; color: #000; }
-        .actions .btn-primary:hover { background: #e6a300; transform: translateY(-2px); }
-        .actions .btn-secondary { background: #2a2a2a; color: #fff; }
-        .actions .btn-secondary:hover { background: #3a3a3a; }
-        .actions .btn-success { background: #00ff88; color: #000; }
-        .actions .btn-success:hover { background: #00cc6a; transform: translateY(-2px); }
+        .btn-primary:hover { background: #e6a300; transform: translateY(-2px); }
+        .btn-primary.blue { background: #4A90D9; }
+        .btn-primary.blue:hover { background: #357ABD; }
 
         /* ─── MODAL ─── */
         .modal-overlay {
@@ -242,7 +243,13 @@
             overflow-y: auto;
         }
         .modal h3 { color: #FFB300; margin-bottom: 15px; }
-        .modal label { display: block; color: #aaa; font-size: 13px; margin: 10px 0 5px; }
+        .modal label {
+            display: block;
+            color: #aaa;
+            font-size: 13px;
+            margin: 10px 0 5px;
+            font-weight: 600;
+        }
         .modal input, .modal select {
             width: 100%;
             padding: 10px;
@@ -253,6 +260,20 @@
             font-size: 14px;
         }
         .modal input:focus, .modal select:focus { outline: none; border-color: #FFB300; }
+        .modal .preview-box {
+            background: #1a2a1a;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #2a3a2a;
+        }
+        .modal .preview-box p {
+            font-size: 12px;
+            color: #888;
+            margin: 3px 0;
+        }
+        .modal .preview-box strong { color: #00ff88; }
+        .modal .preview-box .highlight { color: #FFB300; }
         .modal .btn-group {
             display: flex;
             gap: 10px;
@@ -278,6 +299,64 @@
             cursor: pointer;
         }
         .modal .btn-group .btn-save:hover { background: #e6a300; }
+
+        /* ─── DEPARTMENT LIST ─── */
+        .dept-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            border: 1px solid #1a1a2e;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .dept-item .info { flex: 1; min-width: 200px; }
+        .dept-item .info .name { color: #fff; font-weight: bold; }
+        .dept-item .info .meta { color: #888; font-size: 13px; }
+        .dept-item .info .contact { color: #555; font-size: 12px; }
+        .dept-item .info .link {
+            color: #00ff88;
+            font-size: 12px;
+            margin-top: 3px;
+            font-family: monospace;
+        }
+        .dept-item .info .creds {
+            color: #666;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .dept-item .info .creds .highlight { color: #FFB300; }
+        .dept-item .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .dept-item .actions .btn-visit {
+            padding: 6px 14px;
+            background: #4A90D9;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .dept-item .actions .btn-visit:hover { background: #357ABD; }
+        .dept-item .actions .btn-delete {
+            padding: 6px 14px;
+            background: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .dept-item .actions .btn-delete:hover { background: #c0392b; }
 
         /* ─── TOAST ─── */
         .toast {
@@ -316,10 +395,12 @@
         @media (max-width: 768px) {
             .stats { grid-template-columns: 1fr 1fr; }
             .header { flex-direction: column; text-align: center; }
+            .dept-item { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 480px) {
             .stats { grid-template-columns: 1fr; }
             .controls .btn { font-size: 10px; padding: 4px 8px; }
+            .tabs .tab { font-size: 12px; padding: 8px 14px; }
         }
 
         /* ─── FOOTER ─── */
@@ -336,14 +417,14 @@
     </style>
 </head>
 <body>
-    
-    <script>
-    // ─── CHECK LOGIN ───
+
+<!-- ─── LOGIN CHECK ─── -->
+<script>
     const user = JSON.parse(sessionStorage.getItem('gatekeeper_user') || 'null');
     if (!user || user.role !== 'admin') {
         window.location.href = 'login.html';
     }
-    </script>
+</script>
 
 <div class="container">
 
@@ -353,30 +434,26 @@
             <div class="logo">Gatekeeper <span>AI</span></div>
             <div class="subtitle">Super Admin Dashboard</div>
         </div>
-        <div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <span class="badge">🟢 All Systems Online</span>
-            <span style="margin-left: 10px; color: #555; font-size: 13px;" id="timestamp">Loading...</span>
-            
-       <!-- ─── LOGOUT BUTTON ─── -->
-<a href="logout.html" style="color:#888;font-size:13px;text-decoration:none;padding:6px 16px;border:1px solid #2a2a2a;border-radius:6px;transition:all 0.3s;margin-left:10px;" 
-   onmouseover="this.style.borderColor='#e94560';this.style.color='#e94560';" 
-   onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#888';">
-   🚪 Logout
-</a>
+            <span style="color: #555; font-size: 13px;" id="timestamp">Loading...</span>
+            <a href="logout.html" style="color:#888;font-size:13px;text-decoration:none;padding:6px 16px;border:1px solid #2a2a2a;border-radius:6px;transition:all 0.3s;"
+               onmouseover="this.style.borderColor='#e94560';this.style.color='#e94560';"
+               onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#888';">🚪 Logout</a>
         </div>
     </header>
 
-    <!-- ─── STATS ─── -->
-    <div class="stats" id="stats">
+    <!-- ─── TOP STATS ─── -->
+    <div class="stats">
         <div class="stat-card">
             <span class="icon">🏛️</span>
             <div class="number" id="totalCouncils">—</div>
             <div class="label">Total Councils</div>
         </div>
         <div class="stat-card">
-            <span class="icon">👥</span>
-            <div class="number gold" id="totalMPs">—</div>
-            <div class="label">Total MPs</div>
+            <span class="icon">🏗️</span>
+            <div class="number gold" id="totalDepartments">—</div>
+            <div class="label">Total Departments</div>
         </div>
         <div class="stat-card">
             <span class="icon">📋</span>
@@ -385,7 +462,7 @@
         </div>
         <div class="stat-card">
             <span class="icon">⏳</span>
-            <div class="number" id="pending">—</div>
+            <div class="number amber" id="pendingComplaints">—</div>
             <div class="label">Pending Complaints</div>
         </div>
     </div>
@@ -402,7 +479,7 @@
 
     <!-- ─── COUNCILS TAB ─── -->
     <div id="councilsTab">
-        <div class="stats" style="margin-top:0;">
+        <div class="stats">
             <div class="stat-card">
                 <span class="icon">✅</span>
                 <div class="number green" id="activeCouncils">—</div>
@@ -415,7 +492,7 @@
             </div>
             <div class="stat-card">
                 <span class="icon">⏳</span>
-                <div class="number blue" id="pendingCouncils">—</div>
+                <div class="number" id="pendingCouncils">—</div>
                 <div class="label">Pending Councils</div>
             </div>
             <div class="stat-card">
@@ -425,10 +502,11 @@
             </div>
         </div>
 
-        <div class="card" style="background:#1a1a2e;padding:25px;border-radius:12px;border:1px solid #2a2a2a;margin-top:20px;">
-            <h3 style="color:#FFB300;margin-bottom:15px;">
+        <!-- Council Table -->
+        <div class="card">
+            <h3>
                 ⚙️ Council Account Management
-                <span style="background:#2a2a2a;color:#aaa;font-size:11px;padding:2px 10px;border-radius:12px;margin-left:auto;float:right;" id="councilTableCount">0 councils</span>
+                <span class="badge-count" id="councilTableCount">0 councils</span>
             </h3>
             <div class="table-wrap">
                 <table>
@@ -447,15 +525,27 @@
                     </tbody>
                 </table>
             </div>
-            <div style="margin-top:15px;">
-                <button class="btn btn-primary" onclick="showAddCouncil()" style="padding:10px 24px;background:#FFB300;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">➕ Add Council</button>
+            <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn-primary" onclick="showAddCouncil()">➕ Add Council</button>
+                <button class="btn-primary blue" onclick="showAddDepartment()">🏗️ Add Department</button>
+            </div>
+        </div>
+
+        <!-- Departments Section -->
+        <div class="card">
+            <h3>
+                🏗️ Departments by Council
+                <span class="badge-count" id="deptCount">0 departments</span>
+            </h3>
+            <div id="departmentList">
+                <div style="text-align:center;padding:20px;color:#888;">No departments added yet</div>
             </div>
         </div>
     </div>
 
     <!-- ─── MPs TAB ─── -->
     <div id="mpsTab" style="display:none;">
-        <div class="stats" style="margin-top:0;">
+        <div class="stats">
             <div class="stat-card">
                 <span class="icon">✅</span>
                 <div class="number green" id="activeMPs">—</div>
@@ -478,10 +568,10 @@
             </div>
         </div>
 
-        <div class="card" style="background:#1a1a2e;padding:25px;border-radius:12px;border:1px solid #2a2a2a;margin-top:20px;">
-            <h3 style="color:#FFB300;margin-bottom:15px;">
+        <div class="card">
+            <h3>
                 👥 MP Account Management
-                <span style="background:#2a2a2a;color:#aaa;font-size:11px;padding:2px 10px;border-radius:12px;margin-left:auto;float:right;" id="mpTableCount">0 MPs</span>
+                <span class="badge-count" id="mpTableCount">0 MPs</span>
             </h3>
             <div class="table-wrap">
                 <table>
@@ -503,7 +593,50 @@
                 </table>
             </div>
             <div style="margin-top:15px;">
-                <button class="btn btn-primary" onclick="showAddMP()" style="padding:10px 24px;background:#FFB300;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">➕ Add MP</button>
+                <button class="btn-primary" onclick="showAddMP()">➕ Add MP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ADD COUNCIL MODAL ─── -->
+    <div class="modal-overlay" id="addCouncilModal">
+        <div class="modal">
+            <h3>➕ Add New Council</h3>
+            <label>Council Name</label>
+            <input type="text" id="councilName" placeholder="e.g. Harare City Council">
+            <label>Location</label>
+            <input type="text" id="councilLocation" placeholder="e.g. Harare">
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeModal('addCouncilModal')">Cancel</button>
+                <button class="btn-save" onclick="saveCouncil()">Save Council</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ADD DEPARTMENT MODAL ─── -->
+    <div class="modal-overlay" id="addDepartmentModal">
+        <div class="modal">
+            <h3>🏗️ Add New Department</h3>
+            <label>Council</label>
+            <select id="deptCouncil"></select>
+            <label>Department Name</label>
+            <input type="text" id="deptName" placeholder="e.g. Water Department" oninput="updatePreview()">
+            <label>Head of Department - Full Name</label>
+            <input type="text" id="deptHead" placeholder="e.g. Mr. T. Ncube">
+            <label>Phone Number</label>
+            <input type="text" id="deptPhone" placeholder="e.g. 0771 234 567">
+            <label>Email Address</label>
+            <input type="email" id="deptEmail" placeholder="e.g. water@council.co.zw">
+            <div class="preview-box" id="previewBox">
+                <p>🔗 <strong>Your Department Link:</strong></p>
+                <p style="font-size:16px;color:#00ff88;font-family:monospace;" id="previewLink">/council-department</p>
+                <p style="margin-top:8px;">🔑 <strong>Username:</strong> <span class="highlight" id="previewUsername">—</span></p>
+                <p>🔑 <strong>Password:</strong> <span class="highlight">Gatekeeper2025!</span></p>
+                <p style="font-size:11px;color:#555;margin-top:5px;">Department head will use these credentials to log in</p>
+            </div>
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeModal('addDepartmentModal')">Cancel</button>
+                <button class="btn-save" onclick="saveDepartment()">💾 Save Department</button>
             </div>
         </div>
     </div>
@@ -525,21 +658,6 @@
             <div class="btn-group">
                 <button class="btn-cancel" onclick="closeModal('addMPModal')">Cancel</button>
                 <button class="btn-save" onclick="saveMP()">Save MP</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ─── ADD COUNCIL MODAL ─── -->
-    <div class="modal-overlay" id="addCouncilModal">
-        <div class="modal">
-            <h3>➕ Add New Council</h3>
-            <label>Council Name</label>
-            <input type="text" id="councilName" placeholder="e.g. Harare City Council">
-            <label>Location</label>
-            <input type="text" id="councilLocation" placeholder="e.g. Harare">
-            <div class="btn-group">
-                <button class="btn-cancel" onclick="closeModal('addCouncilModal')">Cancel</button>
-                <button class="btn-save" onclick="saveCouncil()">Save Council</button>
             </div>
         </div>
     </div>
@@ -574,6 +692,13 @@
         { id: 6, name: 'Kwekwe City Council', complaints: 0, resolved: 0, response: 'N/A', status: 'inactive' }
     ];
 
+    let departments = [
+        { id: 1, councilId: 1, name: 'Water Department', slug: 'harare-water', headName: 'Mr. T. Ncube', phone: '0771 234 567', email: 'water@harare.co.zw', username: 'harare_water', password: 'Gatekeeper2025!' },
+        { id: 2, councilId: 1, name: 'Roads Department', slug: 'harare-roads', headName: 'Mr. S. Moyo', phone: '0772 345 678', email: 'roads@harare.co.zw', username: 'harare_roads', password: 'Gatekeeper2025!' },
+        { id: 3, councilId: 2, name: 'Water Department', slug: 'bulawayo-water', headName: 'Ms. P. Ncube', phone: '0773 456 789', email: 'water@bulawayo.co.zw', username: 'bulawayo_water', password: 'Gatekeeper2025!' },
+        { id: 4, councilId: 2, name: 'Roads Department', slug: 'bulawayo-roads', headName: 'Ms. L. Dube', phone: '0774 567 890', email: 'roads@bulawayo.co.zw', username: 'bulawayo_roads', password: 'Gatekeeper2025!' }
+    ];
+
     let mps = [
         { id: 1, name: 'Hon. T. Moyo', constituency: 'Harare East', phone: '0771 234 567', complaints: 45, resolved: 40, response: '1.2 hrs', status: 'good' },
         { id: 2, name: 'Hon. S. Ncube', constituency: 'Bulawayo South', phone: '0772 345 678', complaints: 38, resolved: 32, response: '2.1 hrs', status: 'good' },
@@ -604,44 +729,44 @@
 
     // ─── LOAD DASHBOARD ───
     function loadDashboard() {
-        const totalComplaints = councils.reduce((s, c) => s + c.complaints, 0);
-        const pendingComplaints = councils.reduce((s, c) => s + (c.complaints - c.resolved), 0);
-
+        // Top stats
         document.getElementById('totalCouncils').textContent = councils.length;
-        document.getElementById('totalMPs').textContent = mps.length;
-        document.getElementById('totalComplaints').textContent = totalComplaints;
-        document.getElementById('pending').textContent = pendingComplaints;
+        document.getElementById('totalDepartments').textContent = departments.length;
+        const total = councils.reduce((s, c) => s + c.complaints, 0);
+        const pending = councils.reduce((s, c) => s + (c.complaints - c.resolved), 0);
+        document.getElementById('totalComplaints').textContent = total;
+        document.getElementById('pendingComplaints').textContent = pending;
 
-        const activeCouncils = councils.filter(c => c.status === 'active').length;
-        const suspendedCouncils = councils.filter(c => c.status === 'suspended').length;
-        const pendingCouncils = councils.filter(c => c.status === 'pending').length;
-        document.getElementById('activeCouncils').textContent = activeCouncils;
-        document.getElementById('suspendedCouncils').textContent = suspendedCouncils;
-        document.getElementById('pendingCouncils').textContent = pendingCouncils;
-        document.getElementById('councilComplaints').textContent = totalComplaints;
+        // Council stats
+        document.getElementById('activeCouncils').textContent = councils.filter(c => c.status === 'active').length;
+        document.getElementById('suspendedCouncils').textContent = councils.filter(c => c.status === 'suspended').length;
+        document.getElementById('pendingCouncils').textContent = councils.filter(c => c.status === 'pending').length;
+        document.getElementById('councilComplaints').textContent = total;
 
-        const activeMPs = mps.filter(m => m.status === 'good').length;
-        const warningMPs = mps.filter(m => m.status === 'warning').length;
-        const dangerMPs = mps.filter(m => m.status === 'danger').length;
-        document.getElementById('activeMPs').textContent = activeMPs;
-        document.getElementById('warningMPs').textContent = warningMPs;
-        document.getElementById('dangerMPs').textContent = dangerMPs;
+        // MP stats
+        document.getElementById('activeMPs').textContent = mps.filter(m => m.status === 'good').length;
+        document.getElementById('warningMPs').textContent = mps.filter(m => m.status === 'warning').length;
+        document.getElementById('dangerMPs').textContent = mps.filter(m => m.status === 'danger').length;
         document.getElementById('mpComplaints').textContent = mps.reduce((s, m) => s + m.complaints, 0);
 
+        // Counts
         document.getElementById('councilCount').textContent = councils.length;
         document.getElementById('mpCount').textContent = mps.length;
         document.getElementById('councilTableCount').textContent = `${councils.length} councils`;
         document.getElementById('mpTableCount').textContent = `${mps.length} MPs`;
+        document.getElementById('deptCount').textContent = departments.length + ' departments';
+
         document.getElementById('timestamp').textContent = new Date().toLocaleString();
 
         renderCouncilTable();
         renderMPTable();
+        renderDepartments();
     }
 
     // ─── RENDER COUNCIL TABLE ───
     function renderCouncilTable() {
         const tbody = document.getElementById('councilTable');
-        if (councils.length === 0) {
+        if (!councils.length) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#555;">No councils registered</td></tr>';
             return;
         }
@@ -678,7 +803,7 @@
     // ─── RENDER MP TABLE ───
     function renderMPTable() {
         const tbody = document.getElementById('mpTable');
-        if (mps.length === 0) {
+        if (!mps.length) {
             tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#555;">No MPs registered</td></tr>';
             return;
         }
@@ -714,67 +839,173 @@
         tbody.innerHTML = html;
     }
 
+    // ─── RENDER DEPARTMENTS ───
+    function renderDepartments() {
+        const container = document.getElementById('departmentList');
+        if (departments.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">No departments added yet</div>';
+            return;
+        }
+
+        let html = '';
+        departments.forEach(d => {
+            const council = councils.find(c => c.id === d.councilId);
+            const councilName = council ? council.name : 'Unknown Council';
+            const simpleUrl = 'https://gatekeeperai.co.zw/' + d.slug;
+            html += `
+                <div class="dept-item">
+                    <div class="info">
+                        <div class="name">${d.name}</div>
+                        <div class="meta">${councilName} | Head: ${d.headName}</div>
+                        <div class="contact">📱 ${d.phone} | ✉️ ${d.email}</div>
+                        <div class="link">🔗 <strong>/${d.slug}</strong> <span style="color:#555;font-size:11px;">(memorise this)</span></div>
+                        <div class="creds">🔑 Username: <span class="highlight">${d.username}</span> | Password: <span class="highlight">${d.password}</span></div>
+                    </div>
+                    <div class="actions">
+                        <a href="${simpleUrl}" target="_blank" class="btn-visit">🔗 Visit</a>
+                        <button class="btn-delete" onclick="deleteDepartment(${d.id})">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
     // ─── UPDATE COUNCIL STATUS ───
     function updateCouncilStatus(id, status) {
-        const council = councils.find(c => c.id === id);
-        if (council) {
-            council.status = status;
-            loadDashboard();
-            showToast('success', `✅ ${council.name} updated to ${status}`);
-        }
+        const c = councils.find(x => x.id === id);
+        if (c) { c.status = status; loadDashboard(); showToast('success', `✅ ${c.name} updated`); }
     }
 
     // ─── UPDATE MP STATUS ───
     function updateMPStatus(id, status) {
-        const mp = mps.find(m => m.id === id);
-        if (mp) {
-            mp.status = status;
-            loadDashboard();
-            showToast('success', `✅ ${mp.name} updated to ${status}`);
-        }
+        const m = mps.find(x => x.id === id);
+        if (m) { m.status = status; loadDashboard(); showToast('success', `✅ ${m.name} updated`); }
     }
 
     // ─── ADD COUNCIL ───
-    function showAddCouncil() {
-        document.getElementById('addCouncilModal').classList.add('show');
-    }
-
+    function showAddCouncil() { document.getElementById('addCouncilModal').classList.add('show'); }
     function saveCouncil() {
         const name = document.getElementById('councilName').value.trim();
-        const location = document.getElementById('councilLocation').value.trim();
         if (!name) { alert('Please enter council name.'); return; }
-        councils.push({
-            id: Date.now(),
-            name: name,
-            complaints: 0,
-            resolved: 0,
-            response: 'N/A',
-            status: 'pending'
-        });
+        councils.push({ id: Date.now(), name, complaints: 0, resolved: 0, response: 'N/A', status: 'pending' });
         document.getElementById('councilName').value = '';
         document.getElementById('councilLocation').value = '';
         closeModal('addCouncilModal');
         loadDashboard();
-        showToast('success', `✅ ${name} added successfully`);
+        showToast('success', `✅ ${name} added`);
+    }
+
+    // ─── ADD DEPARTMENT ───
+    function showAddDepartment() {
+        const select = document.getElementById('deptCouncil');
+        select.innerHTML = '';
+        councils.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.id;
+            option.textContent = c.name;
+            select.appendChild(option);
+        });
+        document.getElementById('deptName').value = '';
+        document.getElementById('deptHead').value = '';
+        document.getElementById('deptPhone').value = '';
+        document.getElementById('deptEmail').value = '';
+        document.getElementById('addDepartmentModal').classList.add('show');
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const councilId = parseInt(document.getElementById('deptCouncil').value);
+        const deptName = document.getElementById('deptName').value.trim();
+        const council = councils.find(c => c.id === councilId);
+
+        if (council && deptName) {
+            const slug = council.name.toLowerCase()
+                .replace(/city council/g, '')
+                .replace(/city/g, '')
+                .replace(/ /g, '-')
+                .replace(/[^a-z-]/g, '') + '-' +
+                deptName.toLowerCase()
+                .replace(/department/g, '')
+                .replace(/ /g, '-')
+                .replace(/[^a-z-]/g, '');
+            const finalSlug = slug.replace(/--/g, '-').replace(/^-|-$/g, '');
+            document.getElementById('previewLink').textContent = '/' + finalSlug;
+            
+            const username = council.name.toLowerCase().replace(/[^a-z]/g, '_') + '_' + deptName.toLowerCase().replace(/[^a-z]/g, '_');
+            document.getElementById('previewUsername').textContent = username || '—';
+        } else {
+            document.getElementById('previewLink').textContent = '/council-department';
+            document.getElementById('previewUsername').textContent = '—';
+        }
+    }
+
+    function saveDepartment() {
+        const councilId = parseInt(document.getElementById('deptCouncil').value);
+        const name = document.getElementById('deptName').value.trim();
+        const headName = document.getElementById('deptHead').value.trim();
+        const phone = document.getElementById('deptPhone').value.trim();
+        const email = document.getElementById('deptEmail').value.trim();
+
+        if (!councilId || !name || !headName) {
+            alert('Please fill in Council, Department Name, and Head of Department.');
+            return;
+        }
+
+        const council = councils.find(c => c.id === councilId);
+        const slug = council.name.toLowerCase()
+            .replace(/city council/g, '')
+            .replace(/city/g, '')
+            .replace(/ /g, '-')
+            .replace(/[^a-z-]/g, '') + '-' +
+            name.toLowerCase()
+            .replace(/department/g, '')
+            .replace(/ /g, '-')
+            .replace(/[^a-z-]/g, '');
+        const finalSlug = slug.replace(/--/g, '-').replace(/^-|-$/g, '');
+        const username = council.name.toLowerCase().replace(/[^a-z]/g, '_') + '_' + name.toLowerCase().replace(/[^a-z]/g, '_');
+
+        departments.push({
+            id: Date.now(),
+            councilId: councilId,
+            name: name,
+            slug: finalSlug,
+            headName: headName,
+            phone: phone || 'N/A',
+            email: email || 'N/A',
+            username: username,
+            password: 'Gatekeeper2025!'
+        });
+
+        document.getElementById('deptName').value = '';
+        document.getElementById('deptHead').value = '';
+        document.getElementById('deptPhone').value = '';
+        document.getElementById('deptEmail').value = '';
+        closeModal('addDepartmentModal');
+        loadDashboard();
+        showToast('success', `✅ Department added!<br>🔗 Link: <strong>/${finalSlug}</strong>`);
+    }
+
+    // ─── DELETE DEPARTMENT ───
+    function deleteDepartment(id) {
+        if (confirm('Are you sure you want to delete this department?')) {
+            departments = departments.filter(d => d.id !== id);
+            loadDashboard();
+            showToast('success', '✅ Department deleted');
+        }
     }
 
     // ─── ADD MP ───
-    function showAddMP() {
-        document.getElementById('addMPModal').classList.add('show');
-    }
-
+    function showAddMP() { document.getElementById('addMPModal').classList.add('show'); }
     function saveMP() {
         const name = document.getElementById('mpName').value.trim();
         const constituency = document.getElementById('mpConstituency').value.trim();
-        const phone = document.getElementById('mpPhone').value.trim();
-        const whatsapp = document.getElementById('mpWhatsApp').value.trim();
-        const party = document.getElementById('mpParty').value.trim();
         if (!name || !constituency) { alert('Please enter name and constituency.'); return; }
         mps.push({
             id: Date.now(),
-            name: name,
-            constituency: constituency,
-            phone: phone || 'N/A',
+            name,
+            constituency,
+            phone: document.getElementById('mpPhone').value.trim() || 'N/A',
             complaints: 0,
             resolved: 0,
             response: 'N/A',
@@ -787,33 +1018,32 @@
         document.getElementById('mpParty').value = '';
         closeModal('addMPModal');
         loadDashboard();
-        showToast('success', `✅ ${name} added successfully`);
+        showToast('success', `✅ ${name} added`);
     }
 
     // ─── MODAL HELPERS ───
-    function closeModal(id) {
-        document.getElementById(id).classList.remove('show');
-    }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
     // ─── TOAST ───
     function showToast(type, message) {
         const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toastMessage');
         toast.className = `toast show ${type}`;
-        toastMsg.innerHTML = message;
+        document.getElementById('toastMessage').innerHTML = message;
         clearTimeout(window.toastTimeout);
-        window.toastTimeout = setTimeout(hideToast, 5000);
+        window.toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 5000);
     }
-
-    function hideToast() {
-        document.getElementById('toast').classList.remove('show');
-    }
+    function hideToast() { document.getElementById('toast').classList.remove('show'); }
 
     // ─── CLOSE MODALS ON OVERLAY CLICK ───
     document.querySelectorAll('.modal-overlay').forEach(el => {
-        el.addEventListener('click', function(e) {
-            if (e.target === this) this.classList.remove('show');
-        });
+        el.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
+    });
+
+    // ─── LIVE PREVIEW ON COUNCIL CHANGE ───
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'deptCouncil') {
+            updatePreview();
+        }
     });
 
     // ─── LOAD ───
