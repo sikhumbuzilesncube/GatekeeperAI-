@@ -495,23 +495,25 @@
 
 <script>
     // ─── DETECT DEPARTMENT FROM URL ───
-    const path = window.location.pathname;
-    const slug = path.replace('/', '');
-    const department = departments.find(d => d.slug === slug);
+const path = window.location.pathname;
+const slug = path.replace('/', '');
 
-    // ─── SAMPLE DATA ───
-    let teamMembers = [
-        { id: 1, name: 'T. Ncube', phone: '0771 234 567', role: 'Foreman' },
-        { id: 2, name: 'S. Moyo', phone: '0772 345 678', role: 'Technician' },
-        { id: 3, name: 'L. Dube', phone: '0773 456 789', role: 'Driver' }
-    ];
+// ─── DEPARTMENT DATA ───
+const departments = [
+    { id: 1, slug: 'harare-water', name: 'Harare Water Department' },
+    { id: 2, slug: 'harare-roads', name: 'Harare Roads Department' },
+    { id: 3, slug: 'bulawayo-water', name: 'Bulawayo Water Department' },
+    { id: 4, slug: 'bulawayo-roads', name: 'Bulawayo Roads Department' }
+];
 
-    let complaints = [
-        { id: 1, message: 'Burst pipe on Luveve Road. Water flooding the street.', urgency: 'RED', status: 'pending', timestamp: '2025-07-13T10:00:00Z' },
-        { id: 2, message: 'No water in Nkulumane for 2 days. Residents are complaining.', urgency: 'AMBER', status: 'in-progress', timestamp: '2025-07-13T09:00:00Z' },
-        { id: 3, message: 'Water pressure is low in Hillside area.', urgency: 'GREEN', status: 'resolved', timestamp: '2025-07-13T08:00:00Z' }
-    ];
+const currentDept = departments.find(d => d.slug === slug);
 
+if (currentDept) {
+    document.getElementById('deptName').textContent = currentDept.name;
+} else {
+    document.getElementById('deptName').textContent = 'Department';
+    }
+    
     // ─── LOAD DASHBOARD ───
     function loadDashboard() {
         // Set department name
