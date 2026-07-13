@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audit Log – Gatekeeper AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0 25px;
+            border-bottom: 1px solid #1a1a2e;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header .logo { color: #FFB300; font-size: 24px; font-weight: bold; }
+        .header .logo span { color: #00ff88; }
+        .card {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            margin-top: 20px;
+        }
+        .card h3 { color: #FFB300; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 10px 8px; color: #888; border-bottom: 1px solid #2a2a2a; }
+        td { padding: 10px 8px; border-bottom: 1px solid #1a1a2e; color: #ccc; }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge.view { background: #4A90D933; color: #4A90D9; }
+        .badge.update { background: #FFB30033; color: #FFB300; }
+        .badge.forward { background: #00ff8833; color: #00ff88; }
+        .badge.delete { background: #e9456033; color: #e94560; }
+        .footer { margin-top: 30px; padding: 20px 0; border-top: 1px solid #1a1a2e; text-align: center; font-size: 12px; color: #444; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .filters select { padding: 8px 14px; background: #0a0a0a; color: #fff; border: 1px solid #2a2a2a; border-radius: 6px; }
+        .timestamp { color: #555; font-size: 13px; }
+        @media (max-width: 768px) { .header { flex-direction: column; text-align: center; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <div>
+            <div class="logo">Gatekeeper <span>AI</span></div>
+            <div style="color:#888;font-size:14px;">Audit Log</div>
+        </div>
+        <span class="timestamp" id="timestamp">Loading...</span>
+    </header>
+
+    <div class="card">
+        <h3>📋 Activity Log</h3>
+        <div class="filters">
+            <select>
+                <option>All Actions</option>
+                <option>View</option>
+                <option>Update</option>
+                <option>Forward</option>
+                <option>Delete</option>
+            </select>
+            <select>
+                <option>All Users</option>
+                <option>Admin</option>
+                <option>Department Head</option>
+                <option>Operator</option>
+            </select>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color:#555;font-size:12px;">13 Jul 2025 14:30</td>
+                    <td>Admin</td>
+                    <td><span class="badge view">View</span></td>
+                    <td>Viewed complaint</td>
+                    <td style="color:#FFB300;">GK-2024-01234</td>
+                </tr>
+                <tr>
+                    <td style="color:#555;font-size:12px;">13 Jul 2025 14:15</td>
+                    <td>Water Dept</td>
+                    <td><span class="badge forward">Forward</span></td>
+                    <td>Forwarded to T. Ncube</td>
+                    <td style="color:#FFB300;">GK-2024-01235</td>
+                </tr>
+                <tr>
+                    <td style="color:#555;font-size:12px;">13 Jul 2025 13:45</td>
+                    <td>Admin</td>
+                    <td><span class="badge update">Update</span></td>
+                    <td>Status changed: Pending → Resolved</td>
+                    <td style="color:#FFB300;">GK-2024-01236</td>
+                </tr>
+                <tr>
+                    <td style="color:#555;font-size:12px;">13 Jul 2025 12:30</td>
+                    <td>Operator</td>
+                    <td><span class="badge view">View</span></td>
+                    <td>Viewed complaint</td>
+                    <td style="color:#FFB300;">GK-2024-01237</td>
+                </tr>
+                <tr>
+                    <td style="color:#555;font-size:12px;">13 Jul 2025 11:00</td>
+                    <td>Admin</td>
+                    <td><span class="badge delete">Delete</span></td>
+                    <td>Deleted duplicate complaint</td>
+                    <td style="color:#FFB300;">GK-2024-01238</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
+    </div>
+</div>
+<script>
+    document.getElementById('timestamp').textContent = new Date().toLocaleString();
+</script>
+</body>
+      </html>
