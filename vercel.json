@@ -1,3 +1,56 @@
 {
-  "outputDirectory": "."
+  "rewrites": [
+    {
+      "source": "/harare-water",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/harare-roads",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/bulawayo-water",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/bulawayo-roads",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/mutare-water",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/mutare-roads",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/gweru-water",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/gweru-roads",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/masvingo-water",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/masvingo-roads",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/kwekwe-water",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/kwekwe-roads",
+      "destination": "/dashboard-department.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
 }
