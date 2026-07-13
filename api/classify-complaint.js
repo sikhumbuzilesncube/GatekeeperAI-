@@ -370,4 +370,47 @@ function findAuthority(category, location) {
         contact: `${councilName} City Council - ${department}`,
         requiresLocation: false
     };
-                }
+}// ─── CHECK IF MESSAGE IS COMPLETE ───
+function isMessageComplete(result) {
+    return result.category !== 'general' && result.location !== 'unknown';
+}
+
+// ─── GENERATE CLARIFICATION MESSAGE ───
+function generateClarification(message, result) {
+    let reply = `📱 Gatekeeper AI – Clarification Needed\n\n`;
+    
+    if (result.location === 'unknown' && result.category === 'general') {
+        reply += `We couldn't understand your message clearly.\n\n`;
+        reply += `📝 Your message: "${message}"\n\n`;
+        reply += `📍 Please reply with:\n`;
+        reply += `- The location (city/suburb)\n`;
+        reply += `- The type of problem (Roads, Water, Health, etc.)\n\n`;
+        reply += `Example: "Pothole on Chiremba Road, Harare"\n\n`;
+        reply += `Reply with more details.`;
+    } else if (result.location === 'unknown') {
+        reply += `We received your message about "${result.category}".\n\n`;
+        reply += `📍 Please reply with:\n`;
+        reply += `- The name of your city (e.g., Harare, Bulawayo, Mutare)\n`;
+        reply += `- Or share your location pin (📍 button)\n\n`;
+        reply += `Reply with your location.`;
+    } else if (result.location !== 'unknown' && result.category === 'general') {
+        reply += `We received your message from "${result.location}".\n\n`;
+        reply += `📋 Please reply with the type of problem:\n`;
+        reply += `- Roads (potholes, damaged roads)\n`;
+        reply += `- Water (burst pipes, no water)\n`;
+        reply += `- Health (clinic issues)\n`;
+        reply += `- Education (school issues)\n`;
+        reply += `- Electricity (power outages)\n`;
+        reply += `- Refuse (garbage collection)\n\n`;
+        reply += `Reply with one of the above.`;
+    } else if (result.location === 'conflict') {
+        reply += `We found multiple locations matching your message.\n\n`;
+        reply += `📍 Please select one:\n`;
+        reply += `1️⃣ Hillside, Harare\n`;
+        reply += `2️⃣ Hillside, Bulawayo\n\n`;
+        reply += `Reply with 1 or 2.`;
+    }
+    
+    return reply;
+}
+
