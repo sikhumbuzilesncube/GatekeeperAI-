@@ -104,7 +104,6 @@
             margin-left: auto;
         }
 
-        /* ─── TEAM MEMBERS ─── */
         .team-item {
             display: flex;
             justify-content: space-between;
@@ -133,7 +132,6 @@
         }
         .team-item .btn-remove:hover { background: #c0392b; }
 
-        /* ─── FAULT LIST ─── */
         .fault-item {
             display: flex;
             justify-content: space-between;
@@ -462,8 +460,8 @@
             location: 'Luveve, Bulawayo',
             description: 'No power for 2 days, fridge spoiling',
             urgency: 'AMBER',
-            status: 'pending',
-            assignedTo: null,
+            status: 'assigned',
+            assignedTo: 'T. Ncube',
             timestamp: '2025-07-14T10:00:00Z'
         },
         {
@@ -472,7 +470,7 @@
             location: 'Main Road near Luveve School, Bulawayo',
             description: 'Fallen poles blocking road',
             urgency: 'RED',
-            status: 'pending',
+            status: 'resolved',
             assignedTo: null,
             timestamp: '2025-07-14T08:00:00Z'
         }
@@ -528,7 +526,7 @@
         container.innerHTML = html;
     }
 
-    // ─── RENDER FAULTS ───
+    // ─── RENDER FAULTS (FIXED) ───
     function renderFaults() {
         const container = document.getElementById('faultList');
         if (faults.length === 0) {
@@ -542,7 +540,7 @@
         }
 
         const urgencyMap = { 'RED': 'red', 'AMBER': 'amber', 'GREEN': 'green' };
-        const statusMap = { 'pending': 'pending', 'in-progress': 'in-progress', 'resolved': 'resolved', 'assigned': 'assigned' };
+        const statusMap = { 'pending': 'pending', 'assigned': 'assigned', 'in-progress': 'in-progress', 'resolved': 'resolved' };
 
         let html = '';
         faults.forEach(f => {
@@ -554,7 +552,8 @@
             // Populate team members dropdown
             let teamOptions = '<option value="">Assign to...</option>';
             teamMembers.forEach(m => {
-                teamOptions += `<option value="${m.name}">${m.name} (${m.role})</option>`;
+                const selected = f.assignedTo === m.name ? 'selected' : '';
+                teamOptions += `<option value="${m.name}" ${selected}>${m.name} (${m.role})</option>`;
             });
 
             html += `
@@ -577,8 +576,8 @@
                                 ${teamOptions}
                             </select>
                             <button class="btn-forward" onclick="assignFault('${f.id}')">📤 Assign</button>
-                            ${f.status === 'pending' ? `<button class="btn-status btn-progress" onclick="updateStatus('${f.id}', 'in-progress')">🔄 Start</button>` : ''}
-                            ${f.status === 'in-progress' ? `<button class="btn-status btn-resolve" onclick="updateStatus('${f.id}', 'resolved')">✅ Resolve</button>` : ''}
+                            ${f.status === 'pending' || f.status === 'assigned' ? `<button class="btn-status btn-progress" onclick="updateStatus('${f.id}', 'in-progress')">🔄 Start</button>` : ''}
+                            ${f.status === 'in-progress' || f.status === 'assigned' ? `<button class="btn-status btn-resolve" onclick="updateStatus('${f.id}', 'resolved')">✅ Resolve</button>` : ''}
                         ` : '<span style="color:#00ff88;">✅ Resolved</span>'}
                     </div>
                 </div>
@@ -600,23 +599,6 @@
         if (fault) {
             fault.assignedTo = selected;
             fault.status = 'assigned';
-
-            // Simulate WhatsApp message
-            const message = `
-⚡ ZESA FAULT ASSIGNMENT
-
-You have been assigned a fault:
-
-📍 Location: ${fault.location}
-📝 Description: ${fault.description}
-🔴 Urgency: ${fault.urgency}
-🆔 Reference: ${fault.id}
-
-Please attend to this fault as soon as possible.
-
----
-Gatekeeper AI – ZESA Fault Management
-            `;
 
             // Find team member phone
             const member = teamMembers.find(m => m.name === selected);
@@ -702,4 +684,4 @@ Gatekeeper AI – ZESA Fault Management
 </script>
 
 </body>
-  </html>
+                </html>
