@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto-Fix Log – Gatekeeper AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0a0a; color: #e0e0e0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { border-bottom: 1px solid #1a1a2e; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .header h1 { color: #FFB300; font-size: 24px; }
+        .header h1 span { color: #00ff88; }
+        .refresh-btn { background: #FFB300; color: #000; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .refresh-btn:hover { background: #e6a300; }
+        .log-entry { background: #1a1a2e; padding: 15px; border-radius: 8px; border: 1px solid #2a2a2a; margin-bottom: 10px; }
+        .log-entry .time { color: #888; font-size: 12px; }
+        .log-entry .status-healthy { color: #00ff88; font-weight: bold; }
+        .log-entry .status-degraded { color: #FFB300; font-weight: bold; }
+        .log-entry .status-error { color: #e94560; font-weight: bold; }
+        .log-entry .fix { color: #4A90D9; font-size: 13px; margin-left: 10px; }
+        .log-entry .fix-success { color: #00ff88; }
+        .log-entry .fix-failed { color: #e94560; }
+        .footer { margin-top: 30px; border-top: 1px solid #1a1a2e; padding-top: 20px; text-align: center; color: #444; font-size: 12px; }
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .back-link { color: #888; text-decoration: none; padding: 6px 16px; border: 1px solid #2a2a2a; border-radius: 6px; }
+        .back-link:hover { color: #FFB300; border-color: #FFB300; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Gatekeeper <span>AI</span> – Auto-Fix Log</h1>
+        <div>
+            <a href="dashboard.html" class="back-link">⬅️ Dashboard</a>
+            <button class="refresh-btn" onclick="loadLogs()">🔄 Refresh</button>
+        </div>
+    </div>
+    <p style="color:#888;margin-bottom:20px;">System self-healing activity log – shows all auto-fix actions taken</p>
+
+    <div id="logs">
+        <div class="loading">⏳ Loading logs...</div>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
+    </div>
+</div>
+
+<script>
+    async function loadLogs() {
+        const container = document.getElementById('logs');
+        container.innerHTML = '<div class="loading">⏳ Loading logs...</div>';
+
+        try {
+            const response = await fetch('/api/auto-fix');
+            const data = await response.json();
+            console.log('Auto-Fix Data:', data);
+
+            let html = '';
+
+            if (data && data.details) {
+                const statusClass = data.status === 'healthy' ? 'status-healthy' : 
+                                   data.status === 'fixed' ? 'status-degraded' : 'status-error';
+                html += `
+                    <div class="log-entry">
+                        <div class="time">📅 ${new Date(data.timestamp).toLocaleString()}</div>
+                        <div><strong>Status:</strong> <span class="${statusClass}">${data.status.toUpperCase()}</span></div>
+                        <div><strong>Fixes Applied:</strong> ${data.fixes_applied || 0}</div>
+                `;
+
+                if (data.details.fixes && data.details.fixes.length > 0) {
+                    html += `<div style="margin-top:8px;"><strong>🛠️ Fixes Applied:</strong>`;
+                    data.details.fixes.forEach(f => {
+                        const successClass = f.success ? 'fix-success' : 'fix-failed';
+                        const icon = f.success ? '✅' : '❌';
+                        html += `
+                            <div class="fix">
+                                <strong>${f.service}</strong>: ${f.action}
+                                <span class="${successClass}">${icon}</span>
+                                ${f.message}
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                if (data.details.issues && data.details.issues.length > 0) {
+                    html += `<div style="margin-top:8px;"><strong>⚠️ Issues Found:</strong>`;
+                    data.details.issues.forEach(i => {
+                        const severityColor = i.severity === 'critical' ? '#e94560' : i.severity === 'high' ? '#FFB300' : '#4A90D9';
+                        html += `
+                            <div style="color:#888;font-size:13px;margin-left:10px;">
+                                <span style="color:${severityColor};">●</span>
+                                ${i.service}: ${i.issue} (${i.severity})
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+
+                // Show services status
+                if (data.details.services) {
+                    html += `<div class="log-entry" style="border-color:#1a3a1a;">`;
+                    html += `<div style="font-weight:bold;color:#FFB300;margin-bottom:5px;">📊 Service Status</div>`;
+                    const services = data.details.services;
+                    for (const [name, status] of Object.entries(services)) {
+                        const color = status.status === 'online' ? '#00ff88' : 
+                                     status.status === 'pending' ? '#FFB300' : '#e94560';
+                        const icon = status.status === 'online' ? '🟢' : 
+                                     status.status === 'pending' ? '🟡' : '🔴';
+                        html += `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #0a0a0a;">
+                            <span>${icon} ${name}</span>
+                            <span style="color:${color};">${status.status}</span>
+                        </div>`;
+                    }
+                    html += `</div>`;
+                }
+
+            } else {
+                html = `<div style="text-align:center;padding:40px;color:#888;">📭 No logs available yet.<br>Run the Auto-Fix to generate logs.</div>`;
+            }
+
+            container.innerHTML = html;
+
+        } catch (error) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:40px;color:#e94560;">
+                    ❌ Error loading logs: ${error.message}
+                    <br><br>
+                    <button onclick="loadLogs()" style="background:#FFB300;color:#000;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:bold;">🔄 Retry</button>
+                </div>
+            `;
+        }
+    }
+
+    // Auto-refresh every 30 seconds
+    document.addEventListener('DOMContentLoaded', loadLogs);
+    setInterval(loadLogs, 30000);
+</script>
+</body>
+</html>
