@@ -100,7 +100,6 @@
             margin-left: auto;
         }
 
-        /* ─── COMPLAINT TYPES ─── */
         .fault-types {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -125,24 +124,25 @@
             background: #1a1a1a;
         }
 
-        .meter-input-group {
+        .input-group {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
+            margin: 10px 0;
         }
-        .meter-input-group input {
-            flex: 1;
+        .input-group input {
             padding: 12px 16px;
             background: #0a0a0a;
             border: 1px solid #2a2a2a;
             border-radius: 8px;
             color: #fff;
             font-size: 16px;
-            min-width: 200px;
+            width: 100%;
         }
-        .meter-input-group input:focus { outline: none; border-color: #FFB300; }
-        .meter-input-group .btn {
+        .input-group input:focus { outline: none; border-color: #FFB300; }
+        .input-group input::placeholder { color: #555; }
+
+        .btn {
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
@@ -154,19 +154,14 @@
         .btn-primary:hover { background: #e6a300; }
         .btn-blue { background: #4A90D9; color: #fff; }
         .btn-blue:hover { background: #357ABD; }
-        .btn-green { background: #00ff88; color: #000; }
-        .btn-green:hover { background: #00cc6a; }
-        .btn-red { background: #e94560; color: #fff; }
-        .btn-red:hover { background: #c0392b; }
 
         .info-box {
             background: #0a0a0a;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #1a1a2e;
-            display: none;
+            margin-top: 10px;
         }
-        .info-box.show { display: block; }
         .info-box .field {
             display: flex;
             justify-content: space-between;
@@ -208,7 +203,6 @@
             font-size: 12px;
             cursor: pointer;
         }
-        .complaint-item .actions select:focus { outline: none; border-color: #FFB300; }
         .complaint-item .actions .btn-forward {
             padding: 6px 14px;
             background: #4A90D9;
@@ -316,6 +310,19 @@
         .footer a { color: #555; text-decoration: none; }
         .footer a:hover { color: #FFB300; }
 
+        .required-star { color: #e94560; }
+
+        .location-hint {
+            background: #1a2a1a;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #2a3a2a;
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+        .location-hint strong { color: #00ff88; }
+
         @media (max-width: 768px) {
             .stats { grid-template-columns: 1fr 1fr; }
             .row { grid-template-columns: 1fr; }
@@ -326,14 +333,6 @@
         }
         @media (max-width: 480px) {
             .stats { grid-template-columns: 1fr; }
-            .meter-input-group { flex-direction: column; }
-        }
-
-        .fault-type-label {
-            font-size: 11px;
-            color: #555;
-            margin-bottom: 5px;
-            display: block;
         }
     </style>
 </head>
@@ -389,28 +388,32 @@
             </div>
 
             <div id="domesticFields">
-                <label style="color:#888;font-size:13px;font-weight:600;margin-top:10px;display:block;">Meter Number</label>
-                <div class="meter-input-group">
-                    <input type="text" id="meterNumber" placeholder="e.g. ZESA-123456" onkeypress="if(event.key==='Enter') submitFault()">
+                <div class="input-group">
+                    <label style="color:#888;font-size:13px;">Meter Number <span class="required-star">*</span></label>
+                    <input type="text" id="meterNumber" placeholder="e.g. ZESA-123456">
                 </div>
-                <div class="info-box" id="meterInfo">
-                    <div style="color:#888;font-size:12px;">ℹ️ Meter number will be forwarded to ZESA depot with the fault.</div>
+                <div class="input-group">
+                    <label style="color:#888;font-size:13px;">Location <span class="required-star">*</span></label>
+                    <input type="text" id="domesticLocation" placeholder="e.g. Luveve, Bulawayo">
+                    <div class="location-hint">
+                        📍 <strong>Important:</strong> Your location determines which ZESA depot receives your complaint.
+                    </div>
                 </div>
             </div>
 
             <div id="publicFields" style="display:none;">
-                <label style="color:#888;font-size:13px;font-weight:600;margin-top:10px;display:block;">Location Description</label>
-                <div class="meter-input-group">
-                    <input type="text" id="locationDesc" placeholder="e.g. Fallen poles near Luveve School" onkeypress="if(event.key==='Enter') submitFault()">
+                <div class="input-group">
+                    <label style="color:#888;font-size:13px;">Location <span class="required-star">*</span></label>
+                    <input type="text" id="publicLocation" placeholder="e.g. Fallen poles near Luveve School">
                 </div>
             </div>
 
-            <label style="color:#888;font-size:13px;font-weight:600;margin-top:10px;display:block;">Fault Description</label>
-            <div class="meter-input-group">
+            <div class="input-group">
+                <label style="color:#888;font-size:13px;">Fault Description</label>
                 <input type="text" id="faultDesc" placeholder="e.g. No power for 2 days, fridge spoiling">
             </div>
 
-            <button class="btn btn-primary" onclick="submitFault()" style="width:100%;padding:14px;font-size:16px;">📤 Submit Fault</button>
+            <button class="btn btn-primary" onclick="submitFault()" style="width:100%;padding:14px;font-size:16px;margin-top:10px;">📤 Submit Fault</button>
         </div>
 
         <div class="card">
@@ -420,6 +423,12 @@
                 <div class="depot-item"><span class="name">Mbare Depot</span><span class="count green">0</span></div>
                 <div class="depot-item"><span class="name">Highfields Depot</span><span class="count green">0</span></div>
                 <div class="depot-item"><span class="name">Chitungwiza Depot</span><span class="count green">0</span></div>
+            </div>
+            <div style="margin-top:15px;padding:12px;background:#0a0a0a;border-radius:8px;border:1px solid #1a1a2e;">
+                <p style="color:#888;font-size:12px;">
+                    📍 <strong style="color:#FFB300;">Location Routing:</strong><br>
+                    Complaints are routed to depots based on the location provided.
+                </p>
             </div>
         </div>
     </div>
@@ -451,7 +460,6 @@
 <script>
     // ─── SAMPLE FAULTS ───
     let faults = [];
-
     let currentFaultType = 'domestic';
 
     function selectFaultType(type, btn) {
@@ -468,35 +476,50 @@
         }
     }
 
+    // ─── GET DEPOT FROM LOCATION ───
+    function getDepot(location) {
+        const lower = location.toLowerCase();
+        if (lower.includes('luveve') || lower.includes('bulawayo')) return 'City Centre Depot';
+        if (lower.includes('mbare') || lower.includes('harare')) return 'Mbare Depot';
+        if (lower.includes('highfields') || lower.includes('harare')) return 'Highfields Depot';
+        if (lower.includes('chitungwiza')) return 'Chitungwiza Depot';
+        return 'City Centre Depot'; // Default
+    }
+
     // ─── SUBMIT FAULT ───
     function submitFault() {
         let meterNumber = '';
         let location = '';
         let faultDesc = document.getElementById('faultDesc').value.trim();
 
-        if (!faultDesc) {
-            showToast('error', '❌ Please describe the fault.');
-            return;
-        }
-
         if (currentFaultType === 'domestic') {
             meterNumber = document.getElementById('meterNumber').value.trim();
+            location = document.getElementById('domesticLocation').value.trim();
+
             if (!meterNumber) {
                 showToast('error', '❌ Please enter a meter number.');
                 return;
             }
-            location = 'Meter: ' + meterNumber;
+            if (!location) {
+                showToast('error', '❌ Please enter your location.');
+                return;
+            }
         } else {
-            location = document.getElementById('locationDesc').value.trim();
+            location = document.getElementById('publicLocation').value.trim();
             if (!location) {
                 showToast('error', '❌ Please enter the location.');
                 return;
             }
         }
 
+        if (!faultDesc) {
+            showToast('error', '❌ Please describe the fault.');
+            return;
+        }
+
         // Determine urgency
         let urgency = 'AMBER';
-        const urgentKeywords = ['fire', 'burning', 'fallen', 'danger', 'sparks', 'smoke', 'explosion'];
+        const urgentKeywords = ['fire', 'burning', 'fallen', 'danger', 'sparks', 'smoke', 'explosion', 'collapsed', 'emergency'];
         const lowerDesc = faultDesc.toLowerCase();
         for (const word of urgentKeywords) {
             if (lowerDesc.includes(word)) {
@@ -505,11 +528,14 @@
             }
         }
 
+        const depot = getDepot(location);
+
         const newFault = {
             id: Date.now(),
             type: currentFaultType,
             meterNumber: meterNumber || 'N/A',
             location: location,
+            depot: depot,
             description: faultDesc,
             urgency: urgency,
             status: 'pending',
@@ -522,11 +548,12 @@
         document.getElementById('faultDesc').value = '';
         if (currentFaultType === 'domestic') {
             document.getElementById('meterNumber').value = '';
+            document.getElementById('domesticLocation').value = '';
         } else {
-            document.getElementById('locationDesc').value = '';
+            document.getElementById('publicLocation').value = '';
         }
 
-        showToast('success', `✅ Fault reported successfully!\nReference: ZESA-${String(newFault.id).slice(-6)}`);
+        showToast('success', `✅ Fault reported!\n📍 Route: ${depot}\n📱 Ref: ZESA-${String(newFault.id).slice(-6)}`);
     }
 
     // ─── LOAD DASHBOARD ───
@@ -568,6 +595,7 @@
                         <div class="msg">${typeIcon} ${f.description}</div>
                         <div class="meta">
                             <span>📍 ${f.location}</span>
+                            <span>🏛️ ${f.depot}</span>
                             ${f.meterNumber !== 'N/A' ? `<span>📱 ${f.meterNumber}</span>` : ''}
                             <span class="urgency-badge ${urgency}">${f.urgency}</span>
                             <span class="status-badge ${status}">${f.status}</span>
@@ -598,10 +626,7 @@
     function updateDepots() {
         const depotCounts = {};
         faults.forEach(f => {
-            let depot = 'City Centre Depot';
-            if (f.location.toLowerCase().includes('mbare')) depot = 'Mbare Depot';
-            else if (f.location.toLowerCase().includes('highfields')) depot = 'Highfields Depot';
-            else if (f.location.toLowerCase().includes('chitungwiza')) depot = 'Chitungwiza Depot';
+            const depot = f.depot || 'City Centre Depot';
             if (!depotCounts[depot]) depotCounts[depot] = 0;
             depotCounts[depot]++;
         });
@@ -651,4 +676,4 @@
 </script>
 
 </body>
-    </html>
+                </html>
