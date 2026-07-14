@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZESA Dashboard – Gatekeeper AI</title>
+    <title>National ZESA Dashboard – Gatekeeper AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -100,77 +100,43 @@
             margin-left: auto;
         }
 
-        .fault-types {
+        /* ─── DEPOT LIST ─── */
+        .depot-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 10px 0;
         }
-        .fault-type-btn {
-            padding: 10px;
+        .depot-item {
             background: #0a0a0a;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            color: #aaa;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-size: 13px;
-        }
-        .fault-type-btn:hover { border-color: #FFB300; color: #fff; }
-        .fault-type-btn.active {
-            border-color: #FFB300;
-            color: #FFB300;
-            background: #1a1a1a;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .input-group input {
             padding: 12px 16px;
-            background: #0a0a0a;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
-            width: 100%;
-        }
-        .input-group input:focus { outline: none; border-color: #FFB300; }
-        .input-group input::placeholder { color: #555; }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary { background: #FFB300; color: #000; }
-        .btn-primary:hover { background: #e6a300; }
-        .btn-blue { background: #4A90D9; color: #fff; }
-        .btn-blue:hover { background: #357ABD; }
-
-        .info-box {
-            background: #0a0a0a;
-            padding: 15px;
             border-radius: 8px;
             border: 1px solid #1a1a2e;
-            margin-top: 10px;
         }
-        .info-box .field {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px solid #0a0a0a;
+        .depot-item:hover { border-color: #2a2a2a; }
+        .depot-item .name { color: #fff; font-weight: bold; }
+        .depot-item .location { color: #888; font-size: 12px; }
+        .depot-item .manager { color: #aaa; font-size: 13px; margin-top: 4px; }
+        .depot-item .manager strong { color: #FFB300; }
+        .depot-item .count { font-weight: bold; font-size: 18px; margin-top: 6px; }
+        .depot-item .count .sub { font-size: 11px; font-weight: normal; color: #888; }
+        .depot-item .count.red { color: #e94560; }
+        .depot-item .count.amber { color: #FFB300; }
+        .depot-item .count.green { color: #00ff88; }
+        .depot-item .actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+        .depot-item .actions .btn-sm {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .info-box .field .label { color: #888; font-size: 13px; }
-        .info-box .field .value { color: #fff; font-weight: bold; }
+        .btn-edit { background: #4A90D9; color: #fff; }
+        .btn-edit:hover { background: #357ABD; }
+        .btn-delete { background: #e94560; color: #fff; }
+        .btn-delete:hover { background: #c0392b; }
 
+        /* ─── COMPLAINT LIST ─── */
         .complaint-item {
             display: flex;
             justify-content: space-between;
@@ -184,48 +150,21 @@
             gap: 10px;
         }
         .complaint-item:hover { border-color: #2a2a2a; }
-        .complaint-item .info { flex: 1; min-width: 150px; }
-        .complaint-item .info .msg { color: #fff; font-size: 14px; }
-        .complaint-item .info .meta { color: #888; font-size: 12px; }
+        .complaint-item .info { flex: 1; min-width: 200px; }
+        .complaint-item .info .msg { color: #fff; font-size: 14px; font-weight: 500; }
+        .complaint-item .info .meta { color: #888; font-size: 12px; margin-top: 3px; }
         .complaint-item .info .meta span { margin-right: 12px; }
-        .complaint-item .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
+        .complaint-item .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
         }
-        .complaint-item .actions select {
-            padding: 6px 10px;
-            background: #0a0a0a;
-            color: #fff;
-            border: 1px solid #2a2a2a;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .complaint-item .actions .btn-forward {
-            padding: 6px 14px;
-            background: #4A90D9;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-        .complaint-item .actions .btn-forward:hover { background: #357ABD; }
-        .complaint-item .actions .btn-status {
-            padding: 6px 14px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-        .btn-progress { background: #FFB300; color: #000; }
-        .btn-progress:hover { background: #e6a300; }
-        .btn-resolve { background: #00ff88; color: #000; }
-        .btn-resolve:hover { background: #00cc6a; }
+        .status-badge.pending { background: #e9456033; color: #e94560; }
+        .status-badge.routed { background: #FFB30033; color: #FFB300; }
+        .status-badge.resolved { background: #00ff8833; color: #00ff88; }
+        .status-badge.escalated { background: #e9456033; color: #e94560; }
 
         .urgency-badge {
             display: inline-block;
@@ -237,34 +176,12 @@
         .urgency-badge.red { background: #e9456033; color: #e94560; }
         .urgency-badge.amber { background: #FFB30033; color: #FFB300; }
         .urgency-badge.green { background: #00ff8833; color: #00ff88; }
-        .status-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .status-badge.pending { background: #e9456033; color: #e94560; }
-        .status-badge.in-progress { background: #FFB30033; color: #FFB300; }
-        .status-badge.resolved { background: #00ff8833; color: #00ff88; }
 
-        .depot-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .depot-item {
-            background: #0a0a0a;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #1a1a2e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #555;
         }
-        .depot-item .name { color: #aaa; font-size: 13px; }
-        .depot-item .count { font-weight: bold; }
-        .depot-item .count.red { color: #e94560; }
-        .depot-item .count.amber { color: #FFB300; }
-        .depot-item .count.green { color: #00ff88; }
-
-        .empty { text-align: center; padding: 30px; color: #555; }
         .empty .icon { font-size: 40px; margin-bottom: 10px; }
 
         .toast {
@@ -310,25 +227,99 @@
         .footer a { color: #555; text-decoration: none; }
         .footer a:hover { color: #FFB300; }
 
-        .required-star { color: #e94560; }
-
-        .location-hint {
-            background: #1a2a1a;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #2a3a2a;
-            font-size: 12px;
-            color: #888;
-            margin-top: 8px;
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
         }
-        .location-hint strong { color: #00ff88; }
+        .filters select, .filters input {
+            padding: 8px 14px;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .filters select:focus, .filters input:focus { outline: none; border-color: #FFB300; }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #FFB300; color: #000; }
+        .btn-primary:hover { background: #e6a300; }
+        .btn-blue { background: #4A90D9; color: #fff; }
+        .btn-blue:hover { background: #357ABD; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 90%;
+            border: 1px solid #2a2a2a;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h3 { color: #FFB300; margin-bottom: 15px; }
+        .modal label { display: block; color: #aaa; font-size: 13px; margin: 10px 0 5px; font-weight: 600; }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .modal input:focus { outline: none; border-color: #FFB300; }
+        .modal .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+        .modal .btn-group .btn-cancel {
+            padding: 10px 24px;
+            background: #2a2a2a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .modal .btn-group .btn-cancel:hover { background: #3a3a3a; }
+        .modal .btn-group .btn-save {
+            padding: 10px 24px;
+            background: #FFB300;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal .btn-group .btn-save:hover { background: #e6a300; }
 
         @media (max-width: 768px) {
             .stats { grid-template-columns: 1fr 1fr; }
             .row { grid-template-columns: 1fr; }
             .header { flex-direction: column; text-align: center; }
             .depot-list { grid-template-columns: 1fr; }
-            .fault-types { grid-template-columns: 1fr; }
             .complaint-item { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 480px) {
@@ -343,7 +334,7 @@
     <header class="header">
         <div>
             <div class="logo">Gatekeeper <span>AI</span></div>
-            <div class="subtitle">⚡ ZESA Fault Management Dashboard</div>
+            <div class="subtitle">⚡ National ZESA Fault Management Dashboard</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <span class="badge">🟢 Online</span>
@@ -354,6 +345,7 @@
         </div>
     </header>
 
+    <!-- ─── STATS ─── -->
     <div class="stats">
         <div class="stat-card">
             <span class="icon">⚡</span>
@@ -377,71 +369,86 @@
         </div>
     </div>
 
+    <!-- ─── ROW 1: DEPOTS + MONTHLY STATS ─── -->
     <div class="row">
         <div class="card">
-            <h3>📝 Report a Fault</h3>
-
-            <label style="color:#888;font-size:13px;font-weight:600;">Fault Type</label>
-            <div class="fault-types">
-                <button class="fault-type-btn active" onclick="selectFaultType('domestic', this)">🏠 Domestic Fault</button>
-                <button class="fault-type-btn" onclick="selectFaultType('public', this)">🌍 Public Fault</button>
+            <h3>
+                📍 Depot Management
+                <span class="badge-count" id="depotCount">0 depots</span>
+            </h3>
+            <button class="btn btn-primary" onclick="showAddDepot()" style="margin-bottom:15px;">➕ Add Depot</button>
+            <div id="depotList" class="depot-list">
+                <div style="grid-column:1/-1;text-align:center;color:#888;padding:20px;">No depots added yet</div>
             </div>
-
-            <div id="domesticFields">
-                <div class="input-group">
-                    <label style="color:#888;font-size:13px;">Meter Number <span class="required-star">*</span></label>
-                    <input type="text" id="meterNumber" placeholder="e.g. ZESA-123456">
-                </div>
-                <div class="input-group">
-                    <label style="color:#888;font-size:13px;">Location <span class="required-star">*</span></label>
-                    <input type="text" id="domesticLocation" placeholder="e.g. Luveve, Bulawayo">
-                    <div class="location-hint">
-                        📍 <strong>Important:</strong> Your location determines which ZESA depot receives your complaint.
-                    </div>
-                </div>
-            </div>
-
-            <div id="publicFields" style="display:none;">
-                <div class="input-group">
-                    <label style="color:#888;font-size:13px;">Location <span class="required-star">*</span></label>
-                    <input type="text" id="publicLocation" placeholder="e.g. Fallen poles near Luveve School">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label style="color:#888;font-size:13px;">Fault Description</label>
-                <input type="text" id="faultDesc" placeholder="e.g. No power for 2 days, fridge spoiling">
-            </div>
-
-            <button class="btn btn-primary" onclick="submitFault()" style="width:100%;padding:14px;font-size:16px;margin-top:10px;">📤 Submit Fault</button>
         </div>
 
         <div class="card">
-            <h3>📍 Depot Status</h3>
-            <div class="depot-list" id="depotList">
-                <div class="depot-item"><span class="name">City Centre Depot</span><span class="count green">0</span></div>
-                <div class="depot-item"><span class="name">Mbare Depot</span><span class="count green">0</span></div>
-                <div class="depot-item"><span class="name">Highfields Depot</span><span class="count green">0</span></div>
-                <div class="depot-item"><span class="name">Chitungwiza Depot</span><span class="count green">0</span></div>
-            </div>
-            <div style="margin-top:15px;padding:12px;background:#0a0a0a;border-radius:8px;border:1px solid #1a1a2e;">
-                <p style="color:#888;font-size:12px;">
-                    📍 <strong style="color:#FFB300;">Location Routing:</strong><br>
-                    Complaints are routed to depots based on the location provided.
-                </p>
+            <h3>📊 Monthly National Stats</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div style="background:#0a0a0a;padding:12px;border-radius:8px;border:1px solid #1a1a2e;text-align:center;">
+                    <div style="color:#888;font-size:11px;text-transform:uppercase;">Total This Month</div>
+                    <div style="font-size:24px;font-weight:bold;color:#FFB300;" id="monthTotal">—</div>
+                </div>
+                <div style="background:#0a0a0a;padding:12px;border-radius:8px;border:1px solid #1a1a2e;text-align:center;">
+                    <div style="color:#888;font-size:11px;text-transform:uppercase;">Resolved This Month</div>
+                    <div style="font-size:24px;font-weight:bold;color:#00ff88;" id="monthResolved">—</div>
+                </div>
+                <div style="background:#0a0a0a;padding:12px;border-radius:8px;border:1px solid #1a1a2e;text-align:center;">
+                    <div style="color:#888;font-size:11px;text-transform:uppercase;">Domestic Faults</div>
+                    <div style="font-size:24px;font-weight:bold;color:#4A90D9;" id="monthDomestic">—</div>
+                </div>
+                <div style="background:#0a0a0a;padding:12px;border-radius:8px;border:1px solid #1a1a2e;text-align:center;">
+                    <div style="color:#888;font-size:11px;text-transform:uppercase;">Public Faults</div>
+                    <div style="font-size:24px;font-weight:bold;color:#9B59B6;" id="monthPublic">—</div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ─── ROW 2: ALL FAULTS ─── -->
     <div class="card" style="margin-top:20px;">
         <h3>
-            📋 Recent Faults
+            📋 All Faults
             <span class="badge-count" id="faultCount">0 faults</span>
         </h3>
+        <div class="filters">
+            <select id="statusFilter" onchange="filterFaults()">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="routed">Routed</option>
+                <option value="resolved">Resolved</option>
+                <option value="escalated">Escalated</option>
+            </select>
+            <select id="depotFilter" onchange="filterFaults()">
+                <option value="all">All Depots</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="Search meter or location..." oninput="filterFaults()">
+        </div>
         <div id="faultList">
             <div class="empty">
                 <div class="icon">⚡</div>
                 <p>No faults reported yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ADD DEPOT MODAL ─── -->
+    <div class="modal-overlay" id="addDepotModal">
+        <div class="modal">
+            <h3>➕ Add New Depot</h3>
+            <label>Depot Name</label>
+            <input type="text" id="depotName" placeholder="e.g. City Centre Depot">
+            <label>Location / Area</label>
+            <input type="text" id="depotLocation" placeholder="e.g. Bulawayo">
+            <label>Manager / Supervisor Name</label>
+            <input type="text" id="depotManager" placeholder="e.g. Mr. T. Ncube">
+            <label>Manager Phone Number</label>
+            <input type="text" id="depotPhone" placeholder="e.g. 0771 234 567">
+            <label>Manager WhatsApp Number</label>
+            <input type="text" id="depotWhatsApp" placeholder="e.g. 0771 234 567">
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeModal('addDepotModal')">Cancel</button>
+                <button class="btn-save" onclick="saveDepot()">💾 Save Depot</button>
             </div>
         </div>
     </div>
@@ -458,103 +465,92 @@
 </div>
 
 <script>
+    // ─── DEPOTS DATA ───
+    let depots = [
+        {
+            id: 1,
+            name: 'City Centre Depot',
+            location: 'Bulawayo',
+            manager: 'Mr. T. Ncube',
+            phone: '0771 234 567',
+            whatsapp: '0771 234 567'
+        },
+        {
+            id: 2,
+            name: 'Mbare Depot',
+            location: 'Harare',
+            manager: 'Ms. P. Dube',
+            phone: '0772 345 678',
+            whatsapp: '0772 345 678'
+        },
+        {
+            id: 3,
+            name: 'Highfields Depot',
+            location: 'Harare',
+            manager: 'Mr. S. Moyo',
+            phone: '0773 456 789',
+            whatsapp: '0773 456 789'
+        },
+        {
+            id: 4,
+            name: 'Chitungwiza Depot',
+            location: 'Harare',
+            manager: 'Mrs. L. Ndlovu',
+            phone: '0774 567 890',
+            whatsapp: '0774 567 890'
+        }
+    ];
+
     // ─── SAMPLE FAULTS ───
-    let faults = [];
-    let currentFaultType = 'domestic';
-
-    function selectFaultType(type, btn) {
-        currentFaultType = type;
-        document.querySelectorAll('.fault-type-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (type === 'domestic') {
-            document.getElementById('domesticFields').style.display = 'block';
-            document.getElementById('publicFields').style.display = 'none';
-        } else {
-            document.getElementById('domesticFields').style.display = 'none';
-            document.getElementById('publicFields').style.display = 'block';
-        }
-    }
-
-    // ─── GET DEPOT FROM LOCATION ───
-    function getDepot(location) {
-        const lower = location.toLowerCase();
-        if (lower.includes('luveve') || lower.includes('bulawayo')) return 'City Centre Depot';
-        if (lower.includes('mbare') || lower.includes('harare')) return 'Mbare Depot';
-        if (lower.includes('highfields') || lower.includes('harare')) return 'Highfields Depot';
-        if (lower.includes('chitungwiza')) return 'Chitungwiza Depot';
-        return 'City Centre Depot'; // Default
-    }
-
-    // ─── SUBMIT FAULT ───
-    function submitFault() {
-        let meterNumber = '';
-        let location = '';
-        let faultDesc = document.getElementById('faultDesc').value.trim();
-
-        if (currentFaultType === 'domestic') {
-            meterNumber = document.getElementById('meterNumber').value.trim();
-            location = document.getElementById('domesticLocation').value.trim();
-
-            if (!meterNumber) {
-                showToast('error', '❌ Please enter a meter number.');
-                return;
-            }
-            if (!location) {
-                showToast('error', '❌ Please enter your location.');
-                return;
-            }
-        } else {
-            location = document.getElementById('publicLocation').value.trim();
-            if (!location) {
-                showToast('error', '❌ Please enter the location.');
-                return;
-            }
-        }
-
-        if (!faultDesc) {
-            showToast('error', '❌ Please describe the fault.');
-            return;
-        }
-
-        // Determine urgency
-        let urgency = 'AMBER';
-        const urgentKeywords = ['fire', 'burning', 'fallen', 'danger', 'sparks', 'smoke', 'explosion', 'collapsed', 'emergency'];
-        const lowerDesc = faultDesc.toLowerCase();
-        for (const word of urgentKeywords) {
-            if (lowerDesc.includes(word)) {
-                urgency = 'RED';
-                break;
-            }
-        }
-
-        const depot = getDepot(location);
-
-        const newFault = {
-            id: Date.now(),
-            type: currentFaultType,
-            meterNumber: meterNumber || 'N/A',
-            location: location,
-            depot: depot,
-            description: faultDesc,
-            urgency: urgency,
+    let faults = [
+        {
+            id: 'ZESA-001',
+            type: 'domestic',
+            meterNumber: 'ZESA-123456',
+            location: 'Luveve, Bulawayo',
+            depot: 'City Centre Depot',
+            description: 'No power for 2 days, fridge spoiling',
+            urgency: 'AMBER',
             status: 'pending',
-            timestamp: new Date().toISOString()
-        };
-
-        faults.unshift(newFault);
-        loadDashboard();
-
-        document.getElementById('faultDesc').value = '';
-        if (currentFaultType === 'domestic') {
-            document.getElementById('meterNumber').value = '';
-            document.getElementById('domesticLocation').value = '';
-        } else {
-            document.getElementById('publicLocation').value = '';
+            timestamp: '2025-07-14T10:00:00Z'
+        },
+        {
+            id: 'ZESA-002',
+            type: 'domestic',
+            meterNumber: 'ZESA-789012',
+            location: 'Mbare, Harare',
+            depot: 'Mbare Depot',
+            description: 'Voltage fluctuation, appliances damaged',
+            urgency: 'AMBER',
+            status: 'routed',
+            timestamp: '2025-07-14T09:00:00Z'
+        },
+        {
+            id: 'ZESA-003',
+            type: 'public',
+            meterNumber: 'N/A',
+            location: 'Main Road near Luveve School, Bulawayo',
+            depot: 'City Centre Depot',
+            description: 'Fallen poles blocking road',
+            urgency: 'RED',
+            status: 'pending',
+            timestamp: '2025-07-14T08:00:00Z'
+        },
+        {
+            id: 'ZESA-004',
+            type: 'domestic',
+            meterNumber: 'ZESA-345678',
+            location: 'Highfields, Harare',
+            depot: 'Highfields Depot',
+            description: 'Meter not reading, billing error',
+            urgency: 'GREEN',
+            status: 'resolved',
+            timestamp: '2025-07-14T07:00:00Z'
         }
+    ];
 
-        showToast('success', `✅ Fault reported!\n📍 Route: ${depot}\n📱 Ref: ZESA-${String(newFault.id).slice(-6)}`);
-    }
+    let filteredFaults = [...faults];
+    let editingDepotId = null;
 
     // ─── LOAD DASHBOARD ───
     function loadDashboard() {
@@ -567,54 +563,39 @@
         document.getElementById('avgResponse').textContent = '3.5 hrs';
         document.getElementById('timestamp').textContent = new Date().toLocaleString();
         document.getElementById('faultCount').textContent = total + ' faults';
+        document.getElementById('depotCount').textContent = depots.length + ' depots';
 
+        renderDepots();
+        updateMonthlyStats();
+        updateDepotFilter();
         renderFaults();
-        updateDepots();
     }
 
-    // ─── RENDER FAULTS ───
-    function renderFaults() {
-        const container = document.getElementById('faultList');
-        if (faults.length === 0) {
-            container.innerHTML = `<div class="empty"><div class="icon">⚡</div><p>No faults reported yet.</p></div>`;
+    // ─── RENDER DEPOTS ───
+    function renderDepots() {
+        const container = document.getElementById('depotList');
+        if (depots.length === 0) {
+            container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:20px;">No depots added yet</div>';
             return;
         }
 
-        const urgencyMap = { 'RED': 'red', 'AMBER': 'amber', 'GREEN': 'green' };
-        const statusMap = { 'pending': 'pending', 'in-progress': 'in-progress', 'resolved': 'resolved' };
-
         let html = '';
-        faults.slice(0, 10).forEach(f => {
-            const urgency = urgencyMap[f.urgency] || 'green';
-            const status = statusMap[f.status] || 'pending';
-            const time = f.timestamp ? new Date(f.timestamp).toLocaleString() : '—';
-            const typeIcon = f.type === 'domestic' ? '🏠' : '🌍';
+        depots.forEach(d => {
+            // Count faults for this depot
+            const depotFaults = faults.filter(f => f.depot === d.name);
+            const pendingCount = depotFaults.filter(f => f.status !== 'resolved').length;
+            const status = pendingCount > 10 ? 'red' : pendingCount > 5 ? 'amber' : 'green';
+
             html += `
-                <div class="complaint-item">
-                    <div class="info">
-                        <div class="msg">${typeIcon} ${f.description}</div>
-                        <div class="meta">
-                            <span>📍 ${f.location}</span>
-                            <span>🏛️ ${f.depot}</span>
-                            ${f.meterNumber !== 'N/A' ? `<span>📱 ${f.meterNumber}</span>` : ''}
-                            <span class="urgency-badge ${urgency}">${f.urgency}</span>
-                            <span class="status-badge ${status}">${f.status}</span>
-                            <span>⏱️ ${time}</span>
-                        </div>
-                    </div>
+                <div class="depot-item">
+                    <div class="name">${d.name}</div>
+                    <div class="location">📍 ${d.location}</div>
+                    <div class="manager">👤 <strong>${d.manager}</strong></div>
+                    <div style="color:#888;font-size:12px;">📱 ${d.phone} | 💬 ${d.whatsapp}</div>
+                    <div class="count ${status}">${pendingCount} <span class="sub">pending</span></div>
                     <div class="actions">
-                        ${f.status !== 'resolved' ? `
-                            <select id="team-${f.id}" style="padding:6px 10px;background:#0a0a0a;color:#fff;border:1px solid #2a2a2a;border-radius:6px;font-size:12px;">
-                                <option value="">Assign to...</option>
-                                <option value="City Centre Team">City Centre Team</option>
-                                <option value="Mbare Team">Mbare Team</option>
-                                <option value="Highfields Team">Highfields Team</option>
-                                <option value="Chitungwiza Team">Chitungwiza Team</option>
-                            </select>
-                            <button class="btn-forward" onclick="forwardFault(${f.id})">📤 Assign</button>
-                            ${f.status === 'pending' ? `<button class="btn-status btn-progress" onclick="updateStatus(${f.id}, 'in-progress')">🔄 Start</button>` : ''}
-                            ${f.status === 'in-progress' ? `<button class="btn-status btn-resolve" onclick="updateStatus(${f.id}, 'resolved')">✅ Resolve</button>` : ''}
-                        ` : '<span style="color:#00ff88;">✅ Resolved</span>'}
+                        <button class="btn-sm btn-edit" onclick="editDepot(${d.id})">✏️ Edit</button>
+                        <button class="btn-sm btn-delete" onclick="deleteDepot(${d.id})">🗑️ Delete</button>
                     </div>
                 </div>
             `;
@@ -622,44 +603,172 @@
         container.innerHTML = html;
     }
 
-    // ─── UPDATE DEPOTS ───
-    function updateDepots() {
-        const depotCounts = {};
-        faults.forEach(f => {
-            const depot = f.depot || 'City Centre Depot';
-            if (!depotCounts[depot]) depotCounts[depot] = 0;
-            depotCounts[depot]++;
-        });
-
-        document.querySelectorAll('.depot-item').forEach(item => {
-            const name = item.querySelector('.name').textContent;
-            const count = depotCounts[name] || 0;
-            const countEl = item.querySelector('.count');
-            countEl.textContent = count;
-            countEl.className = 'count ' + (count > 10 ? 'red' : count > 5 ? 'amber' : 'green');
+    // ─── UPDATE DEPOT FILTER ───
+    function updateDepotFilter() {
+        const select = document.getElementById('depotFilter');
+        select.innerHTML = '<option value="all">All Depots</option>';
+        depots.forEach(d => {
+            const option = document.createElement('option');
+            option.value = d.name;
+            option.textContent = d.name;
+            select.appendChild(option);
         });
     }
 
-    // ─── FORWARD FAULT ───
-    function forwardFault(id) {
-        const select = document.getElementById(`team-${id}`);
-        const selected = select.value;
-        if (!selected) {
-            showToast('error', '❌ Please select a team.');
+    // ─── UPDATE MONTHLY STATS ───
+    function updateMonthlyStats() {
+        const now = new Date();
+        const month = now.getMonth();
+        const year = now.getFullYear();
+
+        const monthFaults = faults.filter(f => {
+            const d = new Date(f.timestamp);
+            return d.getMonth() === month && d.getFullYear() === year;
+        });
+
+        const monthResolved = monthFaults.filter(f => f.status === 'resolved');
+        const monthDomestic = monthFaults.filter(f => f.type === 'domestic');
+        const monthPublic = monthFaults.filter(f => f.type === 'public');
+
+        document.getElementById('monthTotal').textContent = monthFaults.length;
+        document.getElementById('monthResolved').textContent = monthResolved.length;
+        document.getElementById('monthDomestic').textContent = monthDomestic.length;
+        document.getElementById('monthPublic').textContent = monthPublic.length;
+    }
+
+    // ─── RENDER FAULTS ───
+    function renderFaults() {
+        const container = document.getElementById('faultList');
+        const list = filteredFaults;
+
+        if (list.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="icon">⚡</div><p>No faults found.</p></div>`;
             return;
         }
-        showToast('success', `📤 Fault assigned to ${selected}`);
+
+        const urgencyMap = { 'RED': 'red', 'AMBER': 'amber', 'GREEN': 'green' };
+
+        let html = '';
+        list.slice(0, 20).forEach(f => {
+            const urgency = urgencyMap[f.urgency] || 'green';
+            const time = f.timestamp ? new Date(f.timestamp).toLocaleString() : '—';
+            const typeIcon = f.type === 'domestic' ? '🏠' : '🌍';
+            html += `
+                <div class="complaint-item">
+                    <div class="info">
+                        <div class="msg">${typeIcon} ${f.description}</div>
+                        <div class="meta">
+                            <span>🆔 ${f.id}</span>
+                            <span>📍 ${f.location}</span>
+                            ${f.meterNumber !== 'N/A' ? `<span>📱 ${f.meterNumber}</span>` : ''}
+                            <span>🏛️ ${f.depot}</span>
+                            <span class="urgency-badge ${urgency}">${f.urgency}</span>
+                            <span class="status-badge ${f.status}">${f.status}</span>
+                            <span>⏱️ ${time}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
     }
 
-    // ─── UPDATE STATUS ───
-    function updateStatus(id, status) {
-        const fault = faults.find(f => f.id === id);
-        if (fault) {
-            fault.status = status;
+    // ─── FILTER FAULTS ───
+    function filterFaults() {
+        const status = document.getElementById('statusFilter').value;
+        const depot = document.getElementById('depotFilter').value;
+        const search = document.getElementById('searchInput').value.toLowerCase();
+
+        filteredFaults = faults.filter(f => {
+            let match = true;
+            if (status !== 'all' && f.status !== status) match = false;
+            if (depot !== 'all' && f.depot !== depot) match = false;
+            if (search && !f.location.toLowerCase().includes(search) && !f.meterNumber.toLowerCase().includes(search)) match = false;
+            return match;
+        });
+
+        renderFaults();
+    }
+
+    // ─── ADD DEPOT ───
+    function showAddDepot() {
+        editingDepotId = null;
+        document.getElementById('depotName').value = '';
+        document.getElementById('depotLocation').value = '';
+        document.getElementById('depotManager').value = '';
+        document.getElementById('depotPhone').value = '';
+        document.getElementById('depotWhatsApp').value = '';
+        document.getElementById('addDepotModal').classList.add('show');
+    }
+
+    // ─── EDIT DEPOT ───
+    function editDepot(id) {
+        const depot = depots.find(d => d.id === id);
+        if (!depot) return;
+        editingDepotId = id;
+        document.getElementById('depotName').value = depot.name;
+        document.getElementById('depotLocation').value = depot.location;
+        document.getElementById('depotManager').value = depot.manager;
+        document.getElementById('depotPhone').value = depot.phone;
+        document.getElementById('depotWhatsApp').value = depot.whatsapp;
+        document.getElementById('addDepotModal').classList.add('show');
+    }
+
+    // ─── SAVE DEPOT ───
+    function saveDepot() {
+        const name = document.getElementById('depotName').value.trim();
+        const location = document.getElementById('depotLocation').value.trim();
+        const manager = document.getElementById('depotManager').value.trim();
+        const phone = document.getElementById('depotPhone').value.trim();
+        const whatsapp = document.getElementById('depotWhatsApp').value.trim();
+
+        if (!name || !location || !manager || !phone) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        if (editingDepotId) {
+            // Edit existing depot
+            const depot = depots.find(d => d.id === editingDepotId);
+            if (depot) {
+                depot.name = name;
+                depot.location = location;
+                depot.manager = manager;
+                depot.phone = phone;
+                depot.whatsapp = whatsapp || phone;
+            }
+            showToast('success', `✅ Depot "${name}" updated successfully`);
+        } else {
+            // Add new depot
+            const newId = depots.length > 0 ? Math.max(...depots.map(d => d.id)) + 1 : 1;
+            depots.push({
+                id: newId,
+                name: name,
+                location: location,
+                manager: manager,
+                phone: phone,
+                whatsapp: whatsapp || phone
+            });
+            showToast('success', `✅ Depot "${name}" added successfully`);
+        }
+
+        closeModal('addDepotModal');
+        loadDashboard();
+    }
+
+    // ─── DELETE DEPOT ───
+    function deleteDepot(id) {
+        const depot = depots.find(d => d.id === id);
+        if (!depot) return;
+        if (confirm(`Delete "${depot.name}"? This will not delete existing faults.`)) {
+            depots = depots.filter(d => d.id !== id);
             loadDashboard();
-            showToast('success', `✅ Fault marked as ${status}`);
+            showToast('success', `🗑️ Depot "${depot.name}" removed`);
         }
     }
+
+    // ─── MODAL HELPERS ───
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
     // ─── TOAST ───
     function showToast(type, message) {
@@ -676,4 +785,4 @@
 </script>
 
 </body>
-                </html>
+    </html>
