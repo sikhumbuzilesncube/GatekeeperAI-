@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZESA Dashboard – Gatekeeper AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0 25px;
+            border-bottom: 1px solid #1a1a2e;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFB300;
+        }
+        .header .logo span { color: #00ff88; }
+        .header .subtitle {
+            font-size: 14px;
+            color: #888;
+        }
+        .header .badge {
+            background: #1a2a1a;
+            color: #00ff88;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #00ff8833;
+        }
+        .header .nav-links a {
+            color: #888;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+        .header .nav-links a:hover { color: #FFB300; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .stat-card {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .stat-card:hover { border-color: #FFB300; }
+        .stat-card .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
+            margin: 5px 0;
+        }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.amber { color: #FFB300; }
+        .stat-card .number.red { color: #e94560; }
+        .stat-card .number.gold { color: #FFB300; }
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .card {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+        }
+        .card h3 {
+            color: #FFB300;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 .badge-count {
+            background: #2a2a2a;
+            color: #aaa;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: auto;
+        }
+
+        /* ─── METER LOOKUP ─── */
+        .meter-lookup {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .meter-lookup input {
+            flex: 1;
+            padding: 12px 16px;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        .meter-lookup input:focus { outline: none; border-color: #FFB300; }
+        .meter-lookup .btn-lookup {
+            padding: 12px 24px;
+            background: #4A90D9;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .meter-lookup .btn-lookup:hover { background: #357ABD; }
+
+        .customer-info {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #1a1a2e;
+            display: none;
+        }
+        .customer-info.show { display: block; }
+        .customer-info .field {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #0a0a0a;
+        }
+        .customer-info .field .label { color: #888; font-size: 13px; }
+        .customer-info .field .value { color: #fff; font-weight: bold; }
+
+        /* ─── COMPLAINT LIST ─── */
+        .complaint-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            border: 1px solid #1a1a2e;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .complaint-item:hover { border-color: #2a2a2a; }
+        .complaint-item .info { flex: 1; min-width: 150px; }
+        .complaint-item .info .msg { color: #fff; font-size: 14px; }
+        .complaint-item .info .meta { color: #888; font-size: 12px; }
+        .complaint-item .info .meta span { margin-right: 12px; }
+        .complaint-item .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .complaint-item .actions select {
+            padding: 6px 10px;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .complaint-item .actions select:focus { outline: none; border-color: #FFB300; }
+        .complaint-item .actions .btn-forward {
+            padding: 6px 14px;
+            background: #4A90D9;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .complaint-item .actions .btn-forward:hover { background: #357ABD; }
+        .complaint-item .actions .btn-status {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .btn-progress { background: #FFB300; color: #000; }
+        .btn-progress:hover { background: #e6a300; }
+        .btn-resolve { background: #00ff88; color: #000; }
+        .btn-resolve:hover { background: #00cc6a; }
+        .btn-escalate { background: #e94560; color: #fff; }
+        .btn-escalate:hover { background: #c0392b; }
+
+        .urgency-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .urgency-badge.red { background: #e9456033; color: #e94560; }
+        .urgency-badge.amber { background: #FFB30033; color: #FFB300; }
+        .urgency-badge.green { background: #00ff8833; color: #00ff88; }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .status-badge.pending { background: #e9456033; color: #e94560; }
+        .status-badge.in-progress { background: #FFB30033; color: #FFB300; }
+        .status-badge.resolved { background: #00ff8833; color: #00ff88; }
+
+        .btn-primary {
+            padding: 10px 24px;
+            background: #FFB300;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover { background: #e6a300; transform: translateY(-2px); }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a2a;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 2000;
+            max-width: 400px;
+        }
+        .toast.show { display: block; animation: slideUp 0.3s ease; }
+        .toast.success { border-color: #00ff88; }
+        .toast.error { border-color: #e94560; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast .close {
+            float: right;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #555;
+        }
+        .empty .icon { font-size: 40px; margin-bottom: 10px; }
+
+        .footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #1a1a2e;
+            text-align: center;
+            font-size: 12px;
+            color: #444;
+        }
+        .footer a { color: #555; text-decoration: none; }
+        .footer a:hover { color: #FFB300; }
+
+        .depot-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .depot-item {
+            background: #0a0a0a;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #1a1a2e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .depot-item .name { color: #aaa; font-size: 13px; }
+        .depot-item .count { font-weight: bold; }
+        .depot-item .count.red { color: #e94560; }
+        .depot-item .count.amber { color: #FFB300; }
+        .depot-item .count.green { color: #00ff88; }
+
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: 1fr 1fr; }
+            .row { grid-template-columns: 1fr; }
+            .header { flex-direction: column; text-align: center; }
+            .depot-list { grid-template-columns: 1fr; }
+            .complaint-item { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: 1fr; }
+            .meter-lookup { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ─── HEADER ─── -->
+    <header class="header">
+        <div>
+            <div class="logo">Gatekeeper <span>AI</span></div>
+            <div class="subtitle">⚡ ZESA Fault Management Dashboard</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="badge">🟢 Online</span>
+            <span style="color: #555; font-size: 13px;" id="timestamp">Loading...</span>
+            <div class="nav-links">
+                <a href="dashboard.html">🏠 Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ─── STATS ─── -->
+    <div class="stats">
+        <div class="stat-card">
+            <span class="icon">⚡</span>
+            <div class="number" id="totalFaults">—</div>
+            <div class="label">Total Faults</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">✅</span>
+            <div class="number green" id="resolved">—</div>
+            <div class="label">Resolved</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">⏳</span>
+            <div class="number amber" id="pending">—</div>
+            <div class="label">Pending</div>
+        </div>
+        <div class="stat-card">
+            <span class="icon">⏱️</span>
+            <div class="number gold" id="avgResponse">—</div>
+            <div class="label">Avg Response Time</div>
+        </div>
+    </div>
+
+    <!-- ─── ROW 1: METER LOOKUP + DEPOTS ─── -->
+    <div class="row">
+        <div class="card">
+            <h3>🔍 Meter Number Lookup</h3>
+            <div class="meter-lookup">
+                <input type="text" id="meterInput" placeholder="Enter meter number (e.g. ZESA-123456)" onkeypress="if(event.key==='Enter') lookupMeter()">
+                <button class="btn-lookup" onclick="lookupMeter()">🔍 Lookup</button>
+            </div>
+            <div class="customer-info" id="customerInfo">
+                <div style="font-weight:bold;color:#00ff88;margin-bottom:8px;">✅ Customer Found</div>
+                <div class="field"><span class="label">Customer Name</span><span class="value" id="custName">—</span></div>
+                <div class="field"><span class="label">Address</span><span class="value" id="custAddress">—</span></div>
+                <div class="field"><span class="label">Suburb</span><span class="value" id="custSuburb">—</span></div>
+                <div class="field"><span class="label">Area / Depot</span><span class="value" id="custDepot">—</span></div>
+                <div style="margin-top:10px;">
+                    <button class="btn-primary" onclick="reportFault()" style="padding:8px 20px;font-size:14px;">📤 Report Fault for This Customer</button>
+                </div>
+            </div>
+            <div id="meterError" style="color:#e94560;font-size:13px;display:none;margin-top:10px;">❌ Meter number not found. Please check and try again.</div>
+        </div>
+        <div class="card">
+            <h3>📍 Depot Status</h3>
+            <div class="depot-list" id="depotList">
+                <div class="depot-item"><span class="name">City Centre Depot</span><span class="count green">12</span></div>
+                <div class="depot-item"><span class="name">Mbare Depot</span><span class="count amber">8</span></div>
+                <div class="depot-item"><span class="name">Highfields Depot</span><span class="count green">5</span></div>
+                <div class="depot-item"><span class="name">Chitungwiza Depot</span><span class="count red">15</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── ROW 2: RECENT FAULTS ─── -->
+    <div class="card" style="margin-top:20px;">
+        <h3>
+            📋 Recent Faults
+            <span class="badge-count" id="faultCount">0 faults</span>
+        </h3>
+        <div id="faultList">
+            <div class="empty">
+                <div class="icon">⚡</div>
+                <p>No faults reported yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast">
+        <button class="close" onclick="hideToast()">×</button>
+        <span id="toastMessage">✅ Action completed</span>
+    </div>
+
+    <!-- ─── FOOTER ─── -->
+    <div class="footer">
+        <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
+        <p><a href="dashboard.html">Back to Admin</a></p>
+    </div>
+</div>
+
+<script>
+    // ─── SAMPLE CUSTOMER DATA ───
+    const customerDatabase = {
+        'ZESA-123456': {
+            name: 'Mr. T. Ncube',
+            address: '45 Luveve Road, Luveve',
+            suburb: 'Luveve',
+            depot: 'City Centre Depot',
+            area: 'Bulawayo'
+        },
+        'ZESA-789012': {
+            name: 'Ms. P. Dube',
+            address: '12 Mbare Street, Mbare',
+            suburb: 'Mbare',
+            depot: 'Mbare Depot',
+            area: 'Harare'
+        },
+        'ZESA-345678': {
+            name: 'Mr. S. Moyo',
+            address: '78 Highfields Drive, Highfields',
+            suburb: 'Highfields',
+            depot: 'Highfields Depot',
+            area: 'Harare'
+        },
+        'ZESA-901234': {
+            name: 'Mrs. L. Ndlovu',
+            address: '23 Chitungwiza Road, Chitungwiza',
+            suburb: 'Chitungwiza',
+            depot: 'Chitungwiza Depot',
+            area: 'Harare'
+        }
+    };
+
+    // ─── SAMPLE FAULTS ───
+    let faults = [
+        { id: 1, meterNumber: 'ZESA-123456', customerName: 'Mr. T. Ncube', address: '45 Luveve Road, Luveve', category: 'No Power', urgency: 'RED', status: 'pending', timestamp: '2025-07-14T10:00:00Z', message: 'No power for 2 days, fridge spoiling' },
+        { id: 2, meterNumber: 'ZESA-789012', customerName: 'Ms. P. Dube', address: '12 Mbare Street, Mbare', category: 'Voltage Fluctuation', urgency: 'AMBER', status: 'in-progress', timestamp: '2025-07-14T09:00:00Z', message: 'Lights flickering, appliances damaged' },
+        { id: 3, meterNumber: 'ZESA-345678', customerName: 'Mr. S. Moyo', address: '78 Highfields Drive, Highfields', category: 'Meter Fault', urgency: 'GREEN', status: 'resolved', timestamp: '2025-07-14T08:00:00Z', message: 'Meter not reading, billing error' }
+    ];
+
+    let currentMeterData = null;
+
+    // ─── LOAD DASHBOARD ───
+    function loadDashboard() {
+        const total = faults.length;
+        const resolved = faults.filter(f => f.status === 'resolved').length;
+        const pending = faults.filter(f => f.status !== 'resolved').length;
+        document.getElementById('totalFaults').textContent = total;
+        document.getElementById('resolved').textContent = resolved;
+        document.getElementById('pending').textContent = pending;
+        document.getElementById('avgResponse').textContent = '3.5 hrs';
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        document.getElementById('faultCount').textContent = total + ' faults';
+
+        renderFaults();
+        updateDepots();
+    }
+
+    // ─── METER LOOKUP ───
+    function lookupMeter() {
+        const meterNumber = document.getElementById('meterInput').value.trim();
+        const errorDiv = document.getElementById('meterError');
+        const infoDiv = document.getElementById('customerInfo');
+
+        errorDiv.style.display = 'none';
+
+        if (!meterNumber) {
+            errorDiv.textContent = '❌ Please enter a meter number.';
+            errorDiv.style.display = 'block';
+            infoDiv.classList.remove('show');
+            return;
+        }
+
+        const customer = customerDatabase[meterNumber];
+
+        if (customer) {
+            currentMeterData = { meterNumber, ...customer };
+            document.getElementById('custName').textContent = customer.name;
+            document.getElementById('custAddress').textContent = customer.address;
+            document.getElementById('custSuburb').textContent = customer.suburb;
+            document.getElementById('custDepot').textContent = customer.depot + ' (' + customer.area + ')';
+            infoDiv.classList.add('show');
+            showToast('success', `✅ Customer found: ${customer.name}`);
+        } else {
+            errorDiv.textContent = '❌ Meter number not found. Please check and try again.';
+            errorDiv.style.display = 'block';
+            infoDiv.classList.remove('show');
+            showToast('error', '❌ Meter number not found');
+        }
+    }
+
+    // ─── REPORT FAULT ───
+    function reportFault() {
+        if (!currentMeterData) {
+            showToast('error', '❌ Please lookup a meter number first.');
+            return;
+        }
+
+        const categories = ['No Power', 'Voltage Fluctuation', 'Meter Fault', 'Fire', 'Burnt Cable', 'Other'];
+        const category = prompt('Select fault type:\n1. No Power\n2. Voltage Fluctuation\n3. Meter Fault\n4. Fire\n5. Burnt Cable\n6. Other\n\nEnter number (1-6):');
+
+        if (!category) return;
+
+        const categoryMap = {
+            '1': 'No Power',
+            '2': 'Voltage Fluctuation',
+            '3': 'Meter Fault',
+            '4': 'Fire',
+            '5': 'Burnt Cable',
+            '6': 'Other'
+        };
+
+        const selectedCategory = categoryMap[category];
+        if (!selectedCategory) {
+            showToast('error', '❌ Invalid selection. Please try again.');
+            return;
+        }
+
+        const urgency = category === '1' || category === '4' || category === '5' ? 'RED' : 'AMBER';
+        const message = prompt('Briefly describe the fault:');
+
+        if (!message) return;
+
+        faults.push({
+            id: Date.now(),
+            meterNumber: currentMeterData.meterNumber,
+            customerName: currentMeterData.name,
+            address: currentMeterData.address,
+            category: selectedCategory,
+            urgency: urgency,
+            status: 'pending',
+            timestamp: new Date().toISOString(),
+            message: message
+        });
+
+        loadDashboard();
+        showToast('success', `✅ Fault reported for ${currentMeterData.name} (${currentMeterData.meterNumber})`);
+        document.getElementById('customerInfo').classList.remove('show');
+        document.getElementById('meterInput').value = '';
+        currentMeterData = null;
+    }
+
+    // ─── RENDER FAULTS ───
+    function renderFaults() {
+        const container = document.getElementById('faultList');
+        if (faults.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="icon">⚡</div><p>No faults reported yet.</p></div>`;
+            return;
+        }
+
+        const urgencyMap = { 'RED': 'red', 'AMBER': 'amber', 'GREEN': 'green' };
+        const statusMap = { 'pending': 'pending', 'in-progress': 'in-progress', 'resolved': 'resolved' };
+
+        let html = '';
+        faults.slice(0, 10).forEach(f => {
+            const urgency = urgencyMap[f.urgency] || 'green';
+            const status = statusMap[f.status] || 'pending';
+            const time = f.timestamp ? new Date(f.timestamp).toLocaleString() : '—';
+            html += `
+                <div class="complaint-item">
+                    <div class="info">
+                        <div class="msg">⚡ ${f.message}</div>
+                        <div class="meta">
+                            <span>🆔 ${f.meterNumber}</span>
+                            <span>👤 ${f.customerName}</span>
+                            <span>📍 ${f.address}</span>
+                            <span class="urgency-badge ${urgency}">${f.urgency}</span>
+                            <span class="status-badge ${status}">${f.status}</span>
+                            <span>⏱️ ${time}</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        ${f.status !== 'resolved' ? `
+                            <select id="team-${f.id}" style="padding:6px 10px;background:#0a0a0a;color:#fff;border:1px solid #2a2a2a;border-radius:6px;font-size:12px;">
+                                <option value="">Assign to...</option>
+                                <option value="City Centre Team">City Centre Team</option>
+                                <option value="Mbare Team">Mbare Team</option>
+                                <option value="Highfields Team">Highfields Team</option>
+                                <option value="Chitungwiza Team">Chitungwiza Team</option>
+                            </select>
+                            <button class="btn-forward" onclick="forwardFault(${f.id})">📤 Assign</button>
+                            ${f.status === 'pending' ? `<button class="btn-status btn-progress" onclick="updateStatus(${f.id}, 'in-progress')">🔄 Start</button>` : ''}
+                            ${f.status === 'in-progress' ? `<button class="btn-status btn-resolve" onclick="updateStatus(${f.id}, 'resolved')">✅ Resolve</button>` : ''}
+                            <button class="btn-status btn-escalate" onclick="updateStatus(${f.id}, 'escalated')">⬆️ Escalate</button>
+                        ` : '<span style="color:#00ff88;">✅ Resolved</span>'}
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // ─── UPDATE DEPOTS ───
+    function updateDepots() {
+        // Update depot counts based on faults
+        const depotCounts = {};
+        faults.forEach(f => {
+            const depot = f.address.includes('Luveve') ? 'City Centre Depot' :
+                          f.address.includes('Mbare') ? 'Mbare Depot' :
+                          f.address.includes('Highfields') ? 'Highfields Depot' :
+                          f.address.includes('Chitungwiza') ? 'Chitungwiza Depot' : 'City Centre Depot';
+            if (!depotCounts[depot]) depotCounts[depot] = 0;
+            depotCounts[depot]++;
+        });
+
+        document.querySelectorAll('.depot-item').forEach(item => {
+            const name = item.querySelector('.name').textContent;
+            const count = depotCounts[name] || 0;
+            const countEl = item.querySelector('.count');
+            countEl.textContent = count;
+            countEl.className = 'count ' + (count > 10 ? 'red' : count > 5 ? 'amber' : 'green');
+        });
+    }
+
+    // ─── FORWARD FAULT ───
+    function forwardFault(id) {
+        const select = document.getElementById(`team-${id}`);
+        const selected = select.value;
+        if (!selected) {
+            showToast('error', '❌ Please select a team to assign to.');
+            return;
+        }
+        showToast('success', `📤 Fault assigned to ${selected}`);
+    }
+
+    // ─── UPDATE STATUS ───
+    function updateStatus(id, status) {
+        const fault = faults.find(f => f.id === id);
+        if (fault) {
+            fault.status = status;
+            loadDashboard();
+            showToast('success', `✅ Fault marked as ${status}`);
+        }
+    }
+
+    // ─── TOAST ───
+    function showToast(type, message) {
+        const toast = document.getElementById('toast');
+        toast.className = `toast show ${type}`;
+        document.getElementById('toastMessage').innerHTML = message;
+        clearTimeout(window.toastTimeout);
+        window.toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 5000);
+    }
+    function hideToast() { document.getElementById('toast').classList.remove('show'); }
+
+    // ─── ENTER KEY SUPPORT ───
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const active = document.activeElement;
+            if (active.id === 'meterInput') {
+                lookupMeter();
+            }
+        }
+    });
+
+    // ─── LOAD ───
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+
+</body>
+  </html>
