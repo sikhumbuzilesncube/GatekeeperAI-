@@ -30,10 +30,7 @@
             color: #FFB300;
         }
         .header .logo span { color: #00ff88; }
-        .header .subtitle {
-            font-size: 14px;
-            color: #888;
-        }
+        .header .subtitle { font-size: 14px; color: #888; }
         .header .badge {
             background: #1a2a1a;
             color: #00ff88;
@@ -63,25 +60,14 @@
             border-radius: 12px;
             border: 1px solid #2a2a2a;
             text-align: center;
-            transition: border-color 0.3s;
         }
         .stat-card:hover { border-color: #FFB300; }
-        .stat-card .number {
-            font-size: 30px;
-            font-weight: bold;
-            color: #fff;
-            margin: 5px 0;
-        }
+        .stat-card .number { font-size: 30px; font-weight: bold; color: #fff; margin: 5px 0; }
         .stat-card .number.green { color: #00ff88; }
         .stat-card .number.amber { color: #FFB300; }
         .stat-card .number.red { color: #e94560; }
         .stat-card .number.gold { color: #FFB300; }
-        .stat-card .label {
-            font-size: 12px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .stat-card .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
 
         .row {
@@ -114,14 +100,38 @@
             margin-left: auto;
         }
 
-        /* ─── METER LOOKUP ─── */
-        .meter-lookup {
+        /* ─── COMPLAINT TYPES ─── */
+        .fault-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .fault-type-btn {
+            padding: 10px;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 13px;
+        }
+        .fault-type-btn:hover { border-color: #FFB300; color: #fff; }
+        .fault-type-btn.active {
+            border-color: #FFB300;
+            color: #FFB300;
+            background: #1a1a1a;
+        }
+
+        .meter-input-group {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-        .meter-lookup input {
+        .meter-input-group input {
             flex: 1;
             padding: 12px 16px;
             background: #0a0a0a;
@@ -131,37 +141,41 @@
             font-size: 16px;
             min-width: 200px;
         }
-        .meter-lookup input:focus { outline: none; border-color: #FFB300; }
-        .meter-lookup .btn-lookup {
+        .meter-input-group input:focus { outline: none; border-color: #FFB300; }
+        .meter-input-group .btn {
             padding: 12px 24px;
-            background: #4A90D9;
-            color: #fff;
             border: none;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
         }
-        .meter-lookup .btn-lookup:hover { background: #357ABD; }
+        .btn-primary { background: #FFB300; color: #000; }
+        .btn-primary:hover { background: #e6a300; }
+        .btn-blue { background: #4A90D9; color: #fff; }
+        .btn-blue:hover { background: #357ABD; }
+        .btn-green { background: #00ff88; color: #000; }
+        .btn-green:hover { background: #00cc6a; }
+        .btn-red { background: #e94560; color: #fff; }
+        .btn-red:hover { background: #c0392b; }
 
-        .customer-info {
+        .info-box {
             background: #0a0a0a;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #1a1a2e;
             display: none;
         }
-        .customer-info.show { display: block; }
-        .customer-info .field {
+        .info-box.show { display: block; }
+        .info-box .field {
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
             border-bottom: 1px solid #0a0a0a;
         }
-        .customer-info .field .label { color: #888; font-size: 13px; }
-        .customer-info .field .value { color: #fff; font-weight: bold; }
+        .info-box .field .label { color: #888; font-size: 13px; }
+        .info-box .field .value { color: #fff; font-weight: bold; }
 
-        /* ─── COMPLAINT LIST ─── */
         .complaint-item {
             display: flex;
             justify-content: space-between;
@@ -218,8 +232,6 @@
         .btn-progress:hover { background: #e6a300; }
         .btn-resolve { background: #00ff88; color: #000; }
         .btn-resolve:hover { background: #00cc6a; }
-        .btn-escalate { background: #e94560; color: #fff; }
-        .btn-escalate:hover { background: #c0392b; }
 
         .urgency-badge {
             display: inline-block;
@@ -242,17 +254,24 @@
         .status-badge.in-progress { background: #FFB30033; color: #FFB300; }
         .status-badge.resolved { background: #00ff8833; color: #00ff88; }
 
-        .btn-primary {
-            padding: 10px 24px;
-            background: #FFB300;
-            color: #000;
-            border: none;
+        .depot-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .depot-item {
+            background: #0a0a0a;
+            padding: 12px;
             border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+            border: 1px solid #1a1a2e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .btn-primary:hover { background: #e6a300; transform: translateY(-2px); }
+        .depot-item .name { color: #aaa; font-size: 13px; }
+        .depot-item .count { font-weight: bold; }
+        .depot-item .count.red { color: #e94560; }
+        .depot-item .count.amber { color: #FFB300; }
+        .depot-item .count.green { color: #00ff88; }
+
+        .empty { text-align: center; padding: 30px; color: #555; }
+        .empty .icon { font-size: 40px; margin-bottom: 10px; }
 
         .toast {
             position: fixed;
@@ -286,13 +305,6 @@
             margin-left: 15px;
         }
 
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #555;
-        }
-        .empty .icon { font-size: 40px; margin-bottom: 10px; }
-
         .footer {
             margin-top: 30px;
             padding: 20px 0;
@@ -304,36 +316,24 @@
         .footer a { color: #555; text-decoration: none; }
         .footer a:hover { color: #FFB300; }
 
-        .depot-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .depot-item {
-            background: #0a0a0a;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #1a1a2e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .depot-item .name { color: #aaa; font-size: 13px; }
-        .depot-item .count { font-weight: bold; }
-        .depot-item .count.red { color: #e94560; }
-        .depot-item .count.amber { color: #FFB300; }
-        .depot-item .count.green { color: #00ff88; }
-
         @media (max-width: 768px) {
             .stats { grid-template-columns: 1fr 1fr; }
             .row { grid-template-columns: 1fr; }
             .header { flex-direction: column; text-align: center; }
             .depot-list { grid-template-columns: 1fr; }
+            .fault-types { grid-template-columns: 1fr; }
             .complaint-item { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 480px) {
             .stats { grid-template-columns: 1fr; }
-            .meter-lookup { flex-direction: column; }
+            .meter-input-group { flex-direction: column; }
+        }
+
+        .fault-type-label {
+            font-size: 11px;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
         }
     </style>
 </head>
@@ -341,7 +341,6 @@
 
 <div class="container">
 
-    <!-- ─── HEADER ─── -->
     <header class="header">
         <div>
             <div class="logo">Gatekeeper <span>AI</span></div>
@@ -356,7 +355,6 @@
         </div>
     </header>
 
-    <!-- ─── STATS ─── -->
     <div class="stats">
         <div class="stat-card">
             <span class="icon">⚡</span>
@@ -380,38 +378,52 @@
         </div>
     </div>
 
-    <!-- ─── ROW 1: METER LOOKUP + DEPOTS ─── -->
     <div class="row">
         <div class="card">
-            <h3>🔍 Meter Number Lookup</h3>
-            <div class="meter-lookup">
-                <input type="text" id="meterInput" placeholder="Enter meter number (e.g. ZESA-123456)" onkeypress="if(event.key==='Enter') lookupMeter()">
-                <button class="btn-lookup" onclick="lookupMeter()">🔍 Lookup</button>
+            <h3>📝 Report a Fault</h3>
+
+            <label style="color:#888;font-size:13px;font-weight:600;">Fault Type</label>
+            <div class="fault-types">
+                <button class="fault-type-btn active" onclick="selectFaultType('domestic', this)">🏠 Domestic Fault</button>
+                <button class="fault-type-btn" onclick="selectFaultType('public', this)">🌍 Public Fault</button>
             </div>
-            <div class="customer-info" id="customerInfo">
-                <div style="font-weight:bold;color:#00ff88;margin-bottom:8px;">✅ Customer Found</div>
-                <div class="field"><span class="label">Customer Name</span><span class="value" id="custName">—</span></div>
-                <div class="field"><span class="label">Address</span><span class="value" id="custAddress">—</span></div>
-                <div class="field"><span class="label">Suburb</span><span class="value" id="custSuburb">—</span></div>
-                <div class="field"><span class="label">Area / Depot</span><span class="value" id="custDepot">—</span></div>
-                <div style="margin-top:10px;">
-                    <button class="btn-primary" onclick="reportFault()" style="padding:8px 20px;font-size:14px;">📤 Report Fault for This Customer</button>
+
+            <div id="domesticFields">
+                <label style="color:#888;font-size:13px;font-weight:600;margin-top:10px;display:block;">Meter Number</label>
+                <div class="meter-input-group">
+                    <input type="text" id="meterNumber" placeholder="e.g. ZESA-123456" onkeypress="if(event.key==='Enter') submitFault()">
+                </div>
+                <div class="info-box" id="meterInfo">
+                    <div style="color:#888;font-size:12px;">ℹ️ Meter number will be forwarded to ZESA depot with the fault.</div>
                 </div>
             </div>
-            <div id="meterError" style="color:#e94560;font-size:13px;display:none;margin-top:10px;">❌ Meter number not found. Please check and try again.</div>
+
+            <div id="publicFields" style="display:none;">
+                <label style="color:#888;font-size:13px;font-weight:600;margin-top:10px;display:block;">Location Description</label>
+                <div class="meter-input-group">
+                    <input type="text" id="locationDesc" placeholder="e.g. Fallen poles near Luveve School" onkeypress="if(event.key==='Enter') submitFault()">
+                </div>
+            </div>
+
+            <label style="color:#888;font-size:13px;font-weight:600;margin-top:10px;display:block;">Fault Description</label>
+            <div class="meter-input-group">
+                <input type="text" id="faultDesc" placeholder="e.g. No power for 2 days, fridge spoiling">
+            </div>
+
+            <button class="btn btn-primary" onclick="submitFault()" style="width:100%;padding:14px;font-size:16px;">📤 Submit Fault</button>
         </div>
+
         <div class="card">
             <h3>📍 Depot Status</h3>
             <div class="depot-list" id="depotList">
-                <div class="depot-item"><span class="name">City Centre Depot</span><span class="count green">12</span></div>
-                <div class="depot-item"><span class="name">Mbare Depot</span><span class="count amber">8</span></div>
-                <div class="depot-item"><span class="name">Highfields Depot</span><span class="count green">5</span></div>
-                <div class="depot-item"><span class="name">Chitungwiza Depot</span><span class="count red">15</span></div>
+                <div class="depot-item"><span class="name">City Centre Depot</span><span class="count green">0</span></div>
+                <div class="depot-item"><span class="name">Mbare Depot</span><span class="count green">0</span></div>
+                <div class="depot-item"><span class="name">Highfields Depot</span><span class="count green">0</span></div>
+                <div class="depot-item"><span class="name">Chitungwiza Depot</span><span class="count green">0</span></div>
             </div>
         </div>
     </div>
 
-    <!-- ─── ROW 2: RECENT FAULTS ─── -->
     <div class="card" style="margin-top:20px;">
         <h3>
             📋 Recent Faults
@@ -425,13 +437,11 @@
         </div>
     </div>
 
-    <!-- ─── TOAST ─── -->
     <div class="toast" id="toast">
         <button class="close" onclick="hideToast()">×</button>
         <span id="toastMessage">✅ Action completed</span>
     </div>
 
-    <!-- ─── FOOTER ─── -->
     <div class="footer">
         <p>© 2025 Gatekeeper AI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
         <p><a href="dashboard.html">Back to Admin</a></p>
@@ -439,46 +449,85 @@
 </div>
 
 <script>
-    // ─── SAMPLE CUSTOMER DATA ───
-    const customerDatabase = {
-        'ZESA-123456': {
-            name: 'Mr. T. Ncube',
-            address: '45 Luveve Road, Luveve',
-            suburb: 'Luveve',
-            depot: 'City Centre Depot',
-            area: 'Bulawayo'
-        },
-        'ZESA-789012': {
-            name: 'Ms. P. Dube',
-            address: '12 Mbare Street, Mbare',
-            suburb: 'Mbare',
-            depot: 'Mbare Depot',
-            area: 'Harare'
-        },
-        'ZESA-345678': {
-            name: 'Mr. S. Moyo',
-            address: '78 Highfields Drive, Highfields',
-            suburb: 'Highfields',
-            depot: 'Highfields Depot',
-            area: 'Harare'
-        },
-        'ZESA-901234': {
-            name: 'Mrs. L. Ndlovu',
-            address: '23 Chitungwiza Road, Chitungwiza',
-            suburb: 'Chitungwiza',
-            depot: 'Chitungwiza Depot',
-            area: 'Harare'
-        }
-    };
-
     // ─── SAMPLE FAULTS ───
-    let faults = [
-        { id: 1, meterNumber: 'ZESA-123456', customerName: 'Mr. T. Ncube', address: '45 Luveve Road, Luveve', category: 'No Power', urgency: 'RED', status: 'pending', timestamp: '2025-07-14T10:00:00Z', message: 'No power for 2 days, fridge spoiling' },
-        { id: 2, meterNumber: 'ZESA-789012', customerName: 'Ms. P. Dube', address: '12 Mbare Street, Mbare', category: 'Voltage Fluctuation', urgency: 'AMBER', status: 'in-progress', timestamp: '2025-07-14T09:00:00Z', message: 'Lights flickering, appliances damaged' },
-        { id: 3, meterNumber: 'ZESA-345678', customerName: 'Mr. S. Moyo', address: '78 Highfields Drive, Highfields', category: 'Meter Fault', urgency: 'GREEN', status: 'resolved', timestamp: '2025-07-14T08:00:00Z', message: 'Meter not reading, billing error' }
-    ];
+    let faults = [];
 
-    let currentMeterData = null;
+    let currentFaultType = 'domestic';
+
+    function selectFaultType(type, btn) {
+        currentFaultType = type;
+        document.querySelectorAll('.fault-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (type === 'domestic') {
+            document.getElementById('domesticFields').style.display = 'block';
+            document.getElementById('publicFields').style.display = 'none';
+        } else {
+            document.getElementById('domesticFields').style.display = 'none';
+            document.getElementById('publicFields').style.display = 'block';
+        }
+    }
+
+    // ─── SUBMIT FAULT ───
+    function submitFault() {
+        let meterNumber = '';
+        let location = '';
+        let faultDesc = document.getElementById('faultDesc').value.trim();
+
+        if (!faultDesc) {
+            showToast('error', '❌ Please describe the fault.');
+            return;
+        }
+
+        if (currentFaultType === 'domestic') {
+            meterNumber = document.getElementById('meterNumber').value.trim();
+            if (!meterNumber) {
+                showToast('error', '❌ Please enter a meter number.');
+                return;
+            }
+            location = 'Meter: ' + meterNumber;
+        } else {
+            location = document.getElementById('locationDesc').value.trim();
+            if (!location) {
+                showToast('error', '❌ Please enter the location.');
+                return;
+            }
+        }
+
+        // Determine urgency
+        let urgency = 'AMBER';
+        const urgentKeywords = ['fire', 'burning', 'fallen', 'danger', 'sparks', 'smoke', 'explosion'];
+        const lowerDesc = faultDesc.toLowerCase();
+        for (const word of urgentKeywords) {
+            if (lowerDesc.includes(word)) {
+                urgency = 'RED';
+                break;
+            }
+        }
+
+        const newFault = {
+            id: Date.now(),
+            type: currentFaultType,
+            meterNumber: meterNumber || 'N/A',
+            location: location,
+            description: faultDesc,
+            urgency: urgency,
+            status: 'pending',
+            timestamp: new Date().toISOString()
+        };
+
+        faults.unshift(newFault);
+        loadDashboard();
+
+        document.getElementById('faultDesc').value = '';
+        if (currentFaultType === 'domestic') {
+            document.getElementById('meterNumber').value = '';
+        } else {
+            document.getElementById('locationDesc').value = '';
+        }
+
+        showToast('success', `✅ Fault reported successfully!\nReference: ZESA-${String(newFault.id).slice(-6)}`);
+    }
 
     // ─── LOAD DASHBOARD ───
     function loadDashboard() {
@@ -494,90 +543,6 @@
 
         renderFaults();
         updateDepots();
-    }
-
-    // ─── METER LOOKUP ───
-    function lookupMeter() {
-        const meterNumber = document.getElementById('meterInput').value.trim();
-        const errorDiv = document.getElementById('meterError');
-        const infoDiv = document.getElementById('customerInfo');
-
-        errorDiv.style.display = 'none';
-
-        if (!meterNumber) {
-            errorDiv.textContent = '❌ Please enter a meter number.';
-            errorDiv.style.display = 'block';
-            infoDiv.classList.remove('show');
-            return;
-        }
-
-        const customer = customerDatabase[meterNumber];
-
-        if (customer) {
-            currentMeterData = { meterNumber, ...customer };
-            document.getElementById('custName').textContent = customer.name;
-            document.getElementById('custAddress').textContent = customer.address;
-            document.getElementById('custSuburb').textContent = customer.suburb;
-            document.getElementById('custDepot').textContent = customer.depot + ' (' + customer.area + ')';
-            infoDiv.classList.add('show');
-            showToast('success', `✅ Customer found: ${customer.name}`);
-        } else {
-            errorDiv.textContent = '❌ Meter number not found. Please check and try again.';
-            errorDiv.style.display = 'block';
-            infoDiv.classList.remove('show');
-            showToast('error', '❌ Meter number not found');
-        }
-    }
-
-    // ─── REPORT FAULT ───
-    function reportFault() {
-        if (!currentMeterData) {
-            showToast('error', '❌ Please lookup a meter number first.');
-            return;
-        }
-
-        const categories = ['No Power', 'Voltage Fluctuation', 'Meter Fault', 'Fire', 'Burnt Cable', 'Other'];
-        const category = prompt('Select fault type:\n1. No Power\n2. Voltage Fluctuation\n3. Meter Fault\n4. Fire\n5. Burnt Cable\n6. Other\n\nEnter number (1-6):');
-
-        if (!category) return;
-
-        const categoryMap = {
-            '1': 'No Power',
-            '2': 'Voltage Fluctuation',
-            '3': 'Meter Fault',
-            '4': 'Fire',
-            '5': 'Burnt Cable',
-            '6': 'Other'
-        };
-
-        const selectedCategory = categoryMap[category];
-        if (!selectedCategory) {
-            showToast('error', '❌ Invalid selection. Please try again.');
-            return;
-        }
-
-        const urgency = category === '1' || category === '4' || category === '5' ? 'RED' : 'AMBER';
-        const message = prompt('Briefly describe the fault:');
-
-        if (!message) return;
-
-        faults.push({
-            id: Date.now(),
-            meterNumber: currentMeterData.meterNumber,
-            customerName: currentMeterData.name,
-            address: currentMeterData.address,
-            category: selectedCategory,
-            urgency: urgency,
-            status: 'pending',
-            timestamp: new Date().toISOString(),
-            message: message
-        });
-
-        loadDashboard();
-        showToast('success', `✅ Fault reported for ${currentMeterData.name} (${currentMeterData.meterNumber})`);
-        document.getElementById('customerInfo').classList.remove('show');
-        document.getElementById('meterInput').value = '';
-        currentMeterData = null;
     }
 
     // ─── RENDER FAULTS ───
@@ -596,14 +561,14 @@
             const urgency = urgencyMap[f.urgency] || 'green';
             const status = statusMap[f.status] || 'pending';
             const time = f.timestamp ? new Date(f.timestamp).toLocaleString() : '—';
+            const typeIcon = f.type === 'domestic' ? '🏠' : '🌍';
             html += `
                 <div class="complaint-item">
                     <div class="info">
-                        <div class="msg">⚡ ${f.message}</div>
+                        <div class="msg">${typeIcon} ${f.description}</div>
                         <div class="meta">
-                            <span>🆔 ${f.meterNumber}</span>
-                            <span>👤 ${f.customerName}</span>
-                            <span>📍 ${f.address}</span>
+                            <span>📍 ${f.location}</span>
+                            ${f.meterNumber !== 'N/A' ? `<span>📱 ${f.meterNumber}</span>` : ''}
                             <span class="urgency-badge ${urgency}">${f.urgency}</span>
                             <span class="status-badge ${status}">${f.status}</span>
                             <span>⏱️ ${time}</span>
@@ -621,7 +586,6 @@
                             <button class="btn-forward" onclick="forwardFault(${f.id})">📤 Assign</button>
                             ${f.status === 'pending' ? `<button class="btn-status btn-progress" onclick="updateStatus(${f.id}, 'in-progress')">🔄 Start</button>` : ''}
                             ${f.status === 'in-progress' ? `<button class="btn-status btn-resolve" onclick="updateStatus(${f.id}, 'resolved')">✅ Resolve</button>` : ''}
-                            <button class="btn-status btn-escalate" onclick="updateStatus(${f.id}, 'escalated')">⬆️ Escalate</button>
                         ` : '<span style="color:#00ff88;">✅ Resolved</span>'}
                     </div>
                 </div>
@@ -632,13 +596,12 @@
 
     // ─── UPDATE DEPOTS ───
     function updateDepots() {
-        // Update depot counts based on faults
         const depotCounts = {};
         faults.forEach(f => {
-            const depot = f.address.includes('Luveve') ? 'City Centre Depot' :
-                          f.address.includes('Mbare') ? 'Mbare Depot' :
-                          f.address.includes('Highfields') ? 'Highfields Depot' :
-                          f.address.includes('Chitungwiza') ? 'Chitungwiza Depot' : 'City Centre Depot';
+            let depot = 'City Centre Depot';
+            if (f.location.toLowerCase().includes('mbare')) depot = 'Mbare Depot';
+            else if (f.location.toLowerCase().includes('highfields')) depot = 'Highfields Depot';
+            else if (f.location.toLowerCase().includes('chitungwiza')) depot = 'Chitungwiza Depot';
             if (!depotCounts[depot]) depotCounts[depot] = 0;
             depotCounts[depot]++;
         });
@@ -657,7 +620,7 @@
         const select = document.getElementById(`team-${id}`);
         const selected = select.value;
         if (!selected) {
-            showToast('error', '❌ Please select a team to assign to.');
+            showToast('error', '❌ Please select a team.');
             return;
         }
         showToast('success', `📤 Fault assigned to ${selected}`);
@@ -683,19 +646,9 @@
     }
     function hideToast() { document.getElementById('toast').classList.remove('show'); }
 
-    // ─── ENTER KEY SUPPORT ───
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            const active = document.activeElement;
-            if (active.id === 'meterInput') {
-                lookupMeter();
-            }
-        }
-    });
-
     // ─── LOAD ───
     document.addEventListener('DOMContentLoaded', loadDashboard);
 </script>
 
 </body>
-  </html>
+    </html>
