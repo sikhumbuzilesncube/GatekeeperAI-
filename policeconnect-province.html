@@ -173,10 +173,39 @@
         .footer a { color: #555; text-decoration: none; }
         .footer a:hover { color: #FFB300; }
 
+        /* ─── PROVINCE SELECTOR ─── */
+        .province-selector {
+            background: #0a0a0a;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #1a1a2e;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .province-selector label { color: #aaa; font-weight: 600; font-size: 14px; }
+        .province-selector select {
+            flex: 1;
+            padding: 10px 16px;
+            background: #1a1a2e;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
+            cursor: pointer;
+        }
+        .province-selector select:focus { outline: none; border-color: #FFB300; }
+        .province-selector select option { background: #1a1a2e; color: #fff; }
+
         @media (max-width: 768px) {
             .stats { grid-template-columns: 1fr 1fr; }
             .row { grid-template-columns: 1fr; }
             .header { flex-direction: column; text-align: center; }
+            .province-selector { flex-direction: column; }
+            .province-selector select { width: 100%; }
         }
         @media (max-width: 480px) { .stats { grid-template-columns: 1fr; } }
     </style>
@@ -201,10 +230,18 @@
         </div>
     </header>
 
-    <!-- Province Info -->
+    <!-- ─── PROVINCE SELECTOR ─── -->
+    <div class="province-selector">
+        <label for="provinceSelect">📍 Select Province:</label>
+        <select id="provinceSelect" onchange="selectProvince()">
+            <option value="">-- Select a province --</option>
+        </select>
+        <span id="provinceStats" style="color:#888;font-size:13px;"></span>
+    </div>
+
     <div id="provinceInfo" style="background:#1a1a2e;padding:12px 20px;border-radius:8px;border:1px solid #2a2a2a;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <span style="color:#aaa;font-size:14px;">📍 <strong style="color:#fff;" id="provinceName">Select a province</strong></span>
-        <span style="color:#888;font-size:12px;" id="provinceStats">— stations · — reports</span>
+        <span style="color:#aaa;font-size:14px;">📍 <strong style="color:#fff;" id="provinceName">No province selected</strong></span>
+        <span style="color:#888;font-size:12px;" id="provinceDetails">Select a province to manage</span>
     </div>
 
     <div class="stats">
@@ -260,30 +297,64 @@
 </div>
 
 <script>
-    // ─── GET PROVINCE FROM URL ───
-    const urlParams = new URLSearchParams(window.location.search);
-    const provinceId = parseInt(urlParams.get('province'));
-
+    // ─── DATA ───
     let provinces = JSON.parse(localStorage.getItem('police_provinces') || '[]');
     let stations = JSON.parse(localStorage.getItem('police_stations') || '[]');
     let officers = JSON.parse(localStorage.getItem('police_officers') || '[]');
     let reports = [];
 
-    let currentProvince = provinces.find(p => p.id === provinceId);
+    let currentProvinceId = null;
 
+    // ─── POPULATE PROVINCE DROPDOWN ───
+    function populateProvinces() {
+        const select = document.getElementById('provinceSelect');
+        select.innerHTML = '<option value="">-- Select a province --</option>';
+        provinces.forEach(p => {
+            const option = document.createElement('option');
+            option.value = p.id;
+            option.textContent = p.name + ' (' + p.commander + ')';
+            select.appendChild(option);
+        });
+    }
+
+    // ─── SELECT PROVINCE ───
+    function selectProvince() {
+        const select = document.getElementById('provinceSelect');
+        currentProvinceId = parseInt(select.value);
+        loadDashboard();
+    }
+
+    // ─── LOAD DASHBOARD ───
     function loadDashboard() {
+        populateProvinces();
+
+        if (!currentProvinceId) {
+            document.getElementById('provinceName').textContent = 'No province selected';
+            document.getElementById('provinceDetails').textContent = 'Select a province from the dropdown above';
+            document.getElementById('provinceStats').textContent = '';
+            document.getElementById('totalReports').textContent = '—';
+            document.getElementById('resolved').textContent = '—';
+            document.getElementById('pending').textContent = '—';
+            document.getElementById('urgent').textContent = '—';
+            document.getElementById('stationCount').textContent = '0 stations';
+            document.getElementById('stationList').innerHTML = `<div class="empty"><div class="icon">🗺️</div><p>Select a province to view stations.</p></div>`;
+            return;
+        }
+
+        const currentProvince = provinces.find(p => p.id === currentProvinceId);
         if (!currentProvince) {
-            document.getElementById('provinceName').textContent = '⚠️ No province selected';
+            document.getElementById('provinceName').textContent = '⚠️ Province not found';
             return;
         }
 
         document.getElementById('provinceName').textContent = '📍 ' + currentProvince.name;
         document.getElementById('timestamp').textContent = new Date().toLocaleString();
 
-        const stationList = stations.filter(s => s.provinceId === currentProvince.id);
-        const officerList = officers.filter(o => o.provinceId === currentProvince.id);
+        const stationList = stations.filter(s => s.provinceId === currentProvinceId);
+        const officerList = officers.filter(o => o.provinceId === currentProvinceId);
         const reportList = reports.filter(r => r.province === currentProvince.name);
 
+        document.getElementById('provinceDetails').textContent = `Commander: ${currentProvince.commander} · 📱 ${currentProvince.phone}`;
         document.getElementById('provinceStats').textContent = `🚔 ${stationList.length} stations · 👮 ${officerList.length} officers · 📋 ${reportList.length} reports`;
 
         document.getElementById('totalReports').textContent = reportList.length;
@@ -295,6 +366,7 @@
         renderStations(stationList);
     }
 
+    // ─── RENDER STATIONS ───
     function renderStations(stationList) {
         const container = document.getElementById('stationList');
         if (stationList.length === 0) {
@@ -323,8 +395,12 @@
         container.innerHTML = html;
     }
 
+    // ─── ADD STATION ───
     function showAddStation() {
-        if (!currentProvince) { alert('Please select a province first.'); return; }
+        if (!currentProvinceId) {
+            showToast('error', '❌ Please select a province first.');
+            return;
+        }
         document.getElementById('stationName').value = '';
         document.getElementById('stationCommander').value = '';
         document.getElementById('stationPhone').value = '';
@@ -335,8 +411,11 @@
         const name = document.getElementById('stationName').value.trim();
         const commander = document.getElementById('stationCommander').value.trim();
         const phone = document.getElementById('stationPhone').value.trim();
-        if (!name || !commander) { alert('Please enter station name and commander name.'); return; }
-        const newStation = { id: Date.now(), provinceId: currentProvince.id, name, commander, phone: phone || 'N/A' };
+        if (!name || !commander) {
+            alert('Please enter station name and commander name.');
+            return;
+        }
+        const newStation = { id: Date.now(), provinceId: currentProvinceId, name, commander, phone: phone || 'N/A' };
         stations.push(newStation);
         localStorage.setItem('police_stations', JSON.stringify(stations));
         closeModal('addStationModal');
@@ -385,4 +464,4 @@
 </script>
 
 </body>
-    </html>
+            </html>
