@@ -71,11 +71,11 @@
         .card h3 { color: #FFB300; font-size: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .card h3 .badge-count { background: #2a2a2a; color: #aaa; font-size: 11px; padding: 2px 10px; border-radius: 12px; margin-left: auto; }
 
-        .team-item {
+        .officer-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 12px;
+            padding: 10px 14px;
             background: #0a0a0a;
             border-radius: 8px;
             border: 1px solid #1a1a2e;
@@ -83,50 +83,21 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .team-item .info { flex: 1; min-width: 150px; }
-        .team-item .info .name { color: #fff; font-weight: bold; }
-        .team-item .info .details { color: #888; font-size: 13px; }
-        .team-item .info .role { color: #FFB300; font-size: 12px; }
-        .team-item .btn-remove { padding: 4px 12px; background: #e94560; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; transition: all 0.3s; }
-        .team-item .btn-remove:hover { background: #c0392b; }
-
-        .report-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 14px;
-            background: #0a0a0a;
-            border-radius: 8px;
-            border: 1px solid #1a1a2e;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-            gap: 10px;
+        .officer-item .name { color: #fff; font-weight: bold; }
+        .officer-item .details { color: #888; font-size: 13px; }
+        .officer-item .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .officer-item .actions .btn-sm {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .report-item:hover { border-color: #2a2a2a; }
-        .report-item .info { flex: 1; min-width: 180px; }
-        .report-item .info .msg { color: #fff; font-size: 14px; font-weight: 500; }
-        .report-item .info .meta { color: #888; font-size: 12px; margin-top: 3px; }
-        .report-item .info .meta span { margin-right: 12px; }
-        .report-item .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .report-item .actions select { padding: 6px 10px; background: #0a0a0a; color: #fff; border: 1px solid #2a2a2a; border-radius: 6px; font-size: 12px; cursor: pointer; }
-        .report-item .actions select:focus { outline: none; border-color: #FFB300; }
-        .report-item .actions .btn-forward { padding: 6px 14px; background: #4A90D9; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
-        .report-item .actions .btn-forward:hover { background: #357ABD; }
-        .report-item .actions .btn-status { padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
-        .btn-progress { background: #FFB300; color: #000; }
-        .btn-progress:hover { background: #e6a300; }
-        .btn-resolve { background: #00ff88; color: #000; }
-        .btn-resolve:hover { background: #00cc6a; }
-
-        .urgency-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-        .urgency-badge.red { background: #e9456033; color: #e94560; }
-        .urgency-badge.amber { background: #FFB30033; color: #FFB300; }
-        .urgency-badge.green { background: #00ff8833; color: #00ff88; }
-        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-        .status-badge.pending { background: #e9456033; color: #e94560; }
-        .status-badge.in-progress { background: #FFB30033; color: #FFB300; }
-        .status-badge.resolved { background: #00ff8833; color: #00ff88; }
-        .status-badge.assigned { background: #4A90D933; color: #4A90D9; }
+        .btn-edit { background: #4A90D9; color: #fff; }
+        .btn-edit:hover { background: #357ABD; }
+        .btn-delete { background: #e94560; color: #fff; }
+        .btn-delete:hover { background: #c0392b; }
 
         .btn { padding: 8px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
         .btn-primary { background: #FFB300; color: #000; }
@@ -152,11 +123,21 @@
             max-width: 450px;
             width: 90%;
             border: 1px solid #2a2a2a;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal h3 { color: #FFB300; margin-bottom: 15px; }
         .modal label { display: block; color: #aaa; font-size: 13px; margin: 10px 0 5px; font-weight: 600; }
-        .modal input { width: 100%; padding: 10px; background: #0a0a0a; color: #fff; border: 1px solid #2a2a2a; border-radius: 8px; font-size: 14px; }
-        .modal input:focus { outline: none; border-color: #FFB300; }
+        .modal input, .modal select {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a0a;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .modal input:focus, .modal select:focus { outline: none; border-color: #FFB300; }
         .modal .btn-group { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
         .modal .btn-group .btn-cancel { padding: 10px 24px; background: #2a2a2a; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
         .modal .btn-group .btn-cancel:hover { background: #3a3a3a; }
@@ -194,8 +175,6 @@
             .stats { grid-template-columns: 1fr 1fr; }
             .row { grid-template-columns: 1fr; }
             .header { flex-direction: column; text-align: center; }
-            .report-item { flex-direction: column; align-items: stretch; }
-            .team-item { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 480px) { .stats { grid-template-columns: 1fr; } }
     </style>
@@ -213,16 +192,17 @@
             <span class="badge">🟢 Online</span>
             <span style="color: #555; font-size: 13px;" id="timestamp">Loading...</span>
             <div class="nav-links">
-                <a href="policeconnect-province.html">🏛️ Provincial</a>
                 <a href="policeconnect.html">🏠 National</a>
+                <a href="policeconnect-province.html">🏛️ Provincial</a>
                 <a href="index.html">🏠 Home</a>
             </div>
         </div>
     </header>
 
-    <div style="background:#1a1a2e;padding:12px 20px;border-radius:8px;border:1px solid #2a2a2a;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <span style="color:#aaa;font-size:14px;">📍 <strong style="color:#fff;">Central Police Station</strong> | Station Commander</span>
-        <span style="color:#888;font-size:12px;">👮 8 officers · 📋 15 reports</span>
+    <!-- Station Info -->
+    <div id="stationInfo" style="background:#1a1a2e;padding:12px 20px;border-radius:8px;border:1px solid #2a2a2a;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <span style="color:#aaa;font-size:14px;">📍 <strong style="color:#fff;" id="stationName">Select a station</strong></span>
+        <span style="color:#888;font-size:12px;" id="stationStats">— officers · — reports</span>
     </div>
 
     <div class="stats">
@@ -234,9 +214,11 @@
 
     <div class="row">
         <div class="card">
-            <h3>👥 Officers <span class="badge-count" id="teamCount">0 officers</span></h3>
-            <div id="teamList"><div class="empty"><div class="icon">👮</div><p>No officers added yet.</p></div></div>
-            <div style="margin-top:15px;"><button class="btn btn-blue" onclick="showAddOfficer()">➕ Add Officer</button></div>
+            <h3>👮 Officers <span class="badge-count" id="officerCount">0 officers</span></h3>
+            <div id="officerList"><div class="empty"><div class="icon">👮</div><p>No officers added yet.</p></div></div>
+            <div style="margin-top:15px;">
+                <button class="btn btn-blue" onclick="showAddOfficer()">➕ Add Officer</button>
+            </div>
         </div>
         <div class="card">
             <h3>📊 Crime Categories</h3>
@@ -250,18 +232,20 @@
         </div>
     </div>
 
-    <div class="card" style="margin-top:20px;">
-        <h3>📋 Recent Reports <span class="badge-count" id="reportCount">0 reports</span></h3>
-        <div id="reportList"><div class="empty"><div class="icon">👮</div><p>No reports yet.</p></div></div>
-    </div>
-
+    <!-- Add Officer Modal -->
     <div class="modal-overlay" id="addOfficerModal">
         <div class="modal">
             <h3>➕ Add Officer</h3>
-            <label>Full Name</label><input type="text" id="officerName" placeholder="e.g. Sgt. T. Ncube">
-            <label>Phone Number</label><input type="text" id="officerPhone" placeholder="e.g. 0771 234 567">
-            <label>Rank</label><input type="text" id="officerRank" placeholder="e.g. Sergeant">
-            <div class="btn-group"><button class="btn-cancel" onclick="closeModal('addOfficerModal')">Cancel</button><button class="btn-save" onclick="saveOfficer()">💾 Add Officer</button></div>
+            <label>Full Name</label>
+            <input type="text" id="officerName" placeholder="e.g. Sgt. T. Ncube">
+            <label>Phone Number</label>
+            <input type="text" id="officerPhone" placeholder="e.g. 0771 234 567">
+            <label>Rank</label>
+            <input type="text" id="officerRank" placeholder="e.g. Sergeant">
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeModal('addOfficerModal')">Cancel</button>
+                <button class="btn-save" onclick="saveOfficer()">💾 Add Officer</button>
+            </div>
         </div>
     </div>
 
@@ -272,112 +256,86 @@
 
     <div class="footer">
         <p>© 2025 GatekeeperAI. All rights reserved. 🇿🇼 Built for Zimbabwe</p>
-        <p><a href="policeconnect-province.html">🏛️ Provincial Dashboard</a> | <a href="policeconnect.html">🏠 National Dashboard</a> | <a href="index.html">🏠 Home</a></p>
+        <p>
+            <a href="policeconnect.html">🏠 National</a> |
+            <a href="policeconnect-province.html">🏛️ Provincial</a> |
+            <a href="policeconnect-station.html">🏛️ Station</a> |
+            <a href="index.html">🏠 Home</a>
+        </p>
     </div>
 </div>
 
 <script>
-    let officers = [];
+    // ─── GET STATION FROM URL ───
+    const urlParams = new URLSearchParams(window.location.search);
+    const stationId = parseInt(urlParams.get('station'));
+
+    let stations = JSON.parse(localStorage.getItem('police_stations') || '[]');
+    let officers = JSON.parse(localStorage.getItem('police_officers') || '[]');
     let reports = [];
 
-    function loadDashboard() {
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-        document.getElementById('totalReports').textContent = reports.length;
-        document.getElementById('resolved').textContent = reports.filter(r => r.status === 'resolved').length;
-        document.getElementById('pending').textContent = reports.filter(r => r.status !== 'resolved').length;
-        document.getElementById('urgent').textContent = reports.filter(r => r.urgency === 'RED').length;
-        document.getElementById('teamCount').textContent = officers.length;
+    let currentStation = stations.find(s => s.id === stationId);
 
+    function loadDashboard() {
+        if (!currentStation) {
+            document.getElementById('stationName').textContent = '⚠️ No station selected';
+            return;
+        }
+
+        document.getElementById('stationName').textContent = '🚔 ' + currentStation.name;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+        const officerList = officers.filter(o => o.stationId === currentStation.id);
+        const reportList = reports.filter(r => r.station === currentStation.name);
+
+        document.getElementById('stationStats').textContent = `👮 ${officerList.length} officers · 📋 ${reportList.length} reports`;
+
+        document.getElementById('totalReports').textContent = reportList.length;
+        document.getElementById('resolved').textContent = reportList.filter(r => r.status === 'resolved').length;
+        document.getElementById('pending').textContent = reportList.filter(r => r.status !== 'resolved').length;
+        document.getElementById('urgent').textContent = reportList.filter(r => r.urgency === 'RED').length;
+        document.getElementById('officerCount').textContent = officerList.length + ' officers';
+
+        renderOfficers(officerList);
+        renderCategories(reportList);
+    }
+
+    function renderOfficers(officerList) {
+        const container = document.getElementById('officerList');
+        if (officerList.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="icon">👮</div><p>No officers added yet.</p></div>`;
+            return;
+        }
+        let html = '';
+        officerList.forEach(o => {
+            html += `
+                <div class="officer-item">
+                    <div>
+                        <div class="name">${o.name}</div>
+                        <div class="details">📱 ${o.phone} · 🎯 ${o.rank}</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-sm btn-edit" onclick="editOfficer(${o.id})">✏️ Edit</button>
+                        <button class="btn-sm btn-delete" onclick="deleteOfficer(${o.id})">🗑️ Remove</button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function renderCategories(reportList) {
         const categories = { 'Robbery': 0, 'Theft': 0, 'Assault': 0, 'Accident': 0, 'Vandalism': 0 };
-        reports.forEach(r => { if (categories[r.category] !== undefined) categories[r.category]++; });
+        reportList.forEach(r => { if (categories[r.category] !== undefined) categories[r.category]++; });
         document.getElementById('catRobbery').textContent = categories.Robbery;
         document.getElementById('catTheft').textContent = categories.Theft;
         document.getElementById('catAssault').textContent = categories.Assault;
         document.getElementById('catAccident').textContent = categories.Accident;
         document.getElementById('catVandalism').textContent = categories.Vandalism;
-        document.getElementById('reportCount').textContent = reports.length + ' reports';
-
-        renderTeam();
-        renderReports();
-    }
-
-    function renderTeam() {
-        const container = document.getElementById('teamList');
-        if (officers.length === 0) {
-            container.innerHTML = `<div class="empty"><div class="icon">👮</div><p>No officers added yet.</p></div>`;
-            return;
-        }
-        let html = '';
-        officers.forEach(o => {
-            html += `
-                <div class="team-item">
-                    <div class="info">
-                        <div class="name">${o.name}</div>
-                        <div class="details">📱 ${o.phone} · 🎯 ${o.rank}</div>
-                    </div>
-                    <button class="btn-remove" onclick="removeOfficer(${o.id})">🗑️ Remove</button>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    function renderReports() {
-        const container = document.getElementById('reportList');
-        if (reports.length === 0) {
-            container.innerHTML = `<div class="empty"><div class="icon">👮</div><p>No reports yet.</p></div>`;
-            return;
-        }
-        const urgencyMap = { 'RED': 'red', 'AMBER': 'amber', 'GREEN': 'green' };
-        const statusMap = { 'pending': 'pending', 'in-progress': 'in-progress', 'resolved': 'resolved', 'assigned': 'assigned' };
-        let html = '';
-        reports.slice(0, 10).forEach(r => {
-            const urgency = urgencyMap[r.urgency] || 'green';
-            const status = statusMap[r.status] || 'pending';
-            const time = r.timestamp ? new Date(r.timestamp).toLocaleString() : '—';
-            let teamOptions = '<option value="">Assign to...</option>';
-            officers.forEach(o => { teamOptions += `<option value="${o.name}">${o.name}</option>`; });
-            html += `
-                <div class="report-item">
-                    <div class="info">
-                        <div class="msg">${r.description}</div>
-                        <div class="meta">
-                            <span>🆔 ${r.id}</span>
-                            <span>📍 ${r.location}</span>
-                            <span>📂 ${r.category}</span>
-                            <span class="urgency-badge ${urgency}">${r.urgency}</span>
-                            <span class="status-badge ${status}">${r.status}</span>
-                            <span>⏱️ ${time}</span>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        ${r.status !== 'resolved' ? `
-                            <select id="assign-${r.id}">${teamOptions}</select>
-                            <button class="btn-forward" onclick="assignOfficer('${r.id}')">📤 Assign</button>
-                            ${r.status === 'pending' || r.status === 'assigned' ? `<button class="btn-status btn-progress" onclick="updateStatus('${r.id}', 'in-progress')">🔄 Start</button>` : ''}
-                            ${r.status === 'in-progress' || r.status === 'assigned' ? `<button class="btn-status btn-resolve" onclick="updateStatus('${r.id}', 'resolved')">✅ Resolve</button>` : ''}
-                        ` : '<span style="color:#00ff88;">✅ Resolved</span>'}
-                    </div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    function assignOfficer(id) {
-        const select = document.getElementById(`assign-${id}`);
-        const selected = select.value;
-        if (!selected) { showToast('error', '❌ Please select an officer.'); return; }
-        const report = reports.find(r => r.id === id);
-        if (report) { report.assignedTo = selected; report.status = 'assigned'; loadDashboard(); showToast('success', `📤 Assigned to ${selected}`); }
-    }
-
-    function updateStatus(id, status) {
-        const report = reports.find(r => r.id === id);
-        if (report) { report.status = status; loadDashboard(); showToast('success', `✅ Report marked as ${status}`); }
     }
 
     function showAddOfficer() {
+        if (!currentStation) { alert('Please select a station first.'); return; }
         document.getElementById('officerName').value = '';
         document.getElementById('officerPhone').value = '';
         document.getElementById('officerRank').value = '';
@@ -389,26 +347,36 @@
         const phone = document.getElementById('officerPhone').value.trim();
         const rank = document.getElementById('officerRank').value.trim();
         if (!name || !phone) { alert('Please enter name and phone number.'); return; }
-        officers.push({ id: Date.now(), name, phone, rank: rank || 'Officer' });
-        document.getElementById('officerName').value = '';
-        document.getElementById('officerPhone').value = '';
-        document.getElementById('officerRank').value = '';
+        const newOfficer = { id: Date.now(), stationId: currentStation.id, name, phone, rank: rank || 'Officer' };
+        officers.push(newOfficer);
+        localStorage.setItem('police_officers', JSON.stringify(officers));
         closeModal('addOfficerModal');
         loadDashboard();
-        showToast('success', `✅ ${name} added`);
+        showToast('success', `✅ Officer ${name} added`);
     }
 
-    function removeOfficer(id) {
+    function deleteOfficer(id) {
+        if (!confirm('Remove this officer?')) return;
+        officers = officers.filter(o => o.id !== id);
+        localStorage.setItem('police_officers', JSON.stringify(officers));
+        loadDashboard();
+        showToast('success', '🗑️ Officer removed');
+    }
+
+    function editOfficer(id) {
         const officer = officers.find(o => o.id === id);
         if (!officer) return;
-        if (confirm(`Remove ${officer.name}?`)) {
-            officers = officers.filter(o => o.id !== id);
+        const newName = prompt('Officer Name:', officer.name);
+        if (newName && newName.trim()) {
+            officer.name = newName.trim();
+            localStorage.setItem('police_officers', JSON.stringify(officers));
             loadDashboard();
-            showToast('success', `🗑️ ${officer.name} removed`);
+            showToast('success', '✅ Officer updated');
         }
     }
 
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
     function showToast(type, message) {
         const toast = document.getElementById('toast');
         toast.className = `toast show ${type}`;
@@ -426,4 +394,4 @@
 </script>
 
 </body>
-  </html>
+    </html>
