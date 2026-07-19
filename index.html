@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gatekeeper AI – Citizen Service & Oversight</title>
-    <meta name="description" content="Gatekeeper AI uses artificial intelligence to automatically sort, route, and track citizen complaints to the right authorities, ensuring accountability and faster service delivery.">
+    <title>GatekeeperAI – The AI Service Delivery Company</title>
+    <meta name="description" content="GatekeeperAI builds intelligent platforms that help governments and enterprises manage complaints, track service delivery, and improve accountability.">
     <style>
-        /* Reset */
+        /* ─── RESET & BASE ─── */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,41 +17,55 @@
         a { color: #FFB300; text-decoration: none; }
         a:hover { color: #00ff88; }
 
-        /* Container */
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-        /* Header */
+        /* ─── HEADER ─── */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid #1a1a2e;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        .logo { font-size: 28px; font-weight: bold; color: #FFB300; }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #FFB300;
+        }
         .logo span { color: #00ff88; }
-        nav a { margin-left: 25px; font-size: 14px; color: #aaa; transition: color 0.3s; }
+        .logo small {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        nav a {
+            margin-left: 20px;
+            font-size: 14px;
+            color: #aaa;
+            transition: color 0.3s;
+        }
         nav a:hover { color: #FFB300; }
 
-        /* Hero */
+        /* ─── HERO ─── */
         .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             text-align: center;
             padding: 60px 0 40px;
         }
         .hero h1 {
-            font-size: 48px;
+            font-size: 44px;
             color: #fff;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .hero h1 span { color: #FFB300; }
-        .hero p {
-            font-size: 20px;
-            color: #aaa;
-            max-width: 750px;
-            margin-bottom: 30px;
+        .hero .sub {
+            font-size: 18px;
+            color: #888;
+            max-width: 700px;
+            margin: 0 auto 25px;
         }
         .hero .badge {
             display: inline-block;
@@ -59,74 +73,97 @@
             color: #00ff88;
             padding: 8px 20px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13px;
             border: 1px solid #00ff8833;
-            margin-bottom: 25px;
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 16px 40px;
-            background: #FFB300;
-            color: #000;
-            font-weight: bold;
-            border-radius: 10px;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        .cta-button:hover {
-            background: #e6a300;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3);
+            margin-bottom: 20px;
         }
 
-        /* Features */
-        .features {
+        /* ─── PRODUCTS GRID ─── */
+        .products {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            padding: 50px 0;
+            gap: 25px;
+            padding: 40px 0;
         }
-        .feature-card {
+        .product-card {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .product-card:hover {
+            border-color: #FFB300;
+            transform: translateY(-4px);
+        }
+        .product-card .icon { font-size: 36px; margin-bottom: 10px; }
+        .product-card h3 { color: #FFB300; font-size: 18px; margin-bottom: 5px; }
+        .product-card .by { font-size: 12px; color: #00ff88; margin-bottom: 8px; display: block; }
+        .product-card p { color: #aaa; font-size: 14px; }
+        .product-card .tag { 
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .tag-green { background: #00ff8833; color: #00ff88; }
+        .tag-orange { background: #FFB30033; color: #FFB300; }
+        .tag-blue { background: #4A90D933; color: #4A90D9; }
+        .tag-red { background: #e9456033; color: #e94560; }
+
+        /* ─── SECTORS ─── */
+        .sectors {
             background: #1a1a2e;
             padding: 30px;
             border-radius: 12px;
             border: 1px solid #2a2a2a;
-            transition: border-color 0.3s;
-        }
-        .feature-card:hover { border-color: #FFB300; }
-        .feature-card .icon { font-size: 40px; margin-bottom: 15px; }
-        .feature-card h3 { color: #FFB300; margin-bottom: 10px; }
-        .feature-card p { color: #aaa; font-size: 14px; }
-
-        /* Departments */
-        .departments {
-            background: #1a1a2e;
-            padding: 40px;
-            border-radius: 12px;
+            margin: 20px 0;
             text-align: center;
-            margin: 30px 0;
-            border: 1px solid #2a2a2a;
         }
-        .departments h2 { color: #FFB300; margin-bottom: 15px; }
-        .departments .badges {
+        .sectors h2 { color: #FFB300; margin-bottom: 15px; }
+        .sectors .list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
         }
-        .departments .badges span {
+        .sectors .list span {
             background: #0a0a0a;
-            padding: 6px 16px;
+            padding: 6px 18px;
             border-radius: 20px;
             font-size: 13px;
             color: #aaa;
             border: 1px solid #2a2a2a;
         }
 
-        /* Footer */
+        /* ─── CTA ─── */
+        .cta {
+            background: #1a2a1a;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #2a3a2a;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .cta h2 { color: #00ff88; margin-bottom: 10px; }
+        .cta p { color: #aaa; margin-bottom: 20px; }
+        .cta .btn {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #FFB300;
+            color: #000;
+            font-weight: bold;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .cta .btn:hover { background: #e6a300; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3); }
+
+        /* ─── FOOTER ─── */
         footer {
-            margin-top: 50px;
+            margin-top: 40px;
             padding: 30px 0;
             border-top: 1px solid #1a1a2e;
             text-align: center;
@@ -140,19 +177,23 @@
             font-size: 13px;
         }
         footer .links a:hover { color: #FFB300; }
-        footer .legal {
-            font-size: 12px;
-            color: #444;
-            margin-top: 10px;
+        footer .legal { font-size: 12px; color: #444; margin-top: 10px; }
+        footer .zim-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 20px;
+            background: #1a1a2e;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+            font-size: 13px;
         }
-        footer .legal a { color: #555; }
-        footer .legal a:hover { color: #FFB300; }
+        footer .zim-badge span { color: #00ff88; }
 
-        /* Responsive */
+        /* ─── RESPONSIVE ─── */
         @media (max-width: 768px) {
+            .products { grid-template-columns: 1fr; }
             .hero h1 { font-size: 32px; }
-            .features { grid-template-columns: 1fr; }
-            header { flex-direction: column; gap: 15px; }
+            header { flex-direction: column; text-align: center; }
             nav a { margin: 0 12px; }
         }
     </style>
@@ -161,93 +202,135 @@
 
 <div class="container">
 
-    <!-- Header -->
+    <!-- ─── HEADER ─── -->
     <header>
-        <div class="logo">Gatekeeper <span>AI</span></div>
+        <div class="logo">
+            Gatekeeper<span>AI</span>
+            <small>The AI Service Delivery Company</small>
+        </div>
         <nav>
-            <a href="#features">Features</a>
-            <a href="#departments">Departments</a>
+            <a href="#products">Products</a>
+            <a href="#sectors">Sectors</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
         </nav>
     </header>
 
-    <!-- Hero Section -->
+    <!-- ─── HERO ─── -->
     <section class="hero">
-        <div class="badge">🇿🇼 Proudly Zimbabwean – Built for NDS 2</div>
-        <h1>AI-Powered <span>Citizen Service</span> & <span>Accountability</span></h1>
-        <p>Gatekeeper AI automatically reads, sorts, and routes citizen complaints to the correct department or MP—ensuring faster responses, real-time tracking, and full accountability.</p>
-        <a href="#" class="cta-button">🚀 Get Started</a>
+        <div class="badge">🇿🇼 Built in Zimbabwe · Built for Zimbabwe</div>
+        <h1>Intelligent Platforms for <span>Government</span> & <span>Enterprise</span></h1>
+        <p class="sub">GatekeeperAI builds AI-powered platforms that help organisations manage complaints, track service delivery, and improve accountability across all sectors.</p>
     </section>
 
-    <!-- Features -->
-    <section id="features">
-        <h2 style="color: #FFB300; text-align: center; margin-bottom: 10px;">How It Works</h2>
-        <p style="text-align: center; color: #888; margin-bottom: 30px;">From citizen complaint to resolution — in seconds.</p>
-        <div class="features">
-            <div class="feature-card">
-                <div class="icon">📱</div>
-                <h3>1. Citizen Reports</h3>
-                <p>Citizen sends a WhatsApp message to our number. Includes text, location, or photo.</p>
+    <!-- ─── PRODUCTS ─── -->
+    <section id="products">
+        <h2 style="color:#FFB300;text-align:center;margin-bottom:10px;">Our Products</h2>
+        <p style="text-align:center;color:#888;margin-bottom:30px;">Built by GatekeeperAI – The AI Service Delivery Company</p>
+
+        <div class="products">
+
+            <!-- CitizenConnect -->
+            <div class="product-card">
+                <div class="icon">🏙️</div>
+                <h3>CitizenConnect</h3>
+                <span class="by">by GatekeeperAI</span>
+                <p>Complaint management for local authorities. Citizens report issues via WhatsApp, AI routes to the correct department.</p>
+                <span class="tag tag-green">✅ Live</span>
             </div>
-            <div class="feature-card">
-                <div class="icon">🤖</div>
-                <h3>2. AI Sorts & Routes</h3>
-                <p>AI reads the complaint, detects urgency (Red/Amber/Green), and forwards it to the correct authority instantly.</p>
+
+            <!-- PowerTrack -->
+            <div class="product-card">
+                <div class="icon">⚡</div>
+                <h3>PowerTrack</h3>
+                <span class="by">by GatekeeperAI</span>
+                <p>Fault management for utilities (ZESA). Meter number + location routing, depot performance tracking.</p>
+                <span class="tag tag-orange">⚡ Live</span>
             </div>
-            <div class="feature-card">
-                <div class="icon">📊</div>
-                <h3>3. Track & Oversee</h3>
-                <p>Citizens track complaints. Departments resolve them. Supervisors monitor performance in real-time.</p>
+
+            <!-- ParliamentWatch -->
+            <div class="product-card">
+                <div class="icon">🏛️</div>
+                <h3>ParliamentWatch</h3>
+                <span class="by">by GatekeeperAI</span>
+                <p>Constituency oversight and MP performance tracking for the Chief Whip and Clerk of Parliament.</p>
+                <span class="tag tag-blue">🏛️ Live</span>
             </div>
+
+            <!-- CouncilServe -->
+            <div class="product-card">
+                <div class="icon">🏛️</div>
+                <h3>CouncilServe</h3>
+                <span class="by">by GatekeeperAI</span>
+                <p>Service delivery tracking for local government. Real-time dashboards for Town Clerks and department heads.</p>
+                <span class="tag tag-green">✅ Live</span>
+            </div>
+
+            <!-- PoliceConnect -->
+            <div class="product-card">
+                <div class="icon">👮</div>
+                <h3>PoliceConnect</h3>
+                <span class="by">by GatekeeperAI</span>
+                <p>Crime reporting and police complaints. Citizens report incidents, AI routes to the correct police station.</p>
+                <span class="tag tag-blue">🚔 Coming Soon</span>
+            </div>
+
+            <!-- HealthCare -->
+            <div class="product-card">
+                <div class="icon">🏥</div>
+                <h3>HealthCare</h3>
+                <span class="by">by GatekeeperAI</span>
+                <p>Patient feedback and service improvement for hospitals and clinics. Track complaints and improve care.</p>
+                <span class="tag tag-blue">🏥 Coming Soon</span>
+            </div>
+
         </div>
     </section>
 
-    <!-- Departments -->
-    <section id="departments" class="departments">
-        <h2>🏛️ Trusted by Multiple Departments</h2>
-        <p style="color: #aaa; margin-bottom: 10px;">Our AI routes complaints to the right authority—every time.</p>
-        <div class="badges">
-            <span>🏗️ Roads</span>
-            <span>💧 Water</span>
-            <span>🏥 Health</span>
-            <span>🏫 Education</span>
-            <span>⚡ Electricity</span>
-            <span>🗑️ Refuse</span>
-            <span>🚒 Fire</span>
-            <span>🚑 Ambulance</span>
+    <!-- ─── SECTORS ─── -->
+    <section id="sectors" class="sectors">
+        <h2>Who We Serve</h2>
+        <div class="list">
+            <span>🏛️ Local Government</span>
+            <span>⚡ Utilities (ZESA)</span>
             <span>🏛️ Parliament</span>
+            <span>👮 Police</span>
+            <span>🏥 Health</span>
+            <span>📚 Education</span>
+            <span>🏢 Enterprise</span>
         </div>
     </section>
 
-    <!-- Footer -->
-<footer>
-    <div class="links">
-        <a href="index.html">Home</a>
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms & Conditions</a>
-        <a href="dpa.html">DPA (Partners)</a>
-        <a href="sla.html">SLA (Partners)</a>
-    </div>
+    <!-- ─── CTA ─── -->
+    <section class="cta">
+        <h2>🇿🇼 Built for Zimbabwe</h2>
+        <p>GatekeeperAI is proudly Zimbabwean. We understand our local languages, our government structures, and the unique challenges our communities face.</p>
+        <a href="#contact" class="btn">📧 Contact Us</a>
+    </section>
 
-    <!-- 🇿🇼 Proudly Zimbabwean Badge -->
-    <div style="margin: 15px 0; padding: 12px; background: #1a1a2e; border-radius: 10px; border: 1px solid #2a2a2a; display: inline-block;">
-        <span style="font-size: 20px;">🇿🇼</span>
-        <span style="color: #FFB300; font-weight: bold; margin-left: 8px;">Built for Zimbabwe</span>
-        <span style="color: #888; margin-left: 8px;">|</span>
-        <span style="color: #00ff88;">Proudly Zimbabwean</span>
-    </div>
+    <!-- ─── FOOTER ─── -->
+    <footer>
+        <div class="logo" style="font-size:20px;margin-bottom:10px;">
+            Gatekeeper<span>AI</span>
+            <small>The AI Service Delivery Company</small>
+        </div>
+        <div class="links">
+            <a href="#products">Products</a>
+            <a href="#sectors">Sectors</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms & Conditions</a>
+        </div>
+        <p>&copy; 2025 GatekeeperAI. All rights reserved.</p>
+        <div class="legal">
+            GatekeeperAI complies with the <strong>Zimbabwe Data Protection Act [Chapter 11:12]</strong> and 
+            <strong>Meta (WhatsApp) Business Platform Terms</strong>.
+        </div>
+        <div class="zim-badge">
+            🇿🇼 <span>Built for Zimbabwe</span> · Proudly Zimbabwean
+        </div>
+    </footer>
 
-    <p>&copy; 2025 Gatekeeper AI. All rights reserved.</p>
+</div>
 
-    <div class="legal">
-        Gatekeeper AI complies with the <strong>Zimbabwe Data Protection Act [Chapter 11:12]</strong> and 
-        <strong>Meta (WhatsApp) Business Platform Terms</strong>.
-    </div>
-
-    <!-- 🇿🇼 Additional Zimbabwe Pride -->
-    <div style="margin-top: 12px; font-size: 12px; color: #444;">
-        🇿🇼 <span style="color: #555;">Designed &amp; built in Zimbabwe. 🇿🇼</span>
-    </div>
-</footer>
-    
+</body>
+    </html>
