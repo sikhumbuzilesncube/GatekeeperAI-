@@ -100,7 +100,7 @@
         .product-card h3 { color: #FFB300; font-size: 18px; margin-bottom: 5px; }
         .product-card .by { font-size: 12px; color: #00ff88; margin-bottom: 8px; display: block; }
         .product-card p { color: #aaa; font-size: 14px; }
-        .product-card .tag { 
+        .product-card .tag {
             display: inline-block;
             padding: 2px 12px;
             border-radius: 12px;
@@ -138,18 +138,45 @@
             border: 1px solid #2a2a2a;
         }
 
-        /* ─── CTA ─── */
-        .cta {
-            background: #1a2a1a;
+        /* ─── CONTACT SECTION ─── */
+        .contact {
+            background: #1a1a2e;
             padding: 40px;
             border-radius: 12px;
-            border: 1px solid #2a3a2a;
-            text-align: center;
+            border: 1px solid #2a2a2a;
             margin: 30px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
         }
-        .cta h2 { color: #00ff88; margin-bottom: 10px; }
-        .cta p { color: #aaa; margin-bottom: 20px; }
-        .cta .btn {
+        .contact h2 { color: #FFB300; margin-bottom: 15px; }
+        .contact .info p {
+            color: #aaa;
+            font-size: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .contact .info p .icon { font-size: 20px; }
+        .contact .info p a { color: #00ff88; }
+        .contact .info p a:hover { color: #FFB300; }
+        .contact .map-placeholder {
+            background: #0a0a0a;
+            border-radius: 10px;
+            border: 1px solid #2a2a2a;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        .contact .map-placeholder .icon { font-size: 48px; margin-bottom: 10px; }
+        .contact .map-placeholder p { color: #555; font-size: 14px; }
+
+        .btn {
             display: inline-block;
             padding: 14px 40px;
             background: #FFB300;
@@ -158,8 +185,10 @@
             border-radius: 10px;
             font-size: 16px;
             transition: all 0.3s;
+            border: none;
+            cursor: pointer;
         }
-        .cta .btn:hover { background: #e6a300; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3); }
+        .btn:hover { background: #e6a300; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3); }
 
         /* ─── FOOTER ─── */
         footer {
@@ -195,6 +224,7 @@
             .hero h1 { font-size: 32px; }
             header { flex-direction: column; text-align: center; }
             nav a { margin: 0 12px; }
+            .contact { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -211,6 +241,7 @@
         <nav>
             <a href="#products">Products</a>
             <a href="#sectors">Sectors</a>
+            <a href="#contact">Contact</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
         </nav>
@@ -221,6 +252,7 @@
         <div class="badge">🇿🇼 Built in Zimbabwe · Built for Zimbabwe</div>
         <h1>Intelligent Platforms for <span>Government</span> & <span>Enterprise</span></h1>
         <p class="sub">GatekeeperAI builds AI-powered platforms that help organisations manage complaints, track service delivery, and improve accountability across all sectors.</p>
+        <a href="#contact" class="btn">📧 Contact Us</a>
     </section>
 
     <!-- ─── PRODUCTS ─── -->
@@ -229,7 +261,6 @@
         <p style="text-align:center;color:#888;margin-bottom:30px;">Built by GatekeeperAI – The AI Service Delivery Company</p>
 
         <div class="products">
-
             <!-- CitizenConnect -->
             <div class="product-card">
                 <div class="icon">🏙️</div>
@@ -272,7 +303,7 @@
                 <h3>PoliceConnect</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Crime reporting and police complaints. Citizens report incidents, AI routes to the correct police station.</p>
-                <span class="tag tag-blue">🚔 Coming Soon</span>
+                <span class="tag tag-blue">🚔 Live</span>
             </div>
 
             <!-- HealthCare -->
@@ -283,7 +314,6 @@
                 <p>Patient feedback and service improvement for hospitals and clinics. Track complaints and improve care.</p>
                 <span class="tag tag-blue">🏥 Coming Soon</span>
             </div>
-
         </div>
     </section>
 
@@ -301,11 +331,27 @@
         </div>
     </section>
 
-    <!-- ─── CTA ─── -->
-    <section class="cta">
-        <h2>🇿🇼 Built for Zimbabwe</h2>
-        <p>GatekeeperAI is proudly Zimbabwean. We understand our local languages, our government structures, and the unique challenges our communities face.</p>
-        <a href="#contact" class="btn">📧 Contact Us</a>
+    <!-- ─── CONTACT ─── -->
+    <section id="contact" class="contact">
+        <div class="info">
+            <h2>📬 Get in Touch</h2>
+            <p>We'd love to hear from you. Whether you have a question about our products, need support, or want to discuss how we can help your organisation, reach out to us.</p>
+
+            <p><span class="icon">📍</span> <strong>Address:</strong><br>1 Basil Place, between 10th Avenue and J. Tongogara Street, Bulawayo</p>
+
+            <p><span class="icon">📧</span> <strong>Email:</strong><br><a href="mailto:admin@gatekeeperai.co.zw">admin@gatekeeperai.co.zw</a></p>
+
+            <p><span class="icon">📱</span> <strong>Phone / WhatsApp:</strong><br><a href="tel:+263719117744">+263 71 911 7744</a></p>
+
+            <p><span class="icon">🌐</span> <strong>Website:</strong><br><a href="https://gatekeeperai.co.zw">gatekeeperai.co.zw</a></p>
+
+            <a href="mailto:admin@gatekeeperai.co.zw" class="btn" style="display:inline-block;margin-top:10px;">📧 Email Us</a>
+        </div>
+        <div class="map-placeholder">
+            <div class="icon">🇿🇼</div>
+            <p><strong>GatekeeperAI</strong><br>1 Basil Place<br>Bulawayo, Zimbabwe</p>
+            <p style="font-size:12px;color:#444;margin-top:10px;">📍 Located between 10th Avenue and J. Tongogara Street</p>
+        </div>
     </section>
 
     <!-- ─── FOOTER ─── -->
@@ -317,12 +363,13 @@
         <div class="links">
             <a href="#products">Products</a>
             <a href="#sectors">Sectors</a>
+            <a href="#contact">Contact</a>
             <a href="privacy.html">Privacy Policy</a>
             <a href="terms.html">Terms & Conditions</a>
         </div>
         <p>&copy; 2025 GatekeeperAI. All rights reserved.</p>
         <div class="legal">
-            GatekeeperAI complies with the <strong>Zimbabwe Data Protection Act [Chapter 11:12]</strong> and 
+            GatekeeperAI complies with the <strong>Zimbabwe Data Protection Act [Chapter 11:12]</strong> and
             <strong>Meta (WhatsApp) Business Platform Terms</strong>.
         </div>
         <div class="zim-badge">
