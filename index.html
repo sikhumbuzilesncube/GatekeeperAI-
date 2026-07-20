@@ -3,21 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GatekeeperAI – The AI Service Delivery Company</title>
-    <meta name="description" content="GatekeeperAI builds intelligent platforms that help governments and enterprises manage complaints, track service delivery, and improve accountability.">
+    <title>GatekeeperAI – Intelligent Service Delivery</title>
+    <meta name="description" content="GatekeeperAI builds AI-powered platforms for governments and enterprises to manage complaints, track service delivery, and improve accountability.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         /* ─── RESET & BASE ─── */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #0a0a0a;
-            color: #e0e0e0;
+            color: #e8e8e8;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
-        a { color: #FFB300; text-decoration: none; }
-        a:hover { color: #00ff88; }
+        a { color: #F5A623; text-decoration: none; transition: color 0.3s; }
+        a:hover { color: #00e5a0; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ─── BUTTONS ─── */
+        .btn-primary {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #F5A623 0%, #E0961E 100%);
+            color: #0a0a0a;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(245, 166, 35, 0.35);
+            color: #0a0a0a;
+        }
+        .btn-outline {
+            display: inline-block;
+            padding: 14px 36px;
+            background: transparent;
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-outline:hover {
+            border-color: #F5A623;
+            color: #F5A623;
+            background: rgba(245, 166, 35, 0.05);
+        }
 
         /* ─── HEADER ─── */
         header {
@@ -25,206 +68,323 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
-            border-bottom: 1px solid #1a1a2e;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
         }
         .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #FFB300;
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
         }
-        .logo span { color: #00ff88; }
+        .logo span { color: #F5A623; }
         .logo small {
             display: block;
-            font-size: 12px;
-            color: #888;
-            font-weight: normal;
-            letter-spacing: 1px;
+            font-size: 11px;
+            color: #666;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
+        nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         nav a {
-            margin-left: 20px;
             font-size: 14px;
-            color: #aaa;
-            transition: color 0.3s;
+            font-weight: 500;
+            color: #999;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
-        nav a:hover { color: #FFB300; }
+        nav a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        nav .btn-nav {
+            padding: 10px 24px;
+            background: #F5A623;
+            color: #0a0a0a;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        nav .btn-nav:hover { background: #e0961e; color: #0a0a0a; }
 
         /* ─── HERO ─── */
         .hero {
-            text-align: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
             padding: 60px 0 40px;
         }
-        .hero h1 {
-            font-size: 44px;
+        .hero-content h1 {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
             color: #fff;
-            margin-bottom: 10px;
-        }
-        .hero h1 span { color: #FFB300; }
-        .hero .sub {
-            font-size: 18px;
-            color: #888;
-            max-width: 700px;
-            margin: 0 auto 25px;
-        }
-        .hero .badge {
-            display: inline-block;
-            background: #1a2a1a;
-            color: #00ff88;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 13px;
-            border: 1px solid #00ff8833;
             margin-bottom: 20px;
         }
+        .hero-content h1 .highlight { color: #F5A623; position: relative; }
+        .hero-content h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(245, 166, 35, 0.2);
+            border-radius: 4px;
+        }
+        .hero-content p {
+            font-size: 18px;
+            color: #888;
+            max-width: 520px;
+            margin-bottom: 32px;
+        }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 166, 35, 0.08);
+            border: 1px solid rgba(245, 166, 35, 0.15);
+            padding: 6px 16px 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            color: #F5A623;
+            font-weight: 500;
+            margin-bottom: 28px;
+        }
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: #00e5a0;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+        .hero-image {
+            background: linear-gradient(145deg, #1a1a2e, #12121e);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-image .glow {
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(245, 166, 35, 0.08), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-image .icon-display { font-size: 56px; margin-bottom: 16px; display: block; position: relative; z-index: 1; }
+        .hero-image h3 { color: #fff; font-size: 20px; margin-bottom: 8px; position: relative; z-index: 1; }
+        .hero-image p { color: #666; font-size: 14px; max-width: 300px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-image .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            position: relative; z-index: 1;
+        }
+        .hero-image .stats-row .stat-item { text-align: center; }
+        .hero-image .stats-row .stat-number { font-size: 28px; font-weight: 700; color: #F5A623; }
+        .hero-image .stats-row .stat-label { font-size: 12px; color: #555; }
 
-        /* ─── PRODUCTS GRID ─── */
-        .products {
+        /* ─── SECTION HEADERS ─── */
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .section-header .label {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #F5A623;
+            background: rgba(245, 166, 35, 0.08);
+            padding: 4px 16px;
+            border-radius: 100px;
+            margin-bottom: 12px;
+        }
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+        .section-header p {
+            color: #666;
+            font-size: 16px;
+            max-width: 560px;
+            margin: 12px auto 0;
+        }
+
+        /* ─── PRODUCTS ─── */
+        .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            padding: 40px 0;
+            gap: 24px;
+            padding: 20px 0 40px;
         }
         .product-card {
-            background: #1a1a2e;
-            padding: 25px;
+            background: #12121e;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
-            border: 1px solid #2a2a2a;
-            transition: border-color 0.3s, transform 0.3s;
+            padding: 28px 24px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
         .product-card:hover {
-            border-color: #FFB300;
+            border-color: rgba(245, 166, 35, 0.2);
             transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        .product-card .icon { font-size: 36px; margin-bottom: 10px; }
-        .product-card h3 { color: #FFB300; font-size: 18px; margin-bottom: 5px; }
-        .product-card .by { font-size: 12px; color: #00ff88; margin-bottom: 8px; display: block; }
-        .product-card p { color: #aaa; font-size: 14px; }
+        .product-card .icon { font-size: 32px; margin-bottom: 12px; display: block; }
+        .product-card h3 { color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+        .product-card .by { font-size: 12px; color: #F5A623; font-weight: 500; }
+        .product-card p { color: #777; font-size: 14px; margin-top: 8px; line-height: 1.7; }
         .product-card .tag {
             display: inline-block;
             padding: 2px 12px;
-            border-radius: 12px;
+            border-radius: 100px;
             font-size: 10px;
-            font-weight: bold;
-            margin-top: 8px;
+            font-weight: 600;
+            margin-top: 12px;
+            letter-spacing: 0.5px;
         }
-        .tag-green { background: #00ff8833; color: #00ff88; }
-        .tag-orange { background: #FFB30033; color: #FFB300; }
-        .tag-blue { background: #4A90D933; color: #4A90D9; }
-        .tag-red { background: #e9456033; color: #e94560; }
+        .tag-live { background: rgba(0, 229, 160, 0.12); color: #00e5a0; }
+        .tag-coming { background: rgba(245, 166, 35, 0.12); color: #F5A623; }
+        .product-card .card-glow {
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(245, 166, 35, 0.04), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
         /* ─── SECTORS ─── */
         .sectors {
-            background: #1a1a2e;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #2a2a2a;
-            margin: 20px 0;
+            background: #12121e;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 40px;
             text-align: center;
+            margin: 20px 0;
         }
-        .sectors h2 { color: #FFB300; margin-bottom: 15px; }
         .sectors .list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
+            margin-top: 16px;
         }
         .sectors .list span {
-            background: #0a0a0a;
-            padding: 6px 18px;
-            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            padding: 8px 22px;
+            border-radius: 100px;
             font-size: 13px;
             color: #aaa;
-            border: 1px solid #2a2a2a;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.3s;
+        }
+        .sectors .list span:hover {
+            border-color: rgba(245, 166, 35, 0.15);
+            color: #fff;
         }
 
-        /* ─── CONTACT SECTION ─── */
+        /* ─── CONTACT ─── */
         .contact {
-            background: #1a1a2e;
-            padding: 40px;
-            border-radius: 12px;
-            border: 1px solid #2a2a2a;
-            margin: 30px 0;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
+            gap: 50px;
+            background: #12121e;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 48px;
+            margin: 30px 0;
         }
-        .contact h2 { color: #FFB300; margin-bottom: 15px; }
+        .contact h2 { color: #fff; font-size: 28px; font-weight: 700; margin-bottom: 12px; }
         .contact .info p {
-            color: #aaa;
+            color: #888;
             font-size: 15px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             display: flex;
-            align-items: center;
-            gap: 12px;
+            align-items: flex-start;
+            gap: 14px;
         }
-        .contact .info p .icon { font-size: 20px; }
-        .contact .info p a { color: #00ff88; }
-        .contact .info p a:hover { color: #FFB300; }
-        .contact .map-placeholder {
+        .contact .info p .icon { font-size: 18px; min-width: 24px; margin-top: 2px; }
+        .contact .info p a { color: #F5A623; }
+        .contact .info p a:hover { color: #00e5a0; }
+        .contact .info .btn { margin-top: 8px; }
+        .contact .map {
             background: #0a0a0a;
-            border-radius: 10px;
-            border: 1px solid #2a2a2a;
-            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 32px;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 200px;
+            min-height: 220px;
         }
-        .contact .map-placeholder .icon { font-size: 48px; margin-bottom: 10px; }
-        .contact .map-placeholder p { color: #555; font-size: 14px; }
-
-        .btn {
-            display: inline-block;
-            padding: 14px 40px;
-            background: #FFB300;
-            color: #000;
-            font-weight: bold;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-        }
-        .btn:hover { background: #e6a300; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3); }
+        .contact .map .icon { font-size: 48px; margin-bottom: 12px; }
+        .contact .map p { color: #666; font-size: 14px; }
+        .contact .map .address { color: #aaa; font-weight: 500; }
 
         /* ─── FOOTER ─── */
         footer {
-            margin-top: 40px;
-            padding: 30px 0;
-            border-top: 1px solid #1a1a2e;
+            padding: 40px 0 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
             text-align: center;
-            color: #666;
-            font-size: 14px;
         }
-        footer .links { margin: 10px 0; }
+        footer .logo { font-size: 18px; margin-bottom: 12px; }
+        footer .logo small { font-size: 10px; }
+        footer .links { margin: 12px 0; }
         footer .links a {
-            color: #888;
-            margin: 0 15px;
+            color: #666;
+            margin: 0 14px;
             font-size: 13px;
         }
-        footer .links a:hover { color: #FFB300; }
-        footer .legal { font-size: 12px; color: #444; margin-top: 10px; }
-        footer .zim-badge {
-            display: inline-block;
-            margin-top: 12px;
-            padding: 8px 20px;
-            background: #1a1a2e;
-            border-radius: 8px;
-            border: 1px solid #2a2a2a;
-            font-size: 13px;
-        }
-        footer .zim-badge span { color: #00ff88; }
+        footer .links a:hover { color: #F5A623; }
+        footer .legal { font-size: 12px; color: #444; margin-top: 8px; }
+        footer .zim { margin-top: 14px; display: inline-block; padding: 6px 20px; border: 1px solid rgba(255,255,255,0.05); border-radius: 100px; font-size: 12px; color: #555; }
+        footer .zim span { color: #00e5a0; }
 
         /* ─── RESPONSIVE ─── */
+        @media (max-width: 1024px) {
+            .hero { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .hero-content p { margin: 0 auto 32px; }
+            .hero-buttons { justify-content: center; }
+            .hero-badge { justify-content: center; }
+            .products-grid { grid-template-columns: 1fr 1fr; }
+        }
         @media (max-width: 768px) {
-            .products { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 32px; }
+            .hero-content h1 { font-size: 36px; }
+            .products-grid { grid-template-columns: 1fr; }
+            .contact { grid-template-columns: 1fr; padding: 30px; }
             header { flex-direction: column; text-align: center; }
-            nav a { margin: 0 12px; }
-            .contact { grid-template-columns: 1fr; }
+            nav { justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            .hero-content h1 { font-size: 28px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .btn-primary, .btn-outline { width: 100%; text-align: center; }
+            .section-header h2 { font-size: 26px; }
         }
     </style>
 </head>
@@ -244,119 +404,152 @@
             <a href="#contact">Contact</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
+            <a href="#contact" class="btn-nav">Get Started</a>
         </nav>
     </header>
 
     <!-- ─── HERO ─── -->
     <section class="hero">
-        <div class="badge">🇿🇼 Built in Zimbabwe · Built for Zimbabwe</div>
-        <h1>Intelligent Platforms for <span>Government</span> & <span>Enterprise</span></h1>
-        <p class="sub">GatekeeperAI builds AI-powered platforms that help organisations manage complaints, track service delivery, and improve accountability across all sectors.</p>
-        <a href="#contact" class="btn">📧 Contact Us</a>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Built in Zimbabwe · Built for Zimbabwe
+            </div>
+            <h1>Intelligent Platforms for <span class="highlight">Government</span> &amp; <span class="highlight">Enterprise</span></h1>
+            <p>GatekeeperAI builds AI-powered platforms that help organisations manage complaints, track service delivery, and improve accountability across all sectors.</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn-primary">📧 Contact Us</a>
+                <a href="#products" class="btn-outline">Explore Products →</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="glow"></div>
+            <span class="icon-display">🤖</span>
+            <h3>AI-Powered Service Delivery</h3>
+            <p>Trusted by governments and enterprises across Zimbabwe</p>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-number">6+</div>
+                    <div class="stat-label">Products</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">90%+</div>
+                    <div class="stat-label">Languages Supported</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">AI Availability</div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- ─── PRODUCTS ─── -->
     <section id="products">
-        <h2 style="color:#FFB300;text-align:center;margin-bottom:10px;">Our Products</h2>
-        <p style="text-align:center;color:#888;margin-bottom:30px;">Built by GatekeeperAI – The AI Service Delivery Company</p>
-
-        <div class="products">
-            <!-- CitizenConnect -->
+        <div class="section-header">
+            <span class="label">Our Solutions</span>
+            <h2>Products Built for Impact</h2>
+            <p>Each product is designed to solve real-world challenges in service delivery and accountability.</p>
+        </div>
+        <div class="products-grid">
             <div class="product-card">
-                <div class="icon">🏙️</div>
+                <div class="card-glow"></div>
+                <span class="icon">🏙️</span>
                 <h3>CitizenConnect</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Complaint management for local authorities. Citizens report issues via WhatsApp, AI routes to the correct department.</p>
-                <span class="tag tag-green">✅ Live</span>
+                <span class="tag tag-live">✅ Live</span>
             </div>
-
-            <!-- PowerTrack -->
             <div class="product-card">
-                <div class="icon">⚡</div>
+                <div class="card-glow"></div>
+                <span class="icon">⚡</span>
                 <h3>PowerTrack</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Fault management for utilities (ZESA). Meter number + location routing, depot performance tracking.</p>
-                <span class="tag tag-orange">⚡ Live</span>
+                <span class="tag tag-live">⚡ Live</span>
             </div>
-
-            <!-- ParliamentWatch -->
             <div class="product-card">
-                <div class="icon">🏛️</div>
+                <div class="card-glow"></div>
+                <span class="icon">🏛️</span>
                 <h3>ParliamentWatch</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Constituency oversight and MP performance tracking for the Chief Whip and Clerk of Parliament.</p>
-                <span class="tag tag-blue">🏛️ Live</span>
+                <span class="tag tag-live">🏛️ Live</span>
             </div>
-
-            <!-- CouncilServe -->
             <div class="product-card">
-                <div class="icon">🏛️</div>
+                <div class="card-glow"></div>
+                <span class="icon">🏛️</span>
                 <h3>CouncilServe</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Service delivery tracking for local government. Real-time dashboards for Town Clerks and department heads.</p>
-                <span class="tag tag-green">✅ Live</span>
+                <span class="tag tag-live">✅ Live</span>
             </div>
-
-            <!-- PoliceConnect -->
             <div class="product-card">
-                <div class="icon">👮</div>
+                <div class="card-glow"></div>
+                <span class="icon">👮</span>
                 <h3>PoliceConnect</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Crime reporting and police complaints. Citizens report incidents, AI routes to the correct police station.</p>
-                <span class="tag tag-blue">🚔 Live</span>
+                <span class="tag tag-live">🚔 Live</span>
             </div>
-
-            <!-- HealthCare -->
             <div class="product-card">
-                <div class="icon">🏥</div>
+                <div class="card-glow"></div>
+                <span class="icon">🏥</span>
                 <h3>HealthCare</h3>
                 <span class="by">by GatekeeperAI</span>
                 <p>Patient feedback and service improvement for hospitals and clinics. Track complaints and improve care.</p>
-                <span class="tag tag-blue">🏥 Coming Soon</span>
+                <span class="tag tag-coming">⏳ Coming Soon</span>
             </div>
         </div>
     </section>
 
     <!-- ─── SECTORS ─── -->
-    <section id="sectors" class="sectors">
-        <h2>Who We Serve</h2>
-        <div class="list">
-            <span>🏛️ Local Government</span>
-            <span>⚡ Utilities (ZESA)</span>
-            <span>🏛️ Parliament</span>
-            <span>👮 Police</span>
-            <span>🏥 Health</span>
-            <span>📚 Education</span>
-            <span>🏢 Enterprise</span>
+    <section id="sectors">
+        <div class="sectors">
+            <div class="section-header" style="margin-bottom:8px;">
+                <span class="label">Who We Serve</span>
+                <h2 style="font-size:28px;">Trusted Across Sectors</h2>
+            </div>
+            <div class="list">
+                <span>🏛️ Local Government</span>
+                <span>⚡ Utilities (ZESA)</span>
+                <span>🏛️ Parliament</span>
+                <span>👮 Police</span>
+                <span>🏥 Health</span>
+                <span>📚 Education</span>
+                <span>🏢 Enterprise</span>
+            </div>
         </div>
     </section>
 
     <!-- ─── CONTACT ─── -->
-    <section id="contact" class="contact">
-        <div class="info">
-            <h2>📬 Get in Touch</h2>
-            <p>We'd love to hear from you. Whether you have a question about our products, need support, or want to discuss how we can help your organisation, reach out to us.</p>
+    <section id="contact">
+        <div class="contact">
+            <div class="info">
+                <span class="label" style="display:inline-block;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#F5A623;background:rgba(245,166,35,0.08);padding:4px 16px;border-radius:100px;margin-bottom:12px;">Contact</span>
+                <h2>Let's Work Together</h2>
+                <p style="color:#888;font-size:15px;margin-bottom:24px;">Have a question about our products or want to discuss how we can help your organisation? Reach out to us.</p>
 
-            <p><span class="icon">📍</span> <strong>Address:</strong><br>1 Basil Place, between 10th Avenue and J. Tongogara Street, Bulawayo</p>
+                <p><span class="icon">📍</span> <span><strong>Address</strong><br>1 Basil Place, between 10th Avenue and J. Tongogara Street, Bulawayo</span></p>
 
-            <p><span class="icon">📧</span> <strong>Email:</strong><br><a href="mailto:admin@gatekeeperai.co.zw">admin@gatekeeperai.co.zw</a></p>
+                <p><span class="icon">📧</span> <span><strong>Email</strong><br><a href="mailto:admin@gatekeeperai.co.zw">admin@gatekeeperai.co.zw</a></span></p>
 
-            <p><span class="icon">📱</span> <strong>Phone / WhatsApp:</strong><br><a href="tel:+263719117744">+263 71 911 7744</a></p>
+                <p><span class="icon">📱</span> <span><strong>Phone / WhatsApp</strong><br><a href="tel:+263719117744">+263 71 911 7744</a></span></p>
 
-            <p><span class="icon">🌐</span> <strong>Website:</strong><br><a href="https://gatekeeperai.co.zw">gatekeeperai.co.zw</a></p>
-
-            <a href="mailto:admin@gatekeeperai.co.zw" class="btn" style="display:inline-block;margin-top:10px;">📧 Email Us</a>
-        </div>
-        <div class="map-placeholder">
-            <div class="icon">🇿🇼</div>
-            <p><strong>GatekeeperAI</strong><br>1 Basil Place<br>Bulawayo, Zimbabwe</p>
-            <p style="font-size:12px;color:#444;margin-top:10px;">📍 Located between 10th Avenue and J. Tongogara Street</p>
+                <a href="mailto:admin@gatekeeperai.co.zw" class="btn-primary" style="display:inline-block;margin-top:8px;">📧 Email Us</a>
+            </div>
+            <div class="map">
+                <span class="icon">🇿🇼</span>
+                <p><strong>GatekeeperAI</strong></p>
+                <p class="address">1 Basil Place, Bulawayo</p>
+                <p style="font-size:12px;color:#444;margin-top:8px;">📍 Between 10th Avenue and J. Tongogara Street</p>
+            </div>
         </div>
     </section>
 
     <!-- ─── FOOTER ─── -->
     <footer>
-        <div class="logo" style="font-size:20px;margin-bottom:10px;">
+        <div class="logo">
             Gatekeeper<span>AI</span>
             <small>The AI Service Delivery Company</small>
         </div>
@@ -364,17 +557,12 @@
             <a href="#products">Products</a>
             <a href="#sectors">Sectors</a>
             <a href="#contact">Contact</a>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="terms.html">Terms & Conditions</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
         </div>
-        <p>&copy; 2025 GatekeeperAI. All rights reserved.</p>
-        <div class="legal">
-            GatekeeperAI complies with the <strong>Zimbabwe Data Protection Act [Chapter 11:12]</strong> and
-            <strong>Meta (WhatsApp) Business Platform Terms</strong>.
-        </div>
-        <div class="zim-badge">
-            🇿🇼 <span>Built for Zimbabwe</span> · Proudly Zimbabwean
-        </div>
+        <p style="color:#444;font-size:13px;">&copy; 2025 GatekeeperAI. All rights reserved.</p>
+        <div class="legal">GatekeeperAI complies with the <strong>Zimbabwe Data Protection Act [Chapter 11:12]</strong> and <strong>Meta (WhatsApp) Business Platform Terms</strong>.</div>
+        <div class="zim"><span>🇿🇼</span> Built for Zimbabwe · Proudly Zimbabwean</div>
     </footer>
 
 </div>
